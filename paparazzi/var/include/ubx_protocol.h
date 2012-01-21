@@ -1,4 +1,4 @@
-/* Generated from /home/mav/lisa-m-team4938/paparazzi/conf/ubx.xml */
+/* Generated from /home/woz/lisa-m-team4938/paparazzi/conf/ubx.xml */
 /* Please DO NOT EDIT */
 
 #define UBX_SYNC1 0xB5

@@ -1520,10 +1520,10 @@
  1324              		.set	.LANCHOR0,. + 0
  1327              	survey_orientation:
  1328 0000 00       		.space	1
- 1329              		.section	.bss.survey_radius.2299,"aw",%nobits
+ 1329              		.section	.bss.survey_radius.2310,"aw",%nobits
  1330              		.align	2
  1331              		.set	.LANCHOR4,. + 0
- 1334              	survey_radius.2299:
+ 1334              	survey_radius.2310:
  1335 0000 00000000 		.space	4
  1336              		.section	.bss.survey_to,"aw",%nobits
  1337              		.align	2
@@ -1540,30 +1540,30 @@
  1350              	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 nav_survey_rectangle.c
-     /tmp/ccmPidys.s:32     .text.nav_survey_rectangle_init:00000000 $t
-     /tmp/ccmPidys.s:37     .text.nav_survey_rectangle_init:00000000 nav_survey_rectangle_init
-     /tmp/ccmPidys.s:333    .text.nav_survey_rectangle_init:00000228 $d
-     /tmp/ccmPidys.s:351    .text.nav_survey_rectangle_init:0000026c $t
-     /tmp/ccmPidys.s:416    .text.nav_survey_rectangle_init:000002d0 $d
-     /tmp/ccmPidys.s:432    .text.nav_survey_rectangle:00000000 $t
-     /tmp/ccmPidys.s:437    .text.nav_survey_rectangle:00000000 nav_survey_rectangle
-     /tmp/ccmPidys.s:796    .text.nav_survey_rectangle:00000244 $d
-     /tmp/ccmPidys.s:816    .text.nav_survey_rectangle:00000280 $t
-     /tmp/ccmPidys.s:1130   .text.nav_survey_rectangle:000004c0 $d
-     /tmp/ccmPidys.s:1149   .text.nav_survey_rectangle:00000508 $t
-     /tmp/ccmPidys.s:1296   .text.nav_survey_rectangle:00000608 $d
-     /tmp/ccmPidys.s:1317   .bss.survey_from:00000000 $d
-     /tmp/ccmPidys.s:1321   .bss.survey_from:00000000 survey_from
-     /tmp/ccmPidys.s:1327   .bss.survey_orientation:00000000 survey_orientation
-     /tmp/ccmPidys.s:1328   .bss.survey_orientation:00000000 $d
-     /tmp/ccmPidys.s:1330   .bss.survey_radius.2299:00000000 $d
-     /tmp/ccmPidys.s:1334   .bss.survey_radius.2299:00000000 survey_radius.2299
-     /tmp/ccmPidys.s:1337   .bss.survey_to:00000000 $d
-     /tmp/ccmPidys.s:1341   .bss.survey_to:00000000 survey_to
-     /tmp/ccmPidys.s:1347   .bss.survey_uturn:00000000 survey_uturn
-     /tmp/ccmPidys.s:1348   .bss.survey_uturn:00000000 $d
+     /tmp/cc58VrT4.s:32     .text.nav_survey_rectangle_init:00000000 $t
+     /tmp/cc58VrT4.s:37     .text.nav_survey_rectangle_init:00000000 nav_survey_rectangle_init
+     /tmp/cc58VrT4.s:333    .text.nav_survey_rectangle_init:00000228 $d
+     /tmp/cc58VrT4.s:351    .text.nav_survey_rectangle_init:0000026c $t
+     /tmp/cc58VrT4.s:416    .text.nav_survey_rectangle_init:000002d0 $d
+     /tmp/cc58VrT4.s:432    .text.nav_survey_rectangle:00000000 $t
+     /tmp/cc58VrT4.s:437    .text.nav_survey_rectangle:00000000 nav_survey_rectangle
+     /tmp/cc58VrT4.s:796    .text.nav_survey_rectangle:00000244 $d
+     /tmp/cc58VrT4.s:816    .text.nav_survey_rectangle:00000280 $t
+     /tmp/cc58VrT4.s:1130   .text.nav_survey_rectangle:000004c0 $d
+     /tmp/cc58VrT4.s:1149   .text.nav_survey_rectangle:00000508 $t
+     /tmp/cc58VrT4.s:1296   .text.nav_survey_rectangle:00000608 $d
+     /tmp/cc58VrT4.s:1317   .bss.survey_from:00000000 $d
+     /tmp/cc58VrT4.s:1321   .bss.survey_from:00000000 survey_from
+     /tmp/cc58VrT4.s:1327   .bss.survey_orientation:00000000 survey_orientation
+     /tmp/cc58VrT4.s:1328   .bss.survey_orientation:00000000 $d
+     /tmp/cc58VrT4.s:1330   .bss.survey_radius.2310:00000000 $d
+     /tmp/cc58VrT4.s:1334   .bss.survey_radius.2310:00000000 survey_radius.2310
+     /tmp/cc58VrT4.s:1337   .bss.survey_to:00000000 $d
+     /tmp/cc58VrT4.s:1341   .bss.survey_to:00000000 survey_to
+     /tmp/cc58VrT4.s:1347   .bss.survey_uturn:00000000 survey_uturn
+     /tmp/cc58VrT4.s:1348   .bss.survey_uturn:00000000 $d
                      .debug_frame:00000010 $d
-     /tmp/ccmPidys.s:1316   .text.nav_survey_rectangle:0000064c $t
+     /tmp/cc58VrT4.s:1316   .text.nav_survey_rectangle:0000064c $t
 
 UNDEFINED SYMBOLS
 __aeabi_fcmplt

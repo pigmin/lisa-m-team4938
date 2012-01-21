@@ -32,7 +32,7 @@
   39              		.thumb
   40              		.thumb_func
   42              	dl_parse_msg:
-  43              	.LFB40:
+  43              	.LFB47:
   44              		.file 1 "firmwares/fixedwing/datalink.c"
    1:firmwares/fixedwing/datalink.c **** /*
    2:firmwares/fixedwing/datalink.c ****  * $Id$
@@ -1647,62 +1647,62 @@
  1449              	.LVL166:
  1450              	.LBB189:
  1451              	.LBB190:
- 1452              		.file 2 "/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h"
-   1:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** /* This file has been generated from /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/settings_modu
-   2:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** /* Please DO NOT EDIT */
-   3:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** 
-   4:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** #ifndef SETTINGS_H
-   5:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** #define SETTINGS_H 
-   6:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** 
-   7:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** #define RCSettings(mode_changed) { \
-   8:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** }
-   9:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** 
-  10:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** #include "autopilot.h"
-  11:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** #include "downlink.h"
-  12:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** #include "estimator.h"
-  13:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** #include "subsystems/gps.h"
-  14:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** #include "subsystems/nav.h"
-  15:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** #include "generated/modules.h"
-  16:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** 
-  17:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** #define DlSetting(_idx, _value) { \
-  18:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****   switch (_idx) { \
-  19:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 0: flight_altitude = _value; break;\
-  20:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 1: nav_course = _value; break;\
-  21:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 2: nav_IncreaseShift( _value ); _value = nav_shift; break;\
-  22:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 3: estimator_flight_time = _value; break;\
-  23:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 4: nav_SetNavRadius( _value ); _value = nav_radius; break;\
-  24:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 5: pprz_mode = _value; break;\
-  25:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 6: launch = _value; break;\
-  26:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 7: kill_throttle = _value; break;\
-  27:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 8: telemetry_mode_Ap_DefaultChannel = _value; break;\
-  28:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 9: telemetry_mode_Fbw_DefaultChannel = _value; break;\
-  29:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 10: gps_Reset( _value ); _value = gps.reset; break;\
-  30:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     default: break;\
-  31:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****   }\
-  32:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** }
-  33:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** #define PeriodicSendDlValue(_chan) { \
-  34:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****   static uint8_t i;\
-  35:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****   float var;\
-  36:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****   if (i >= 11) i = 0;\
-  37:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****   switch (i) { \
-  38:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 0: var = flight_altitude; break;\
-  39:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 1: var = nav_course; break;\
-  40:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 2: var = nav_shift; break;\
-  41:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 3: var = estimator_flight_time; break;\
-  42:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 4: var = nav_radius; break;\
-  43:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 5: var = pprz_mode; break;\
-  44:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 6: var = launch; break;\
-  45:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 7: var = kill_throttle; break;\
-  46:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 8: var = telemetry_mode_Ap_DefaultChannel; break;\
-  47:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 9: var = telemetry_mode_Fbw_DefaultChannel; break;\
-  48:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 10: var = gps.reset; break;\
-  49:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     default: var = 0.; break;\
-  50:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****   }\
-  51:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****   DOWNLINK_SEND_DL_VALUE(_chan, &i, &var);\
-  52:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****   i++;\
-  53:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** }
-  54:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** static inline float settings_get_value(uint8_t i) {
-  55:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****   switch (i) { \
+ 1452              		.file 2 "/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h"
+   1:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** /* This file has been generated from /home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/settings_modu
+   2:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** /* Please DO NOT EDIT */
+   3:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** 
+   4:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** #ifndef SETTINGS_H
+   5:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** #define SETTINGS_H 
+   6:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** 
+   7:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** #define RCSettings(mode_changed) { \
+   8:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** }
+   9:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** 
+  10:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** #include "autopilot.h"
+  11:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** #include "downlink.h"
+  12:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** #include "estimator.h"
+  13:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** #include "subsystems/gps.h"
+  14:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** #include "subsystems/nav.h"
+  15:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** #include "generated/modules.h"
+  16:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** 
+  17:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** #define DlSetting(_idx, _value) { \
+  18:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****   switch (_idx) { \
+  19:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 0: flight_altitude = _value; break;\
+  20:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 1: nav_course = _value; break;\
+  21:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 2: nav_IncreaseShift( _value ); _value = nav_shift; break;\
+  22:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 3: estimator_flight_time = _value; break;\
+  23:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 4: nav_SetNavRadius( _value ); _value = nav_radius; break;\
+  24:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 5: pprz_mode = _value; break;\
+  25:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 6: launch = _value; break;\
+  26:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 7: kill_throttle = _value; break;\
+  27:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 8: telemetry_mode_Ap_DefaultChannel = _value; break;\
+  28:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 9: telemetry_mode_Fbw_DefaultChannel = _value; break;\
+  29:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 10: gps_Reset( _value ); _value = gps.reset; break;\
+  30:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     default: break;\
+  31:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****   }\
+  32:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** }
+  33:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** #define PeriodicSendDlValue(_chan) { \
+  34:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****   static uint8_t i;\
+  35:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****   float var;\
+  36:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****   if (i >= 11) i = 0;\
+  37:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****   switch (i) { \
+  38:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 0: var = flight_altitude; break;\
+  39:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 1: var = nav_course; break;\
+  40:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 2: var = nav_shift; break;\
+  41:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 3: var = estimator_flight_time; break;\
+  42:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 4: var = nav_radius; break;\
+  43:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 5: var = pprz_mode; break;\
+  44:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 6: var = launch; break;\
+  45:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 7: var = kill_throttle; break;\
+  46:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 8: var = telemetry_mode_Ap_DefaultChannel; break;\
+  47:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 9: var = telemetry_mode_Fbw_DefaultChannel; break;\
+  48:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 10: var = gps.reset; break;\
+  49:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     default: var = 0.; break;\
+  50:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****   }\
+  51:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****   DOWNLINK_SEND_DL_VALUE(_chan, &i, &var);\
+  52:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****   i++;\
+  53:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** }
+  54:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h **** static inline float settings_get_value(uint8_t i) {
+  55:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****   switch (i) { \
  1453              		.loc 2 55 0
  1454 09c4 0A2F     		cmp	r7, #10
  1455 09c6 07D8     		bhi	.L35
@@ -1724,55 +1724,55 @@
  1471 09d8 0024     		movs	r4, #0
  1472 09da 49E0     		b	.L48
  1473              	.L36:
-  56:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 0: return flight_altitude;
+  56:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 0: return flight_altitude;
  1474              		.loc 2 56 0
  1475 09dc 0E4B     		ldr	r3, .L77+12
  1476 09de 00E0     		b	.L63
  1477              	.L37:
-  57:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 1: return nav_course;
+  57:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 1: return nav_course;
  1478              		.loc 2 57 0
  1479 09e0 0E4B     		ldr	r3, .L77+16
  1480              	.L63:
  1481 09e2 1C68     		ldr	r4, [r3, #0]	@ float
  1482 09e4 44E0     		b	.L48
  1483              	.L38:
-  58:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 2: return nav_shift;
+  58:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 2: return nav_shift;
  1484              		.loc 2 58 0
  1485 09e6 0E4B     		ldr	r3, .L77+20
  1486 09e8 FBE7     		b	.L63
  1487              	.L39:
-  59:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 3: return estimator_flight_time;
+  59:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 3: return estimator_flight_time;
  1488              		.loc 2 59 0
  1489 09ea 0E4B     		ldr	r3, .L77+24
  1490 09ec 1888     		ldrh	r0, [r3, #0]
  1491 09ee 3CE0     		b	.L64
  1492              	.L40:
-  60:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 4: return nav_radius;
+  60:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 4: return nav_radius;
  1493              		.loc 2 60 0
  1494 09f0 0E4B     		ldr	r3, .L77+32
  1495 09f2 F6E7     		b	.L63
  1496              	.L41:
-  61:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 5: return pprz_mode;
+  61:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 5: return pprz_mode;
  1497              		.loc 2 61 0
  1498 09f4 104B     		ldr	r3, .L77+44
  1499 09f6 06E0     		b	.L68
  1500              	.L42:
-  62:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 6: return launch;
+  62:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 6: return launch;
  1501              		.loc 2 62 0
  1502 09f8 104B     		ldr	r3, .L77+48
  1503 09fa 04E0     		b	.L68
  1504              	.L43:
-  63:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 7: return kill_throttle;
+  63:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 7: return kill_throttle;
  1505              		.loc 2 63 0
  1506 09fc 104B     		ldr	r3, .L77+52
  1507 09fe 02E0     		b	.L68
  1508              	.L44:
-  64:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 8: return telemetry_mode_Ap_DefaultChannel;
+  64:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 8: return telemetry_mode_Ap_DefaultChannel;
  1509              		.loc 2 64 0
  1510 0a00 104B     		ldr	r3, .L77+56
  1511 0a02 00E0     		b	.L68
  1512              	.L45:
-  65:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 9: return telemetry_mode_Fbw_DefaultChannel;
+  65:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 9: return telemetry_mode_Fbw_DefaultChannel;
  1513              		.loc 2 65 0
  1514 0a04 104B     		ldr	r3, .L77+60
  1515              	.L68:
@@ -1804,7 +1804,7 @@
  1541 0a5c 00000000 		.word	ck_a
  1542 0a60 00000000 		.word	ck_b
  1543              	.L46:
-  66:/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 10: return gps.reset;
+  66:/home/woz/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h ****     case 10: return gps.reset;
  1544              		.loc 2 66 0
  1545 0a64 3C4B     		ldr	r3, .L79
  1546 0a66 B3F8EA00 		ldrh	r0, [r3, #234]
@@ -2020,7 +2020,7 @@
  1716 0b6c 00000000 		.word	ck_b
  1717 0b70 00000000 		.word	downlink_nb_ovrn
  1718              		.cfi_endproc
- 1719              	.LFE40:
+ 1719              	.LFE47:
  1721              		.global	dl_msg_available
  1722              		.global	datalink_time
  1723              		.global	dl_buffer
@@ -2045,31 +2045,31 @@
  1744              	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 datalink.c
-     /tmp/ccPhdNIv.s:37     .text.dl_parse_msg:00000000 $t
-     /tmp/ccPhdNIv.s:42     .text.dl_parse_msg:00000000 dl_parse_msg
-     /tmp/ccPhdNIv.s:313    .text.dl_parse_msg:00000210 $d
-     /tmp/ccPhdNIv.s:333    .text.dl_parse_msg:00000250 $t
-     /tmp/ccPhdNIv.s:735    .text.dl_parse_msg:00000540 $d
-     /tmp/ccPhdNIv.s:753    .text.dl_parse_msg:00000578 $t
-     /tmp/ccPhdNIv.s:1169   .text.dl_parse_msg:000007d0 $d
-     /tmp/ccPhdNIv.s:1188   .text.dl_parse_msg:0000080c $t
-     /tmp/ccPhdNIv.s:1262   .text.dl_parse_msg:00000892 $d
-     /tmp/ccPhdNIv.s:1458   .text.dl_parse_msg:000009cc $d
-     /tmp/ccPhdNIv.s:1521   .text.dl_parse_msg:00000a0c $d
-     /tmp/ccPhdNIv.s:1545   .text.dl_parse_msg:00000a64 $t
-     /tmp/ccPhdNIv.s:1711   .text.dl_parse_msg:00000b58 $d
-     /tmp/ccPhdNIv.s:1727   .bss.dl_msg_available:00000000 dl_msg_available
-     /tmp/ccPhdNIv.s:1741   .bss.datalink_time:00000000 datalink_time
-     /tmp/ccPhdNIv.s:1734   .bss.dl_buffer:00000000 dl_buffer
-     /tmp/ccPhdNIv.s:1728   .bss.dl_msg_available:00000000 $d
-     /tmp/ccPhdNIv.s:1730   .bss.dl_buffer:00000000 $d
-     /tmp/ccPhdNIv.s:1737   .bss.datalink_time:00000000 $d
+     /tmp/ccA8RzFy.s:37     .text.dl_parse_msg:00000000 $t
+     /tmp/ccA8RzFy.s:42     .text.dl_parse_msg:00000000 dl_parse_msg
+     /tmp/ccA8RzFy.s:313    .text.dl_parse_msg:00000210 $d
+     /tmp/ccA8RzFy.s:333    .text.dl_parse_msg:00000250 $t
+     /tmp/ccA8RzFy.s:735    .text.dl_parse_msg:00000540 $d
+     /tmp/ccA8RzFy.s:753    .text.dl_parse_msg:00000578 $t
+     /tmp/ccA8RzFy.s:1169   .text.dl_parse_msg:000007d0 $d
+     /tmp/ccA8RzFy.s:1188   .text.dl_parse_msg:0000080c $t
+     /tmp/ccA8RzFy.s:1262   .text.dl_parse_msg:00000892 $d
+     /tmp/ccA8RzFy.s:1458   .text.dl_parse_msg:000009cc $d
+     /tmp/ccA8RzFy.s:1521   .text.dl_parse_msg:00000a0c $d
+     /tmp/ccA8RzFy.s:1545   .text.dl_parse_msg:00000a64 $t
+     /tmp/ccA8RzFy.s:1711   .text.dl_parse_msg:00000b58 $d
+     /tmp/ccA8RzFy.s:1727   .bss.dl_msg_available:00000000 dl_msg_available
+     /tmp/ccA8RzFy.s:1741   .bss.datalink_time:00000000 datalink_time
+     /tmp/ccA8RzFy.s:1734   .bss.dl_buffer:00000000 dl_buffer
+     /tmp/ccA8RzFy.s:1728   .bss.dl_msg_available:00000000 $d
+     /tmp/ccA8RzFy.s:1730   .bss.dl_buffer:00000000 $d
+     /tmp/ccA8RzFy.s:1737   .bss.datalink_time:00000000 $d
                      .debug_frame:00000010 $d
-     /tmp/ccPhdNIv.s:1724   .text.dl_parse_msg:00000b74 $t
-     /tmp/ccPhdNIv.s:1273   .text.dl_parse_msg:0000089d $d
-     /tmp/ccPhdNIv.s:1273   .text.dl_parse_msg:0000089e $t
-     /tmp/ccPhdNIv.s:1469   .text.dl_parse_msg:000009d7 $d
-     /tmp/ccPhdNIv.s:1469   .text.dl_parse_msg:000009d8 $t
+     /tmp/ccA8RzFy.s:1724   .text.dl_parse_msg:00000b74 $t
+     /tmp/ccA8RzFy.s:1273   .text.dl_parse_msg:0000089d $d
+     /tmp/ccA8RzFy.s:1273   .text.dl_parse_msg:0000089e $t
+     /tmp/ccA8RzFy.s:1469   .text.dl_parse_msg:000009d7 $d
+     /tmp/ccA8RzFy.s:1469   .text.dl_parse_msg:000009d8 $t
 
 UNDEFINED SYMBOLS
 __aeabi_i2f

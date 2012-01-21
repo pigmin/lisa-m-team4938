@@ -794,16 +794,16 @@
  499              	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 settings_arch.c
-     /tmp/ccZSe94z.s:24     .text.pflash_checksum:00000000 $t
-     /tmp/ccZSe94z.s:28     .text.pflash_checksum:00000000 pflash_checksum
-     /tmp/ccZSe94z.s:143    .text.pflash_checksum:00000090 $d
-     /tmp/ccZSe94z.s:149    .text.flash_detect:00000000 $t
-     /tmp/ccZSe94z.s:153    .text.flash_detect:00000000 flash_detect
-     /tmp/ccZSe94z.s:223    .text.flash_detect:0000006c $d
-     /tmp/ccZSe94z.s:228    .text.persistent_read:00000000 $t
-     /tmp/ccZSe94z.s:233    .text.persistent_read:00000000 persistent_read
-     /tmp/ccZSe94z.s:321    .text.persistent_write:00000000 $t
-     /tmp/ccZSe94z.s:326    .text.persistent_write:00000000 persistent_write
+     /tmp/cc7z6gwA.s:24     .text.pflash_checksum:00000000 $t
+     /tmp/cc7z6gwA.s:28     .text.pflash_checksum:00000000 pflash_checksum
+     /tmp/cc7z6gwA.s:143    .text.pflash_checksum:00000090 $d
+     /tmp/cc7z6gwA.s:149    .text.flash_detect:00000000 $t
+     /tmp/cc7z6gwA.s:153    .text.flash_detect:00000000 flash_detect
+     /tmp/cc7z6gwA.s:223    .text.flash_detect:0000006c $d
+     /tmp/cc7z6gwA.s:228    .text.persistent_read:00000000 $t
+     /tmp/cc7z6gwA.s:233    .text.persistent_read:00000000 persistent_read
+     /tmp/cc7z6gwA.s:321    .text.persistent_write:00000000 $t
+     /tmp/cc7z6gwA.s:326    .text.persistent_write:00000000 persistent_write
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS

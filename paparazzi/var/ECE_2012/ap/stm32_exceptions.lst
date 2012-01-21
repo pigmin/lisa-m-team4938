@@ -139,16 +139,16 @@
  115              	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 stm32_exceptions.c
-     /tmp/cc9dKS7N.s:24     .text.nmi_exception:00000000 $t
-     /tmp/cc9dKS7N.s:29     .text.nmi_exception:00000000 nmi_exception
-     /tmp/cc9dKS7N.s:43     .text.hard_fault_exception:00000000 $t
-     /tmp/cc9dKS7N.s:48     .text.hard_fault_exception:00000000 hard_fault_exception
-     /tmp/cc9dKS7N.s:61     .text.mem_manage_exception:00000000 $t
-     /tmp/cc9dKS7N.s:66     .text.mem_manage_exception:00000000 mem_manage_exception
-     /tmp/cc9dKS7N.s:79     .text.bus_fault_exception:00000000 $t
-     /tmp/cc9dKS7N.s:84     .text.bus_fault_exception:00000000 bus_fault_exception
-     /tmp/cc9dKS7N.s:97     .text.usage_fault_exception:00000000 $t
-     /tmp/cc9dKS7N.s:102    .text.usage_fault_exception:00000000 usage_fault_exception
+     /tmp/ccWGFr0J.s:24     .text.nmi_exception:00000000 $t
+     /tmp/ccWGFr0J.s:29     .text.nmi_exception:00000000 nmi_exception
+     /tmp/ccWGFr0J.s:43     .text.hard_fault_exception:00000000 $t
+     /tmp/ccWGFr0J.s:48     .text.hard_fault_exception:00000000 hard_fault_exception
+     /tmp/ccWGFr0J.s:61     .text.mem_manage_exception:00000000 $t
+     /tmp/ccWGFr0J.s:66     .text.mem_manage_exception:00000000 mem_manage_exception
+     /tmp/ccWGFr0J.s:79     .text.bus_fault_exception:00000000 $t
+     /tmp/ccWGFr0J.s:84     .text.bus_fault_exception:00000000 bus_fault_exception
+     /tmp/ccWGFr0J.s:97     .text.usage_fault_exception:00000000 $t
+     /tmp/ccWGFr0J.s:102    .text.usage_fault_exception:00000000 usage_fault_exception
                      .debug_frame:00000010 $d
 
 NO UNDEFINED SYMBOLS

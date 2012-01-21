@@ -1142,7 +1142,7 @@
  622 0302 0C2B     		cmp	r3, #12
  623 0304 72D1     		bne	.L24
  624 0306 3048     		ldr	r0, .L58+8
- 625 0308 1721     		movs	r1, #23
+ 625 0308 1121     		movs	r1, #17
  626 030a FFF7FEFF 		bl	uart_check_free_space
  627 030e 0028     		cmp	r0, #0
  628 0310 68D0     		beq	.L32
@@ -1154,7 +1154,7 @@
  634              	.LBB93:
  635 0318 9921     		movs	r1, #153
  636              	.LBE93:
- 637 031a 1732     		adds	r2, r2, #23
+ 637 031a 1132     		adds	r2, r2, #17
  638 031c 1A80     		strh	r2, [r3, #0]	@ movhi
  639 031e 2C4B     		ldr	r3, .L58+16
  640              	.LBB94:
@@ -1169,12 +1169,12 @@
  649              	.LBB96:
  650 032a FFF7FEFF 		bl	uart_transmit
  651 032e 2648     		ldr	r0, .L58+8
- 652 0330 1721     		movs	r1, #23
+ 652 0330 1121     		movs	r1, #17
  653 0332 FFF7FEFF 		bl	uart_transmit
  654              	.LBE96:
- 655 0336 1823     		movs	r3, #24
+ 655 0336 1223     		movs	r3, #18
  656 0338 2B70     		strb	r3, [r5, #0]
- 657 033a 1733     		adds	r3, r3, #23
+ 657 033a 1133     		adds	r3, r3, #17
  658 033c 2370     		strb	r3, [r4, #0]
  659 033e 2248     		ldr	r0, .L58+8
  660 0340 0121     		movs	r1, #1
@@ -1192,18 +1192,18 @@
  672              	.LBB97:
  673 035c 2B78     		ldrb	r3, [r5, #0]	@ zero_extendqisi2
  674 035e 2278     		ldrb	r2, [r4, #0]	@ zero_extendqisi2
- 675 0360 0833     		adds	r3, r3, #8
+ 675 0360 0533     		adds	r3, r3, #5
  676 0362 DBB2     		uxtb	r3, r3
  677 0364 2B70     		strb	r3, [r5, #0]
  678 0366 9B18     		adds	r3, r3, r2
  679 0368 2370     		strb	r3, [r4, #0]
  680 036a 1748     		ldr	r0, .L58+8
- 681 036c 0821     		movs	r1, #8
+ 681 036c 0521     		movs	r1, #5
  682 036e FFF7FEFF 		bl	uart_transmit
  683 0372 1B4C     		ldr	r4, .L58+32
  180:firmwares/fixedwing/main_fbw.c **** void periodic_task_fbw( void ) {
  684              		.loc 2 180 0
- 685 0374 04F11007 		add	r7, r4, #16
+ 685 0374 04F10A07 		add	r7, r4, #10
  686              	.L33:
  687              	.LBB98:
  688              		.loc 4 88 0
@@ -1270,7 +1270,7 @@
  749 03ec 704B     		ldr	r3, .L60+4
  750 03ee 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
  751 03f0 012B     		cmp	r3, #1
- 752 03f2 40F06D82 		bne	.L34
+ 752 03f2 40F06E82 		bne	.L34
  753              	.LBB100:
  754 03f6 6F4B     		ldr	r3, .L60+8
  755 03f8 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
@@ -1862,14 +1862,14 @@
  1338 0806 1A70     		strb	r2, [r3, #0]
  1339              	.L47:
  1340 0808 374B     		ldr	r3, .L64+4
- 1341 080a 1E88     		ldrh	r6, [r3, #0]
- 1342 080c 182E     		cmp	r6, #24
- 1343 080e 5FD1     		bne	.L34
+ 1341 080a 1B88     		ldrh	r3, [r3, #0]
+ 1342 080c 182B     		cmp	r3, #24
+ 1343 080e 60D1     		bne	.L34
  1344 0810 3648     		ldr	r0, .L64+8
- 1345 0812 1721     		movs	r1, #23
+ 1345 0812 1121     		movs	r1, #17
  1346 0814 FFF7FEFF 		bl	uart_check_free_space
  1347 0818 0028     		cmp	r0, #0
- 1348 081a 55D0     		beq	.L49
+ 1348 081a 56D0     		beq	.L49
  1349 081c 344B     		ldr	r3, .L64+12
  1350              	.LBB144:
  1351 081e 3348     		ldr	r0, .L64+8
@@ -1878,107 +1878,108 @@
  1354              	.LBB145:
  1355 0822 9921     		movs	r1, #153
  1356              	.LBE145:
- 1357 0824 1732     		adds	r2, r2, #23
+ 1357 0824 1132     		adds	r2, r2, #17
  1358 0826 1A80     		strh	r2, [r3, #0]	@ movhi
  1359 0828 324B     		ldr	r3, .L64+16
  1360              	.LBB146:
- 1361 082a 334C     		ldr	r4, .L64+20
+ 1361 082a 334D     		ldr	r5, .L64+20
  1362              	.LBE146:
  1363 082c 1A88     		ldrh	r2, [r3, #0]
  1364              	.LBB147:
- 1365 082e 334D     		ldr	r5, .L64+24
+ 1365 082e 334C     		ldr	r4, .L64+24
  1366              	.LBE147:
  1367 0830 0132     		adds	r2, r2, #1
  1368 0832 1A80     		strh	r2, [r3, #0]	@ movhi
  1369              	.LBB148:
  1370 0834 FFF7FEFF 		bl	uart_transmit
  1371 0838 2C48     		ldr	r0, .L64+8
- 1372 083a 1721     		movs	r1, #23
+ 1372 083a 1121     		movs	r1, #17
  1373 083c FFF7FEFF 		bl	uart_transmit
  1374              	.LBE148:
- 1375 0840 2F23     		movs	r3, #47
- 1376 0842 2370     		strb	r3, [r4, #0]
- 1377 0844 2948     		ldr	r0, .L64+8
- 1378 0846 0121     		movs	r1, #1
- 1379 0848 2E70     		strb	r6, [r5, #0]
- 1380 084a FFF7FEFF 		bl	uart_transmit
- 1381 084e 2B78     		ldrb	r3, [r5, #0]	@ zero_extendqisi2
- 1382 0850 2278     		ldrb	r2, [r4, #0]	@ zero_extendqisi2
- 1383 0852 6933     		adds	r3, r3, #105
- 1384 0854 DBB2     		uxtb	r3, r3
- 1385 0856 2B70     		strb	r3, [r5, #0]
- 1386 0858 9B18     		adds	r3, r3, r2
- 1387 085a 2370     		strb	r3, [r4, #0]
- 1388 085c 2348     		ldr	r0, .L64+8
- 1389 085e 6921     		movs	r1, #105
- 1390 0860 FFF7FEFF 		bl	uart_transmit
- 1391              	.LBB149:
- 1392 0864 2B78     		ldrb	r3, [r5, #0]	@ zero_extendqisi2
- 1393 0866 2278     		ldrb	r2, [r4, #0]	@ zero_extendqisi2
- 1394 0868 0833     		adds	r3, r3, #8
- 1395 086a DBB2     		uxtb	r3, r3
- 1396 086c 2B70     		strb	r3, [r5, #0]
- 1397 086e 9B18     		adds	r3, r3, r2
- 1398 0870 2370     		strb	r3, [r4, #0]
- 1399 0872 1E48     		ldr	r0, .L64+8
- 1400 0874 0821     		movs	r1, #8
- 1401 0876 FFF7FEFF 		bl	uart_transmit
- 1402 087a 214C     		ldr	r4, .L64+28
+ 1375 0840 1223     		movs	r3, #18
+ 1376 0842 2B70     		strb	r3, [r5, #0]
+ 1377 0844 1133     		adds	r3, r3, #17
+ 1378 0846 2370     		strb	r3, [r4, #0]
+ 1379 0848 2848     		ldr	r0, .L64+8
+ 1380 084a 0121     		movs	r1, #1
+ 1381 084c FFF7FEFF 		bl	uart_transmit
+ 1382 0850 2B78     		ldrb	r3, [r5, #0]	@ zero_extendqisi2
+ 1383 0852 2278     		ldrb	r2, [r4, #0]	@ zero_extendqisi2
+ 1384 0854 6933     		adds	r3, r3, #105
+ 1385 0856 DBB2     		uxtb	r3, r3
+ 1386 0858 2B70     		strb	r3, [r5, #0]
+ 1387 085a 9B18     		adds	r3, r3, r2
+ 1388 085c 2370     		strb	r3, [r4, #0]
+ 1389 085e 2348     		ldr	r0, .L64+8
+ 1390 0860 6921     		movs	r1, #105
+ 1391 0862 FFF7FEFF 		bl	uart_transmit
+ 1392              	.LBB149:
+ 1393 0866 2B78     		ldrb	r3, [r5, #0]	@ zero_extendqisi2
+ 1394 0868 2278     		ldrb	r2, [r4, #0]	@ zero_extendqisi2
+ 1395 086a 0533     		adds	r3, r3, #5
+ 1396 086c DBB2     		uxtb	r3, r3
+ 1397 086e 2B70     		strb	r3, [r5, #0]
+ 1398 0870 9B18     		adds	r3, r3, r2
+ 1399 0872 2370     		strb	r3, [r4, #0]
+ 1400 0874 1D48     		ldr	r0, .L64+8
+ 1401 0876 0521     		movs	r1, #5
+ 1402 0878 FFF7FEFF 		bl	uart_transmit
+ 1403 087c 204C     		ldr	r4, .L64+28
  180:firmwares/fixedwing/main_fbw.c **** void periodic_task_fbw( void ) {
- 1403              		.loc 2 180 0
- 1404 087c 04F11007 		add	r7, r4, #16
- 1405              	.L50:
- 1406              	.LBB150:
- 1407              		.loc 4 88 0
- 1408 0880 1E4E     		ldr	r6, .L64+24
- 1409 0882 2178     		ldrb	r1, [r4, #0]	@ zero_extendqisi2
- 1410              	.LVL54:
- 1411 0884 1C4D     		ldr	r5, .L64+20
- 1412 0886 3378     		ldrb	r3, [r6, #0]	@ zero_extendqisi2
- 1413 0888 2A78     		ldrb	r2, [r5, #0]	@ zero_extendqisi2
- 1414 088a CB18     		adds	r3, r1, r3
- 1415 088c DBB2     		uxtb	r3, r3
- 1416 088e 3370     		strb	r3, [r6, #0]
- 1417 0890 9B18     		adds	r3, r3, r2
- 1418 0892 2B70     		strb	r3, [r5, #0]
- 1419 0894 1548     		ldr	r0, .L64+8
- 1420 0896 FFF7FEFF 		bl	uart_transmit
- 1421              	.LVL55:
- 1422              	.LBE150:
- 1423              	.LBB151:
- 1424 089a 6178     		ldrb	r1, [r4, #1]	@ zero_extendqisi2
- 1425              	.LVL56:
- 1426 089c 3378     		ldrb	r3, [r6, #0]	@ zero_extendqisi2
- 1427 089e 2A78     		ldrb	r2, [r5, #0]	@ zero_extendqisi2
- 1428 08a0 CB18     		adds	r3, r1, r3
- 1429 08a2 DBB2     		uxtb	r3, r3
- 1430 08a4 3370     		strb	r3, [r6, #0]
- 1431 08a6 9B18     		adds	r3, r3, r2
- 1432 08a8 2B70     		strb	r3, [r5, #0]
- 1433 08aa 1048     		ldr	r0, .L64+8
- 1434 08ac 0234     		adds	r4, r4, #2
- 1435 08ae FFF7FEFF 		bl	uart_transmit
- 1436              	.LVL57:
- 1437              	.LBE151:
- 1438 08b2 BC42     		cmp	r4, r7
- 1439 08b4 E4D1     		bne	.L50
- 1440              	.LBE149:
- 1441 08b6 3178     		ldrb	r1, [r6, #0]	@ zero_extendqisi2
- 1442 08b8 0C48     		ldr	r0, .L64+8
- 1443 08ba FFF7FEFF 		bl	uart_transmit
- 1444 08be 0B48     		ldr	r0, .L64+8
- 1445 08c0 2978     		ldrb	r1, [r5, #0]	@ zero_extendqisi2
- 1446 08c2 FFF7FEFF 		bl	uart_transmit
- 1447 08c6 03E0     		b	.L34
- 1448              	.L49:
- 1449 08c8 064B     		ldr	r3, .L64
- 1450 08ca 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
- 1451 08cc 0132     		adds	r2, r2, #1
- 1452 08ce 1A70     		strb	r2, [r3, #0]
- 1453              	.L34:
- 1454              	.LBE100:
- 1455              	.LBE64:
- 1456              	.LBE63:
+ 1404              		.loc 2 180 0
+ 1405 087e 04F10A07 		add	r7, r4, #10
+ 1406              	.L50:
+ 1407              	.LBB150:
+ 1408              		.loc 4 88 0
+ 1409 0882 1D4E     		ldr	r6, .L64+20
+ 1410 0884 2178     		ldrb	r1, [r4, #0]	@ zero_extendqisi2
+ 1411              	.LVL54:
+ 1412 0886 1D4D     		ldr	r5, .L64+24
+ 1413 0888 3378     		ldrb	r3, [r6, #0]	@ zero_extendqisi2
+ 1414 088a 2A78     		ldrb	r2, [r5, #0]	@ zero_extendqisi2
+ 1415 088c CB18     		adds	r3, r1, r3
+ 1416 088e DBB2     		uxtb	r3, r3
+ 1417 0890 3370     		strb	r3, [r6, #0]
+ 1418 0892 9B18     		adds	r3, r3, r2
+ 1419 0894 2B70     		strb	r3, [r5, #0]
+ 1420 0896 1548     		ldr	r0, .L64+8
+ 1421 0898 FFF7FEFF 		bl	uart_transmit
+ 1422              	.LVL55:
+ 1423              	.LBE150:
+ 1424              	.LBB151:
+ 1425 089c 6178     		ldrb	r1, [r4, #1]	@ zero_extendqisi2
+ 1426              	.LVL56:
+ 1427 089e 3378     		ldrb	r3, [r6, #0]	@ zero_extendqisi2
+ 1428 08a0 2A78     		ldrb	r2, [r5, #0]	@ zero_extendqisi2
+ 1429 08a2 CB18     		adds	r3, r1, r3
+ 1430 08a4 DBB2     		uxtb	r3, r3
+ 1431 08a6 3370     		strb	r3, [r6, #0]
+ 1432 08a8 9B18     		adds	r3, r3, r2
+ 1433 08aa 2B70     		strb	r3, [r5, #0]
+ 1434 08ac 0F48     		ldr	r0, .L64+8
+ 1435 08ae 0234     		adds	r4, r4, #2
+ 1436 08b0 FFF7FEFF 		bl	uart_transmit
+ 1437              	.LVL57:
+ 1438              	.LBE151:
+ 1439 08b4 BC42     		cmp	r4, r7
+ 1440 08b6 E4D1     		bne	.L50
+ 1441              	.LBE149:
+ 1442 08b8 3178     		ldrb	r1, [r6, #0]	@ zero_extendqisi2
+ 1443 08ba 0C48     		ldr	r0, .L64+8
+ 1444 08bc FFF7FEFF 		bl	uart_transmit
+ 1445 08c0 0A48     		ldr	r0, .L64+8
+ 1446 08c2 2978     		ldrb	r1, [r5, #0]	@ zero_extendqisi2
+ 1447 08c4 FFF7FEFF 		bl	uart_transmit
+ 1448 08c8 03E0     		b	.L34
+ 1449              	.L49:
+ 1450 08ca 064B     		ldr	r3, .L64
+ 1451 08cc 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
+ 1452 08ce 0132     		adds	r2, r2, #1
+ 1453 08d0 1A70     		strb	r2, [r3, #0]
+ 1454              	.L34:
+ 1455              	.LBE100:
+ 1456              	.LBE64:
+ 1457              	.LBE63:
  195:firmwares/fixedwing/main_fbw.c ****   {
  196:firmwares/fixedwing/main_fbw.c ****     set_failsafe_mode();
  197:firmwares/fixedwing/main_fbw.c ****   }
@@ -1989,819 +1990,819 @@
  202:firmwares/fixedwing/main_fbw.c **** #endif
  203:firmwares/fixedwing/main_fbw.c **** 
  204:firmwares/fixedwing/main_fbw.c ****   if (!_10Hz) {
- 1457              		.loc 2 204 0
- 1458 08d0 0C4B     		ldr	r3, .L64+32
- 1459 08d2 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
- 1460 08d4 1BB9     		cbnz	r3, .L52
+ 1458              		.loc 2 204 0
+ 1459 08d2 0C4B     		ldr	r3, .L64+32
+ 1460 08d4 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 1461 08d6 1BB9     		cbnz	r3, .L52
  205:firmwares/fixedwing/main_fbw.c ****     electrical_periodic();
  206:firmwares/fixedwing/main_fbw.c ****   }
  207:firmwares/fixedwing/main_fbw.c **** 
  208:firmwares/fixedwing/main_fbw.c **** }
- 1461              		.loc 2 208 0
- 1462 08d6 BDE8F041 		pop	{r4, r5, r6, r7, r8, lr}
+ 1462              		.loc 2 208 0
+ 1463 08d8 BDE8F041 		pop	{r4, r5, r6, r7, r8, lr}
  205:firmwares/fixedwing/main_fbw.c ****     electrical_periodic();
- 1463              		.loc 2 205 0
- 1464 08da FFF7FEBF 		b	electrical_periodic
- 1465              	.L52:
- 1466 08de BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
- 1467              	.L65:
- 1468 08e2 00BF     		.align	2
- 1469              	.L64:
- 1470 08e4 00000000 		.word	downlink_nb_ovrn
- 1471 08e8 00000000 		.word	.LANCHOR8
- 1472 08ec 00000000 		.word	uart2
- 1473 08f0 00000000 		.word	downlink_nb_bytes
- 1474 08f4 00000000 		.word	downlink_nb_msgs
- 1475 08f8 00000000 		.word	ck_b
- 1476 08fc 00000000 		.word	ck_a
- 1477 0900 00000000 		.word	actuators
- 1478 0904 00000000 		.word	.LANCHOR1
- 1479              		.cfi_endproc
- 1480              	.LFE43:
- 1482              		.global	__aeabi_i2f
- 1483              		.global	__aeabi_fcmpgt
- 1484              		.global	__aeabi_f2d
- 1485              		.global	__aeabi_dmul
- 1486              		.global	__aeabi_d2f
- 1487              		.global	__aeabi_f2iz
- 1488              		.section	.text.event_task_fbw,"ax",%progbits
- 1489              		.align	1
- 1490              		.global	event_task_fbw
- 1491              		.thumb
- 1492              		.thumb_func
- 1494              	event_task_fbw:
- 1495              	.LFB42:
+ 1464              		.loc 2 205 0
+ 1465 08dc FFF7FEBF 		b	electrical_periodic
+ 1466              	.L52:
+ 1467 08e0 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 1468              	.L65:
+ 1469              		.align	2
+ 1470              	.L64:
+ 1471 08e4 00000000 		.word	downlink_nb_ovrn
+ 1472 08e8 00000000 		.word	.LANCHOR8
+ 1473 08ec 00000000 		.word	uart2
+ 1474 08f0 00000000 		.word	downlink_nb_bytes
+ 1475 08f4 00000000 		.word	downlink_nb_msgs
+ 1476 08f8 00000000 		.word	ck_a
+ 1477 08fc 00000000 		.word	ck_b
+ 1478 0900 00000000 		.word	actuators
+ 1479 0904 00000000 		.word	.LANCHOR1
+ 1480              		.cfi_endproc
+ 1481              	.LFE43:
+ 1483              		.global	__aeabi_i2f
+ 1484              		.global	__aeabi_fcmpgt
+ 1485              		.global	__aeabi_f2d
+ 1486              		.global	__aeabi_dmul
+ 1487              		.global	__aeabi_d2f
+ 1488              		.global	__aeabi_f2iz
+ 1489              		.section	.text.event_task_fbw,"ax",%progbits
+ 1490              		.align	1
+ 1491              		.global	event_task_fbw
+ 1492              		.thumb
+ 1493              		.thumb_func
+ 1495              	event_task_fbw:
+ 1496              	.LFB42:
  111:firmwares/fixedwing/main_fbw.c **** void event_task_fbw( void) {
- 1496              		.loc 2 111 0
- 1497              		.cfi_startproc
- 1498              		@ args = 0, pretend = 0, frame = 0
- 1499              		@ frame_needed = 0, uses_anonymous_args = 0
- 1500 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, sl, lr}
- 1501              	.LCFI2:
- 1502              		.cfi_def_cfa_offset 32
+ 1497              		.loc 2 111 0
+ 1498              		.cfi_startproc
+ 1499              		@ args = 0, pretend = 0, frame = 0
+ 1500              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1501 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, sl, lr}
+ 1502              	.LCFI2:
+ 1503              		.cfi_def_cfa_offset 32
  113:firmwares/fixedwing/main_fbw.c ****   RadioControlEvent(handle_rc_frame);
- 1503              		.loc 2 113 0
- 1504 0004 A24B     		ldr	r3, .L103
- 1505 0006 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
- 1506 0008 002B     		cmp	r3, #0
- 1507 000a 00F00E81 		beq	.L67
- 1508              		.cfi_offset 14, -4
- 1509              		.cfi_offset 10, -8
- 1510              		.cfi_offset 9, -12
- 1511              		.cfi_offset 8, -16
- 1512              		.cfi_offset 7, -20
- 1513              		.cfi_offset 6, -24
- 1514              		.cfi_offset 5, -28
- 1515              		.cfi_offset 4, -32
- 1516 000e A14B     		ldr	r3, .L103+4
- 1517 0010 1A79     		ldrb	r2, [r3, #4]	@ zero_extendqisi2
- 1518 0012 0132     		adds	r2, r2, #1
- 1519 0014 1A71     		strb	r2, [r3, #4]
- 1520 0016 0022     		movs	r2, #0
- 1521 0018 5A70     		strb	r2, [r3, #1]
- 1522 001a 9A78     		ldrb	r2, [r3, #2]	@ zero_extendqisi2
- 1523 001c 12B1     		cbz	r2, .L68
- 1524 001e 013A     		subs	r2, r2, #1
- 1525 0020 9A70     		strb	r2, [r3, #2]
- 1526 0022 FFE0     		b	.L69
- 1527              	.L68:
- 1528 0024 1A70     		strb	r2, [r3, #0]
- 1529              	.LBB160:
- 1530 0026 9C4B     		ldr	r3, .L103+8
- 1531 0028 1B88     		ldrh	r3, [r3, #0]
- 1532 002a A3F53A53 		sub	r3, r3, #11904
- 1533              	.LVL58:
- 1534 002e 303B     		subs	r3, r3, #48
- 1535 0030 002B     		cmp	r3, #0
- 1536 0032 05DB     		blt	.L70
- 1537 0034 4FF41652 		mov	r2, #9600
- 1538 0038 5343     		muls	r3, r2, r3
- 1539              	.LVL59:
- 1540 003a 41F22812 		movw	r2, #4392
- 1541 003e 02E0     		b	.L102
- 1542              	.LVL60:
- 1543              	.L70:
- 1544 0040 964A     		ldr	r2, .L103+12
- 1545 0042 5343     		muls	r3, r2, r3
- 1546              	.LVL61:
- 1547 0044 964A     		ldr	r2, .L103+16
- 1548              	.L102:
- 1549 0046 93FBF2F3 		sdiv	r3, r3, r2
- 1550              	.LVL62:
- 1551 004a 944A     		ldr	r2, .L103+12
- 1552 004c 9342     		cmp	r3, r2
- 1553 004e ACBF     		ite	ge
- 1554 0050 1846     		movge	r0, r3
- 1555 0052 1046     		movlt	r0, r2
- 1556              	.LVL63:
- 1557 0054 B0F5165F 		cmp	r0, #9600
- 1558 0058 A8BF     		it	ge
- 1559 005a 4FF41650 		movge	r0, #9600
- 1560              	.LVL64:
- 1561 005e 8D4B     		ldr	r3, .L103+4
- 1562 0060 80B2     		uxth	r0, r0
- 1563 0062 D880     		strh	r0, [r3, #6]	@ movhi
- 1564 0064 8C4B     		ldr	r3, .L103+8
- 1565 0066 5B88     		ldrh	r3, [r3, #2]
- 1566 0068 A3F53A53 		sub	r3, r3, #11904
- 1567              	.LVL65:
- 1568 006c 303B     		subs	r3, r3, #48
- 1569 006e 002B     		cmp	r3, #0
- 1570 0070 06DB     		blt	.L72
- 1571 0072 4FF41652 		mov	r2, #9600
- 1572 0076 5343     		muls	r3, r2, r3
- 1573              	.LVL66:
- 1574 0078 894A     		ldr	r2, .L103+16
- 1575 007a 93FBF2F3 		sdiv	r3, r3, r2
- 1576              	.LVL67:
- 1577 007e 04E0     		b	.L73
- 1578              	.LVL68:
- 1579              	.L72:
- 1580 0080 5343     		muls	r3, r2, r3
- 1581              	.LVL69:
- 1582 0082 41F22811 		movw	r1, #4392
- 1583 0086 93FBF1F3 		sdiv	r3, r3, r1
- 1584              	.LVL70:
- 1585              	.L73:
- 1586 008a 844A     		ldr	r2, .L103+12
- 1587 008c 9342     		cmp	r3, r2
- 1588 008e ACBF     		ite	ge
- 1589 0090 1946     		movge	r1, r3
- 1590 0092 1146     		movlt	r1, r2
- 1591              	.LVL71:
- 1592 0094 B1F5165F 		cmp	r1, #9600
- 1593 0098 A8BF     		it	ge
- 1594 009a 4FF41651 		movge	r1, #9600
- 1595              	.LVL72:
- 1596 009e 7D4B     		ldr	r3, .L103+4
- 1597 00a0 89B2     		uxth	r1, r1
- 1598 00a2 1981     		strh	r1, [r3, #8]	@ movhi
- 1599 00a4 7C4B     		ldr	r3, .L103+8
- 1600 00a6 9B88     		ldrh	r3, [r3, #4]
- 1601 00a8 A3F53A53 		sub	r3, r3, #11904
- 1602              	.LVL73:
- 1603 00ac 303B     		subs	r3, r3, #48
- 1604 00ae 002B     		cmp	r3, #0
- 1605 00b0 06DB     		blt	.L74
- 1606 00b2 4FF41652 		mov	r2, #9600
- 1607 00b6 5343     		muls	r3, r2, r3
- 1608              	.LVL74:
- 1609 00b8 794A     		ldr	r2, .L103+16
- 1610 00ba 93FBF2F3 		sdiv	r3, r3, r2
- 1611              	.LVL75:
- 1612 00be 04E0     		b	.L75
- 1613              	.LVL76:
- 1614              	.L74:
- 1615 00c0 5343     		muls	r3, r2, r3
- 1616              	.LVL77:
- 1617 00c2 41F2281C 		movw	ip, #4392
- 1618 00c6 93FBFCF3 		sdiv	r3, r3, ip
- 1619              	.LVL78:
- 1620              	.L75:
- 1621 00ca 744C     		ldr	r4, .L103+12
- 1622 00cc 714D     		ldr	r5, .L103+4
- 1623 00ce A342     		cmp	r3, r4
- 1624 00d0 B8BF     		it	lt
- 1625 00d2 2346     		movlt	r3, r4
- 1626              	.LVL79:
- 1627 00d4 B3F5165F 		cmp	r3, #9600
- 1628 00d8 A8BF     		it	ge
- 1629 00da 4FF41653 		movge	r3, #9600
- 1630              	.LVL80:
- 1631 00de 6B81     		strh	r3, [r5, #10]	@ movhi
- 1632 00e0 6D4B     		ldr	r3, .L103+8
- 1633 00e2 4FF4165C 		mov	ip, #9600
- 1634 00e6 DA88     		ldrh	r2, [r3, #6]
- 1635 00e8 41F69816 		movw	r6, #6552
- 1636 00ec 1219     		adds	r2, r2, r4
- 1637 00ee 783A     		subs	r2, r2, #120
- 1638 00f0 0CFB02F2 		mul	r2, ip, r2
- 1639 00f4 1B89     		ldrh	r3, [r3, #8]
- 1640 00f6 92FBF6F2 		sdiv	r2, r2, r6
- 1641              	.LVL81:
- 1642 00fa 22EAE272 		bic	r2, r2, r2, asr #31
- 1643              	.LVL82:
- 1644 00fe A3F53A53 		sub	r3, r3, #11904
- 1645              	.LVL83:
- 1646 0102 6245     		cmp	r2, ip
- 1647 0104 A8BF     		it	ge
- 1648 0106 6246     		movge	r2, ip
- 1649              	.LVL84:
- 1650 0108 303B     		subs	r3, r3, #48
- 1651 010a 92B2     		uxth	r2, r2
- 1652 010c 002B     		cmp	r3, #0
- 1653 010e AA81     		strh	r2, [r5, #12]	@ movhi
- 1654 0110 05DB     		blt	.L76
- 1655 0112 0CFB03F3 		mul	r3, ip, r3
- 1656              	.LVL85:
- 1657 0116 624C     		ldr	r4, .L103+16
- 1658 0118 93FBF4F3 		sdiv	r3, r3, r4
- 1659              	.LVL86:
- 1660 011c 04E0     		b	.L77
- 1661              	.LVL87:
- 1662              	.L76:
- 1663 011e 6343     		muls	r3, r4, r3
- 1664              	.LVL88:
- 1665 0120 41F2281C 		movw	ip, #4392
- 1666 0124 93FBFCF3 		sdiv	r3, r3, ip
- 1667              	.LVL89:
- 1668              	.L77:
- 1669 0128 5C4C     		ldr	r4, .L103+12
- 1670 012a A342     		cmp	r3, r4
- 1671 012c B8BF     		it	lt
- 1672 012e 2346     		movlt	r3, r4
- 1673              	.LVL90:
- 1674 0130 584C     		ldr	r4, .L103+4
- 1675 0132 B4F90EC0 		ldrsh	ip, [r4, #14]
- 1676 0136 4FEACC05 		lsl	r5, ip, #3
- 1677 013a CCEB050C 		rsb	ip, ip, r5
- 1678 013e B3F5165F 		cmp	r3, #9600
- 1679 0142 D4BF     		ite	le
- 1680 0144 6344     		addle	r3, ip, r3
- 1681 0146 0CF51653 		addgt	r3, ip, #9600
- 1682              	.LVL91:
- 1683 014a 002B     		cmp	r3, #0
- 1684 014c B8BF     		it	lt
- 1685 014e 0733     		addlt	r3, r3, #7
- 1686 0150 DB10     		asrs	r3, r3, #3
- 1687 0152 E381     		strh	r3, [r4, #14]	@ movhi
- 1688 0154 504B     		ldr	r3, .L103+8
- 1689 0156 5B89     		ldrh	r3, [r3, #10]
- 1690 0158 A3F53A53 		sub	r3, r3, #11904
- 1691              	.LVL92:
- 1692 015c 303B     		subs	r3, r3, #48
- 1693 015e 002B     		cmp	r3, #0
- 1694 0160 07DB     		blt	.L79
- 1695 0162 4FF4165C 		mov	ip, #9600
- 1696 0166 0CFB03F3 		mul	r3, ip, r3
- 1697              	.LVL93:
- 1698 016a 4E4C     		ldr	r4, .L103+20
- 1699 016c 93FBF4F3 		sdiv	r3, r3, r4
- 1700              	.LVL94:
- 1701 0170 05E0     		b	.L80
- 1702              	.LVL95:
- 1703              	.L79:
- 1704 0172 4A4C     		ldr	r4, .L103+12
- 1705 0174 41F2281C 		movw	ip, #4392
- 1706 0178 6343     		muls	r3, r4, r3
- 1707              	.LVL96:
- 1708 017a 93FBFCF3 		sdiv	r3, r3, ip
- 1709              	.LVL97:
- 1710              	.L80:
- 1711 017e 474C     		ldr	r4, .L103+12
- 1712 0180 A342     		cmp	r3, r4
- 1713 0182 B8BF     		it	lt
- 1714 0184 2346     		movlt	r3, r4
- 1715              	.LVL98:
- 1716 0186 434C     		ldr	r4, .L103+4
- 1717 0188 B4F910C0 		ldrsh	ip, [r4, #16]
- 1718 018c 4FEACC05 		lsl	r5, ip, #3
- 1719 0190 CCEB050C 		rsb	ip, ip, r5
- 1720 0194 B3F5165F 		cmp	r3, #9600
- 1721 0198 D4BF     		ite	le
- 1722 019a 6344     		addle	r3, ip, r3
- 1723 019c 0CF51653 		addgt	r3, ip, #9600
- 1724              	.LVL99:
- 1725 01a0 002B     		cmp	r3, #0
- 1726 01a2 B8BF     		it	lt
- 1727 01a4 0733     		addlt	r3, r3, #7
- 1728 01a6 DB10     		asrs	r3, r3, #3
- 1729 01a8 2382     		strh	r3, [r4, #16]	@ movhi
- 1730 01aa 3B4B     		ldr	r3, .L103+8
- 1731 01ac 9B89     		ldrh	r3, [r3, #12]
- 1732 01ae A3F53A53 		sub	r3, r3, #11904
- 1733              	.LVL100:
- 1734 01b2 303B     		subs	r3, r3, #48
- 1735 01b4 002B     		cmp	r3, #0
- 1736 01b6 07DB     		blt	.L82
- 1737 01b8 4FF4165C 		mov	ip, #9600
- 1738 01bc 0CFB03F3 		mul	r3, ip, r3
- 1739              	.LVL101:
- 1740 01c0 374C     		ldr	r4, .L103+16
- 1741 01c2 93FBF4F3 		sdiv	r3, r3, r4
- 1742              	.LVL102:
- 1743 01c6 05E0     		b	.L83
- 1744              	.LVL103:
- 1745              	.L82:
- 1746 01c8 344C     		ldr	r4, .L103+12
- 1747 01ca 41F2281C 		movw	ip, #4392
- 1748 01ce 6343     		muls	r3, r4, r3
- 1749              	.LVL104:
- 1750 01d0 93FBFCF3 		sdiv	r3, r3, ip
- 1751              	.LVL105:
- 1752              	.L83:
- 1753 01d4 314C     		ldr	r4, .L103+12
- 1754 01d6 A342     		cmp	r3, r4
- 1755 01d8 B8BF     		it	lt
- 1756 01da 2346     		movlt	r3, r4
- 1757              	.LVL106:
- 1758 01dc 2D4C     		ldr	r4, .L103+4
- 1759 01de B4F912C0 		ldrsh	ip, [r4, #18]
- 1760 01e2 4FEACC04 		lsl	r4, ip, #3
- 1761 01e6 CCEB040C 		rsb	ip, ip, r4
- 1762 01ea B3F5165F 		cmp	r3, #9600
- 1763 01ee D4BF     		ite	le
- 1764 01f0 6344     		addle	r3, ip, r3
- 1765 01f2 0CF51653 		addgt	r3, ip, #9600
- 1766              	.LVL107:
- 1767 01f6 002B     		cmp	r3, #0
- 1768 01f8 B8BF     		it	lt
- 1769 01fa 0733     		addlt	r3, r3, #7
- 1770 01fc 254C     		ldr	r4, .L103+4
- 1771 01fe DB10     		asrs	r3, r3, #3
- 1772 0200 9BB2     		uxth	r3, r3
- 1773 0202 6382     		strh	r3, [r4, #18]	@ movhi
- 1774              	.LBE160:
- 1775              	.LBB161:
- 1776              	.LBB162:
+ 1504              		.loc 2 113 0
+ 1505 0004 A24B     		ldr	r3, .L103
+ 1506 0006 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 1507 0008 002B     		cmp	r3, #0
+ 1508 000a 00F00E81 		beq	.L67
+ 1509              		.cfi_offset 14, -4
+ 1510              		.cfi_offset 10, -8
+ 1511              		.cfi_offset 9, -12
+ 1512              		.cfi_offset 8, -16
+ 1513              		.cfi_offset 7, -20
+ 1514              		.cfi_offset 6, -24
+ 1515              		.cfi_offset 5, -28
+ 1516              		.cfi_offset 4, -32
+ 1517 000e A14B     		ldr	r3, .L103+4
+ 1518 0010 1A79     		ldrb	r2, [r3, #4]	@ zero_extendqisi2
+ 1519 0012 0132     		adds	r2, r2, #1
+ 1520 0014 1A71     		strb	r2, [r3, #4]
+ 1521 0016 0022     		movs	r2, #0
+ 1522 0018 5A70     		strb	r2, [r3, #1]
+ 1523 001a 9A78     		ldrb	r2, [r3, #2]	@ zero_extendqisi2
+ 1524 001c 12B1     		cbz	r2, .L68
+ 1525 001e 013A     		subs	r2, r2, #1
+ 1526 0020 9A70     		strb	r2, [r3, #2]
+ 1527 0022 FFE0     		b	.L69
+ 1528              	.L68:
+ 1529 0024 1A70     		strb	r2, [r3, #0]
+ 1530              	.LBB160:
+ 1531 0026 9C4B     		ldr	r3, .L103+8
+ 1532 0028 1B88     		ldrh	r3, [r3, #0]
+ 1533 002a A3F53A53 		sub	r3, r3, #11904
+ 1534              	.LVL58:
+ 1535 002e 303B     		subs	r3, r3, #48
+ 1536 0030 002B     		cmp	r3, #0
+ 1537 0032 05DB     		blt	.L70
+ 1538 0034 4FF41652 		mov	r2, #9600
+ 1539 0038 5343     		muls	r3, r2, r3
+ 1540              	.LVL59:
+ 1541 003a 41F22812 		movw	r2, #4392
+ 1542 003e 02E0     		b	.L102
+ 1543              	.LVL60:
+ 1544              	.L70:
+ 1545 0040 964A     		ldr	r2, .L103+12
+ 1546 0042 5343     		muls	r3, r2, r3
+ 1547              	.LVL61:
+ 1548 0044 964A     		ldr	r2, .L103+16
+ 1549              	.L102:
+ 1550 0046 93FBF2F3 		sdiv	r3, r3, r2
+ 1551              	.LVL62:
+ 1552 004a 944A     		ldr	r2, .L103+12
+ 1553 004c 9342     		cmp	r3, r2
+ 1554 004e ACBF     		ite	ge
+ 1555 0050 1846     		movge	r0, r3
+ 1556 0052 1046     		movlt	r0, r2
+ 1557              	.LVL63:
+ 1558 0054 B0F5165F 		cmp	r0, #9600
+ 1559 0058 A8BF     		it	ge
+ 1560 005a 4FF41650 		movge	r0, #9600
+ 1561              	.LVL64:
+ 1562 005e 8D4B     		ldr	r3, .L103+4
+ 1563 0060 80B2     		uxth	r0, r0
+ 1564 0062 D880     		strh	r0, [r3, #6]	@ movhi
+ 1565 0064 8C4B     		ldr	r3, .L103+8
+ 1566 0066 5B88     		ldrh	r3, [r3, #2]
+ 1567 0068 A3F53A53 		sub	r3, r3, #11904
+ 1568              	.LVL65:
+ 1569 006c 303B     		subs	r3, r3, #48
+ 1570 006e 002B     		cmp	r3, #0
+ 1571 0070 06DB     		blt	.L72
+ 1572 0072 4FF41652 		mov	r2, #9600
+ 1573 0076 5343     		muls	r3, r2, r3
+ 1574              	.LVL66:
+ 1575 0078 894A     		ldr	r2, .L103+16
+ 1576 007a 93FBF2F3 		sdiv	r3, r3, r2
+ 1577              	.LVL67:
+ 1578 007e 04E0     		b	.L73
+ 1579              	.LVL68:
+ 1580              	.L72:
+ 1581 0080 5343     		muls	r3, r2, r3
+ 1582              	.LVL69:
+ 1583 0082 41F22811 		movw	r1, #4392
+ 1584 0086 93FBF1F3 		sdiv	r3, r3, r1
+ 1585              	.LVL70:
+ 1586              	.L73:
+ 1587 008a 844A     		ldr	r2, .L103+12
+ 1588 008c 9342     		cmp	r3, r2
+ 1589 008e ACBF     		ite	ge
+ 1590 0090 1946     		movge	r1, r3
+ 1591 0092 1146     		movlt	r1, r2
+ 1592              	.LVL71:
+ 1593 0094 B1F5165F 		cmp	r1, #9600
+ 1594 0098 A8BF     		it	ge
+ 1595 009a 4FF41651 		movge	r1, #9600
+ 1596              	.LVL72:
+ 1597 009e 7D4B     		ldr	r3, .L103+4
+ 1598 00a0 89B2     		uxth	r1, r1
+ 1599 00a2 1981     		strh	r1, [r3, #8]	@ movhi
+ 1600 00a4 7C4B     		ldr	r3, .L103+8
+ 1601 00a6 9B88     		ldrh	r3, [r3, #4]
+ 1602 00a8 A3F53A53 		sub	r3, r3, #11904
+ 1603              	.LVL73:
+ 1604 00ac 303B     		subs	r3, r3, #48
+ 1605 00ae 002B     		cmp	r3, #0
+ 1606 00b0 06DB     		blt	.L74
+ 1607 00b2 4FF41652 		mov	r2, #9600
+ 1608 00b6 5343     		muls	r3, r2, r3
+ 1609              	.LVL74:
+ 1610 00b8 794A     		ldr	r2, .L103+16
+ 1611 00ba 93FBF2F3 		sdiv	r3, r3, r2
+ 1612              	.LVL75:
+ 1613 00be 04E0     		b	.L75
+ 1614              	.LVL76:
+ 1615              	.L74:
+ 1616 00c0 5343     		muls	r3, r2, r3
+ 1617              	.LVL77:
+ 1618 00c2 41F2281C 		movw	ip, #4392
+ 1619 00c6 93FBFCF3 		sdiv	r3, r3, ip
+ 1620              	.LVL78:
+ 1621              	.L75:
+ 1622 00ca 744C     		ldr	r4, .L103+12
+ 1623 00cc 714D     		ldr	r5, .L103+4
+ 1624 00ce A342     		cmp	r3, r4
+ 1625 00d0 B8BF     		it	lt
+ 1626 00d2 2346     		movlt	r3, r4
+ 1627              	.LVL79:
+ 1628 00d4 B3F5165F 		cmp	r3, #9600
+ 1629 00d8 A8BF     		it	ge
+ 1630 00da 4FF41653 		movge	r3, #9600
+ 1631              	.LVL80:
+ 1632 00de 6B81     		strh	r3, [r5, #10]	@ movhi
+ 1633 00e0 6D4B     		ldr	r3, .L103+8
+ 1634 00e2 4FF4165C 		mov	ip, #9600
+ 1635 00e6 DA88     		ldrh	r2, [r3, #6]
+ 1636 00e8 41F69816 		movw	r6, #6552
+ 1637 00ec 1219     		adds	r2, r2, r4
+ 1638 00ee 783A     		subs	r2, r2, #120
+ 1639 00f0 0CFB02F2 		mul	r2, ip, r2
+ 1640 00f4 1B89     		ldrh	r3, [r3, #8]
+ 1641 00f6 92FBF6F2 		sdiv	r2, r2, r6
+ 1642              	.LVL81:
+ 1643 00fa 22EAE272 		bic	r2, r2, r2, asr #31
+ 1644              	.LVL82:
+ 1645 00fe A3F53A53 		sub	r3, r3, #11904
+ 1646              	.LVL83:
+ 1647 0102 6245     		cmp	r2, ip
+ 1648 0104 A8BF     		it	ge
+ 1649 0106 6246     		movge	r2, ip
+ 1650              	.LVL84:
+ 1651 0108 303B     		subs	r3, r3, #48
+ 1652 010a 92B2     		uxth	r2, r2
+ 1653 010c 002B     		cmp	r3, #0
+ 1654 010e AA81     		strh	r2, [r5, #12]	@ movhi
+ 1655 0110 05DB     		blt	.L76
+ 1656 0112 0CFB03F3 		mul	r3, ip, r3
+ 1657              	.LVL85:
+ 1658 0116 624C     		ldr	r4, .L103+16
+ 1659 0118 93FBF4F3 		sdiv	r3, r3, r4
+ 1660              	.LVL86:
+ 1661 011c 04E0     		b	.L77
+ 1662              	.LVL87:
+ 1663              	.L76:
+ 1664 011e 6343     		muls	r3, r4, r3
+ 1665              	.LVL88:
+ 1666 0120 41F2281C 		movw	ip, #4392
+ 1667 0124 93FBFCF3 		sdiv	r3, r3, ip
+ 1668              	.LVL89:
+ 1669              	.L77:
+ 1670 0128 5C4C     		ldr	r4, .L103+12
+ 1671 012a A342     		cmp	r3, r4
+ 1672 012c B8BF     		it	lt
+ 1673 012e 2346     		movlt	r3, r4
+ 1674              	.LVL90:
+ 1675 0130 584C     		ldr	r4, .L103+4
+ 1676 0132 B4F90EC0 		ldrsh	ip, [r4, #14]
+ 1677 0136 4FEACC05 		lsl	r5, ip, #3
+ 1678 013a CCEB050C 		rsb	ip, ip, r5
+ 1679 013e B3F5165F 		cmp	r3, #9600
+ 1680 0142 D4BF     		ite	le
+ 1681 0144 6344     		addle	r3, ip, r3
+ 1682 0146 0CF51653 		addgt	r3, ip, #9600
+ 1683              	.LVL91:
+ 1684 014a 002B     		cmp	r3, #0
+ 1685 014c B8BF     		it	lt
+ 1686 014e 0733     		addlt	r3, r3, #7
+ 1687 0150 DB10     		asrs	r3, r3, #3
+ 1688 0152 E381     		strh	r3, [r4, #14]	@ movhi
+ 1689 0154 504B     		ldr	r3, .L103+8
+ 1690 0156 5B89     		ldrh	r3, [r3, #10]
+ 1691 0158 A3F53A53 		sub	r3, r3, #11904
+ 1692              	.LVL92:
+ 1693 015c 303B     		subs	r3, r3, #48
+ 1694 015e 002B     		cmp	r3, #0
+ 1695 0160 07DB     		blt	.L79
+ 1696 0162 4FF4165C 		mov	ip, #9600
+ 1697 0166 0CFB03F3 		mul	r3, ip, r3
+ 1698              	.LVL93:
+ 1699 016a 4E4C     		ldr	r4, .L103+20
+ 1700 016c 93FBF4F3 		sdiv	r3, r3, r4
+ 1701              	.LVL94:
+ 1702 0170 05E0     		b	.L80
+ 1703              	.LVL95:
+ 1704              	.L79:
+ 1705 0172 4A4C     		ldr	r4, .L103+12
+ 1706 0174 41F2281C 		movw	ip, #4392
+ 1707 0178 6343     		muls	r3, r4, r3
+ 1708              	.LVL96:
+ 1709 017a 93FBFCF3 		sdiv	r3, r3, ip
+ 1710              	.LVL97:
+ 1711              	.L80:
+ 1712 017e 474C     		ldr	r4, .L103+12
+ 1713 0180 A342     		cmp	r3, r4
+ 1714 0182 B8BF     		it	lt
+ 1715 0184 2346     		movlt	r3, r4
+ 1716              	.LVL98:
+ 1717 0186 434C     		ldr	r4, .L103+4
+ 1718 0188 B4F910C0 		ldrsh	ip, [r4, #16]
+ 1719 018c 4FEACC05 		lsl	r5, ip, #3
+ 1720 0190 CCEB050C 		rsb	ip, ip, r5
+ 1721 0194 B3F5165F 		cmp	r3, #9600
+ 1722 0198 D4BF     		ite	le
+ 1723 019a 6344     		addle	r3, ip, r3
+ 1724 019c 0CF51653 		addgt	r3, ip, #9600
+ 1725              	.LVL99:
+ 1726 01a0 002B     		cmp	r3, #0
+ 1727 01a2 B8BF     		it	lt
+ 1728 01a4 0733     		addlt	r3, r3, #7
+ 1729 01a6 DB10     		asrs	r3, r3, #3
+ 1730 01a8 2382     		strh	r3, [r4, #16]	@ movhi
+ 1731 01aa 3B4B     		ldr	r3, .L103+8
+ 1732 01ac 9B89     		ldrh	r3, [r3, #12]
+ 1733 01ae A3F53A53 		sub	r3, r3, #11904
+ 1734              	.LVL100:
+ 1735 01b2 303B     		subs	r3, r3, #48
+ 1736 01b4 002B     		cmp	r3, #0
+ 1737 01b6 07DB     		blt	.L82
+ 1738 01b8 4FF4165C 		mov	ip, #9600
+ 1739 01bc 0CFB03F3 		mul	r3, ip, r3
+ 1740              	.LVL101:
+ 1741 01c0 374C     		ldr	r4, .L103+16
+ 1742 01c2 93FBF4F3 		sdiv	r3, r3, r4
+ 1743              	.LVL102:
+ 1744 01c6 05E0     		b	.L83
+ 1745              	.LVL103:
+ 1746              	.L82:
+ 1747 01c8 344C     		ldr	r4, .L103+12
+ 1748 01ca 41F2281C 		movw	ip, #4392
+ 1749 01ce 6343     		muls	r3, r4, r3
+ 1750              	.LVL104:
+ 1751 01d0 93FBFCF3 		sdiv	r3, r3, ip
+ 1752              	.LVL105:
+ 1753              	.L83:
+ 1754 01d4 314C     		ldr	r4, .L103+12
+ 1755 01d6 A342     		cmp	r3, r4
+ 1756 01d8 B8BF     		it	lt
+ 1757 01da 2346     		movlt	r3, r4
+ 1758              	.LVL106:
+ 1759 01dc 2D4C     		ldr	r4, .L103+4
+ 1760 01de B4F912C0 		ldrsh	ip, [r4, #18]
+ 1761 01e2 4FEACC04 		lsl	r4, ip, #3
+ 1762 01e6 CCEB040C 		rsb	ip, ip, r4
+ 1763 01ea B3F5165F 		cmp	r3, #9600
+ 1764 01ee D4BF     		ite	le
+ 1765 01f0 6344     		addle	r3, ip, r3
+ 1766 01f2 0CF51653 		addgt	r3, ip, #9600
+ 1767              	.LVL107:
+ 1768 01f6 002B     		cmp	r3, #0
+ 1769 01f8 B8BF     		it	lt
+ 1770 01fa 0733     		addlt	r3, r3, #7
+ 1771 01fc 254C     		ldr	r4, .L103+4
+ 1772 01fe DB10     		asrs	r3, r3, #3
+ 1773 0200 9BB2     		uxth	r3, r3
+ 1774 0202 6382     		strh	r3, [r4, #18]	@ movhi
+ 1775              	.LBE160:
+ 1776              	.LBB161:
+ 1777              	.LBB162:
   99:firmwares/fixedwing/main_fbw.c ****   fbw_mode = FBW_MODE_OF_PPRZ(radio_control.values[RADIO_MODE]);
- 1777              		.loc 2 99 0
- 1778 0204 1BB2     		sxth	r3, r3
- 1779 0206 284C     		ldr	r4, .L103+24
- 1780 0208 13F5965F 		cmn	r3, #4800
- 1781 020c B4BF     		ite	lt
- 1782 020e 0023     		movlt	r3, #0
- 1783 0210 0123     		movge	r3, #1
- 1784 0212 2370     		strb	r3, [r4, #0]
+ 1778              		.loc 2 99 0
+ 1779 0204 1BB2     		sxth	r3, r3
+ 1780 0206 284C     		ldr	r4, .L103+24
+ 1781 0208 13F5965F 		cmn	r3, #4800
+ 1782 020c B4BF     		ite	lt
+ 1783 020e 0023     		movlt	r3, #0
+ 1784 0210 0123     		movge	r3, #1
+ 1785 0212 2370     		strb	r3, [r4, #0]
  100:firmwares/fixedwing/main_fbw.c ****   if (fbw_mode == FBW_MODE_MANUAL)
- 1785              		.loc 2 100 0
- 1786 0214 33B9     		cbnz	r3, .L69
+ 1786              		.loc 2 100 0
+ 1787 0214 33B9     		cbnz	r3, .L69
  102:firmwares/fixedwing/main_fbw.c ****     SetCommandsFromRC(commands, radio_control.values);
- 1787              		.loc 2 102 0
- 1788 0216 254B     		ldr	r3, .L103+28
- 1789 0218 1A80     		strh	r2, [r3, #0]	@ movhi
- 1790 021a 5880     		strh	r0, [r3, #2]	@ movhi
- 1791 021c 9980     		strh	r1, [r3, #4]	@ movhi
+ 1788              		.loc 2 102 0
+ 1789 0216 254B     		ldr	r3, .L103+28
+ 1790 0218 1A80     		strh	r2, [r3, #0]	@ movhi
+ 1791 021a 5880     		strh	r0, [r3, #2]	@ movhi
+ 1792 021c 9980     		strh	r1, [r3, #4]	@ movhi
  103:firmwares/fixedwing/main_fbw.c ****     fbw_new_actuators = 1;
- 1792              		.loc 2 103 0
- 1793 021e 244B     		ldr	r3, .L103+32
- 1794 0220 0122     		movs	r2, #1
- 1795 0222 1A70     		strb	r2, [r3, #0]
- 1796              	.L69:
- 1797              	.LBE162:
- 1798              	.LBE161:
+ 1793              		.loc 2 103 0
+ 1794 021e 244B     		ldr	r3, .L103+32
+ 1795 0220 0122     		movs	r2, #1
+ 1796 0222 1A70     		strb	r2, [r3, #0]
+ 1797              	.L69:
+ 1798              	.LBE162:
+ 1799              	.LBE161:
  113:firmwares/fixedwing/main_fbw.c ****   RadioControlEvent(handle_rc_frame);
- 1799              		.loc 2 113 0
- 1800 0224 1A4B     		ldr	r3, .L103
- 1801 0226 0022     		movs	r2, #0
- 1802 0228 1A70     		strb	r2, [r3, #0]
- 1803              	.L67:
+ 1800              		.loc 2 113 0
+ 1801 0224 1A4B     		ldr	r3, .L103
+ 1802 0226 0022     		movs	r2, #0
+ 1803 0228 1A70     		strb	r2, [r3, #0]
+ 1804              	.L67:
  123:firmwares/fixedwing/main_fbw.c ****   if (inter_mcu_received_ap) {
- 1804              		.loc 2 123 0
- 1805 022a 224B     		ldr	r3, .L103+36
- 1806 022c 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
- 1807 022e EAB1     		cbz	r2, .L85
+ 1805              		.loc 2 123 0
+ 1806 022a 224B     		ldr	r3, .L103+36
+ 1807 022c 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
+ 1808 022e EAB1     		cbz	r2, .L85
  124:firmwares/fixedwing/main_fbw.c ****     inter_mcu_received_ap = FALSE;
- 1808              		.loc 2 124 0
- 1809 0230 0022     		movs	r2, #0
- 1810 0232 1A70     		strb	r2, [r3, #0]
- 1811              	.LBB163:
- 1812              	.LBB164:
+ 1809              		.loc 2 124 0
+ 1810 0230 0022     		movs	r2, #0
+ 1811 0232 1A70     		strb	r2, [r3, #0]
+ 1812              	.LBB163:
+ 1813              	.LBB164:
  131:./inter_mcu.h ****   time_since_last_ap = 0;
- 1813              		.loc 1 131 0
- 1814 0234 204B     		ldr	r3, .L103+40
- 1815 0236 1A70     		strb	r2, [r3, #0]
+ 1814              		.loc 1 131 0
+ 1815 0234 204B     		ldr	r3, .L103+40
+ 1816 0236 1A70     		strb	r2, [r3, #0]
  132:./inter_mcu.h ****   ap_ok = TRUE;
- 1816              		.loc 1 132 0
- 1817 0238 204B     		ldr	r3, .L103+44
- 1818 023a 0132     		adds	r2, r2, #1
- 1819 023c 1A70     		strb	r2, [r3, #0]
- 1820              	.LBE164:
- 1821              	.LBE163:
+ 1817              		.loc 1 132 0
+ 1818 0238 204B     		ldr	r3, .L103+44
+ 1819 023a 0132     		adds	r2, r2, #1
+ 1820 023c 1A70     		strb	r2, [r3, #0]
+ 1821              	.LBE164:
+ 1822              	.LBE163:
  126:firmwares/fixedwing/main_fbw.c ****     if (ap_ok && fbw_mode == FBW_MODE_FAILSAFE) {
- 1822              		.loc 2 126 0
- 1823 023e 1A4B     		ldr	r3, .L103+24
- 1824 0240 1978     		ldrb	r1, [r3, #0]	@ zero_extendqisi2
- 1825 0242 0229     		cmp	r1, #2
+ 1823              		.loc 2 126 0
+ 1824 023e 1A4B     		ldr	r3, .L103+24
+ 1825 0240 1978     		ldrb	r1, [r3, #0]	@ zero_extendqisi2
+ 1826 0242 0229     		cmp	r1, #2
  127:firmwares/fixedwing/main_fbw.c ****       fbw_mode = FBW_MODE_AUTO;
- 1826              		.loc 2 127 0
- 1827 0244 08BF     		it	eq
- 1828 0246 1A70     		strbeq	r2, [r3, #0]
+ 1827              		.loc 2 127 0
+ 1828 0244 08BF     		it	eq
+ 1829 0246 1A70     		strbeq	r2, [r3, #0]
  129:firmwares/fixedwing/main_fbw.c ****     if (fbw_mode == FBW_MODE_AUTO) {
- 1829              		.loc 2 129 0
- 1830 0248 174B     		ldr	r3, .L103+24
- 1831 024a 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
- 1832 024c 012B     		cmp	r3, #1
- 1833 024e 08D1     		bne	.L87
- 1834              	.LBB165:
+ 1830              		.loc 2 129 0
+ 1831 0248 174B     		ldr	r3, .L103+24
+ 1832 024a 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 1833 024c 012B     		cmp	r3, #1
+ 1834 024e 08D1     		bne	.L87
+ 1835              	.LBB165:
  130:firmwares/fixedwing/main_fbw.c ****       SetCommands(ap_state->commands);
- 1835              		.loc 2 130 0
- 1836 0250 1B4B     		ldr	r3, .L103+48
- 1837 0252 1A68     		ldr	r2, [r3, #0]
- 1838 0254 154B     		ldr	r3, .L103+28
- 1839 0256 1188     		ldrh	r1, [r2, #0]
- 1840 0258 1980     		strh	r1, [r3, #0]	@ movhi
- 1841 025a 5188     		ldrh	r1, [r2, #2]
- 1842 025c 5980     		strh	r1, [r3, #2]	@ movhi
- 1843 025e 9288     		ldrh	r2, [r2, #4]
- 1844 0260 9A80     		strh	r2, [r3, #4]	@ movhi
- 1845              	.L87:
- 1846              	.LBE165:
+ 1836              		.loc 2 130 0
+ 1837 0250 1B4B     		ldr	r3, .L103+48
+ 1838 0252 1A68     		ldr	r2, [r3, #0]
+ 1839 0254 154B     		ldr	r3, .L103+28
+ 1840 0256 1188     		ldrh	r1, [r2, #0]
+ 1841 0258 1980     		strh	r1, [r3, #0]	@ movhi
+ 1842 025a 5188     		ldrh	r1, [r2, #2]
+ 1843 025c 5980     		strh	r1, [r3, #2]	@ movhi
+ 1844 025e 9288     		ldrh	r2, [r2, #4]
+ 1845 0260 9A80     		strh	r2, [r3, #4]	@ movhi
+ 1846              	.L87:
+ 1847              	.LBE165:
  138:firmwares/fixedwing/main_fbw.c ****     fbw_new_actuators = 1;
- 1847              		.loc 2 138 0
- 1848 0262 134B     		ldr	r3, .L103+32
- 1849 0264 0122     		movs	r2, #1
- 1850 0266 1A70     		strb	r2, [r3, #0]
+ 1848              		.loc 2 138 0
+ 1849 0262 134B     		ldr	r3, .L103+32
+ 1850 0264 0122     		movs	r2, #1
+ 1851 0266 1A70     		strb	r2, [r3, #0]
  141:firmwares/fixedwing/main_fbw.c ****     inter_mcu_fill_fbw_state();
- 1851              		.loc 2 141 0
- 1852 0268 FFF7FEFF 		bl	inter_mcu_fill_fbw_state
- 1853              	.L85:
+ 1852              		.loc 2 141 0
+ 1853 0268 FFF7FEFF 		bl	inter_mcu_fill_fbw_state
+ 1854              	.L85:
  146:firmwares/fixedwing/main_fbw.c ****   if (fbw_new_actuators > 0)
- 1854              		.loc 2 146 0
- 1855 026c 104B     		ldr	r3, .L103+32
- 1856 026e 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
- 1857 0270 002B     		cmp	r3, #0
- 1858 0272 00F0B380 		beq	.L101
- 1859              	.LBB166:
+ 1855              		.loc 2 146 0
+ 1856 026c 104B     		ldr	r3, .L103+32
+ 1857 026e 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 1858 0270 002B     		cmp	r3, #0
+ 1859 0272 00F0B380 		beq	.L101
+ 1860              	.LBB166:
  150:firmwares/fixedwing/main_fbw.c ****     for(i = 0; i < COMMANDS_NB; i++) trimmed_commands[i] = commands[i];
- 1860              		.loc 2 150 0
- 1861 0276 0D4B     		ldr	r3, .L103+28
- 1862 0278 1888     		ldrh	r0, [r3, #0]
- 1863 027a 5F88     		ldrh	r7, [r3, #2]
- 1864 027c 9E88     		ldrh	r6, [r3, #4]
+ 1861              		.loc 2 150 0
+ 1862 0276 0D4B     		ldr	r3, .L103+28
+ 1863 0278 1888     		ldrh	r0, [r3, #0]
+ 1864 027a 5F88     		ldrh	r7, [r3, #2]
+ 1865 027c 9E88     		ldrh	r6, [r3, #4]
  153:firmwares/fixedwing/main_fbw.c ****     trimmed_commands[COMMAND_ROLL] += ChopAbs(command_roll_trim, MAX_PPRZ/10);
- 1865              		.loc 2 153 0
- 1866 027e 114B     		ldr	r3, .L103+52
- 1867 0280 B3F90050 		ldrsh	r5, [r3, #0]
- 1868 0284 15F5707F 		cmn	r5, #960
- 1869 0288 1EDA     		bge	.L89
- 1870 028a 4FF64045 		movw	r5, #64576
- 1871 028e 21E0     		b	.L90
- 1872              	.L104:
- 1873              		.align	2
- 1874              	.L103:
- 1875 0290 00000000 		.word	ppm_frame_available
- 1876 0294 00000000 		.word	radio_control
- 1877 0298 00000000 		.word	ppm_pulses
- 1878 029c 80DAFFFF 		.word	-9600
- 1879 02a0 D9EEFFFF 		.word	-4391
- 1880 02a4 21EFFFFF 		.word	-4319
- 1881 02a8 00000000 		.word	.LANCHOR0
- 1882 02ac 00000000 		.word	commands
- 1883 02b0 00000000 		.word	.LANCHOR3
- 1884 02b4 00000000 		.word	inter_mcu_received_ap
- 1885 02b8 00000000 		.word	time_since_last_ap
- 1886 02bc 00000000 		.word	ap_ok
- 1887 02c0 00000000 		.word	ap_state
- 1888 02c4 00000000 		.word	command_roll_trim
- 1889              	.L89:
- 1890 02c8 B5F5707F 		cmp	r5, #960
- 1891 02cc A8BF     		it	ge
- 1892 02ce 4FF47075 		movge	r5, #960
- 1893 02d2 ADB2     		uxth	r5, r5
- 1894              	.L90:
+ 1866              		.loc 2 153 0
+ 1867 027e 114B     		ldr	r3, .L103+52
+ 1868 0280 B3F90050 		ldrsh	r5, [r3, #0]
+ 1869 0284 15F5707F 		cmn	r5, #960
+ 1870 0288 1EDA     		bge	.L89
+ 1871 028a 4FF64045 		movw	r5, #64576
+ 1872 028e 21E0     		b	.L90
+ 1873              	.L104:
+ 1874              		.align	2
+ 1875              	.L103:
+ 1876 0290 00000000 		.word	ppm_frame_available
+ 1877 0294 00000000 		.word	radio_control
+ 1878 0298 00000000 		.word	ppm_pulses
+ 1879 029c 80DAFFFF 		.word	-9600
+ 1880 02a0 D9EEFFFF 		.word	-4391
+ 1881 02a4 21EFFFFF 		.word	-4319
+ 1882 02a8 00000000 		.word	.LANCHOR0
+ 1883 02ac 00000000 		.word	commands
+ 1884 02b0 00000000 		.word	.LANCHOR3
+ 1885 02b4 00000000 		.word	inter_mcu_received_ap
+ 1886 02b8 00000000 		.word	time_since_last_ap
+ 1887 02bc 00000000 		.word	ap_ok
+ 1888 02c0 00000000 		.word	ap_state
+ 1889 02c4 00000000 		.word	command_roll_trim
+ 1890              	.L89:
+ 1891 02c8 B5F5707F 		cmp	r5, #960
+ 1892 02cc A8BF     		it	ge
+ 1893 02ce 4FF47075 		movge	r5, #960
+ 1894 02d2 ADB2     		uxth	r5, r5
+ 1895              	.L90:
  156:firmwares/fixedwing/main_fbw.c ****     trimmed_commands[COMMAND_PITCH] += ChopAbs(command_pitch_trim, MAX_PPRZ/10);
- 1895              		.loc 2 156 0
- 1896 02d4 484B     		ldr	r3, .L105+24
- 1897 02d6 B3F90040 		ldrsh	r4, [r3, #0]
- 1898 02da 14F5707F 		cmn	r4, #960
- 1899 02de 02DA     		bge	.L91
- 1900 02e0 4FF64044 		movw	r4, #64576
- 1901 02e4 05E0     		b	.L92
- 1902              	.L91:
- 1903 02e6 B4F5707F 		cmp	r4, #960
- 1904 02ea A8BF     		it	ge
- 1905 02ec 4FF47074 		movge	r4, #960
- 1906 02f0 A4B2     		uxth	r4, r4
- 1907              	.L92:
- 1908              	.LBB167:
+ 1896              		.loc 2 156 0
+ 1897 02d4 484B     		ldr	r3, .L105+24
+ 1898 02d6 B3F90040 		ldrsh	r4, [r3, #0]
+ 1899 02da 14F5707F 		cmn	r4, #960
+ 1900 02de 02DA     		bge	.L91
+ 1901 02e0 4FF64044 		movw	r4, #64576
+ 1902 02e4 05E0     		b	.L92
+ 1903              	.L91:
+ 1904 02e6 B4F5707F 		cmp	r4, #960
+ 1905 02ea A8BF     		it	ge
+ 1906 02ec 4FF47074 		movge	r4, #960
+ 1907 02f0 A4B2     		uxth	r4, r4
+ 1908              	.L92:
+ 1909              	.LBB167:
  159:firmwares/fixedwing/main_fbw.c ****     SetActuatorsFromCommands(trimmed_commands);
- 1909              		.loc 2 159 0
- 1910 02f2 00B2     		sxth	r0, r0
- 1911 02f4 FFF7FEFF 		bl	__aeabi_i2f
- 1912 02f8 0021     		movs	r1, #0
- 1913 02fa 8246     		mov	sl, r0
- 1914              	.LVL108:
- 1915 02fc FFF7FEFF 		bl	__aeabi_fcmpgt
- 1916 0300 20B9     		cbnz	r0, .L93
- 1917 0302 4FF00008 		mov	r8, #0
- 1918 0306 4FF00009 		mov	r9, #0
- 1919 030a 03E0     		b	.L94
- 1920              	.L93:
- 1921 030c 0FF2D009 		adr	r9, .L105
- 1922 0310 D9E90089 		ldrd	r8, [r9]
- 1923              	.L94:
- 1924 0314 5046     		mov	r0, sl
- 1925 0316 FFF7FEFF 		bl	__aeabi_f2d
- 1926 031a 4B46     		mov	r3, r9
- 1927 031c 4246     		mov	r2, r8
- 1928 031e FFF7FEFF 		bl	__aeabi_dmul
- 1929 0322 FFF7FEFF 		bl	__aeabi_d2f
- 1930 0326 FFF7FEFF 		bl	__aeabi_f2iz
- 1931 032a 10F59663 		adds	r3, r0, #1200
- 1932              	.LVL109:
- 1933 032e 02D3     		bcc	.L95
- 1934 0330 4FF49663 		mov	r3, #1200
- 1935              	.LVL110:
- 1936 0334 05E0     		b	.L96
- 1937              	.LVL111:
- 1938              	.L95:
- 1939 0336 B3F5FA6F 		cmp	r3, #2000
- 1940 033a 28BF     		it	cs
- 1941 033c 4FF4FA63 		movcs	r3, #2000
- 1942              	.LVL112:
- 1943 0340 9BB2     		uxth	r3, r3
- 1944              	.L96:
- 1945 0342 2E4A     		ldr	r2, .L105+28
- 1946 0344 ED19     		adds	r5, r5, r7
- 1947 0346 D381     		strh	r3, [r2, #14]	@ movhi
- 1948 0348 2D4A     		ldr	r2, .L105+32
- 1949 034a 28B2     		sxth	r0, r5
- 1950 034c D361     		str	r3, [r2, #28]
- 1951 034e FFF7FEFF 		bl	__aeabi_i2f
- 1952 0352 FFF7FEFF 		bl	__aeabi_f2d
- 1953 0356 24A3     		adr	r3, .L105+8
- 1954 0358 D3E90023 		ldrd	r2, [r3]
- 1955 035c FFF7FEFF 		bl	__aeabi_dmul
- 1956 0360 FFF7FEFF 		bl	__aeabi_d2f
- 1957 0364 FFF7FEFF 		bl	__aeabi_f2iz
- 1958 0368 00F5BA60 		add	r0, r0, #1488
- 1959              	.LVL113:
- 1960 036c 0C30     		adds	r0, r0, #12
- 1961 036e B0F57A7F 		cmp	r0, #1000
- 1962 0372 02D2     		bcs	.L97
- 1963 0374 4FF47A70 		mov	r0, #1000
- 1964              	.LVL114:
- 1965 0378 05E0     		b	.L98
- 1966              	.LVL115:
- 1967              	.L97:
- 1968 037a B0F5FA6F 		cmp	r0, #2000
- 1969 037e 28BF     		it	cs
- 1970 0380 4FF4FA60 		movcs	r0, #2000
- 1971              	.LVL116:
- 1972 0384 80B2     		uxth	r0, r0
- 1973              	.L98:
- 1974 0386 1D4B     		ldr	r3, .L105+28
- 1975 0388 A419     		adds	r4, r4, r6
- 1976 038a 1881     		strh	r0, [r3, #8]	@ movhi
- 1977 038c 1C4B     		ldr	r3, .L105+32
- 1978 038e 1861     		str	r0, [r3, #16]
- 1979 0390 20B2     		sxth	r0, r4
- 1980 0392 FFF7FEFF 		bl	__aeabi_i2f
- 1981 0396 FFF7FEFF 		bl	__aeabi_f2d
- 1982 039a 15A3     		adr	r3, .L105+16
- 1983 039c D3E90023 		ldrd	r2, [r3]
- 1984 03a0 FFF7FEFF 		bl	__aeabi_dmul
- 1985 03a4 FFF7FEFF 		bl	__aeabi_d2f
- 1986 03a8 FFF7FEFF 		bl	__aeabi_f2iz
- 1987 03ac 00F5BA60 		add	r0, r0, #1488
- 1988              	.LVL117:
- 1989 03b0 0C30     		adds	r0, r0, #12
- 1990 03b2 B0F57A7F 		cmp	r0, #1000
- 1991 03b6 02D2     		bcs	.L99
- 1992 03b8 4FF47A70 		mov	r0, #1000
- 1993              	.LVL118:
- 1994 03bc 05E0     		b	.L100
- 1995              	.LVL119:
- 1996              	.L99:
- 1997 03be B0F5FA6F 		cmp	r0, #2000
- 1998 03c2 28BF     		it	cs
- 1999 03c4 4FF4FA60 		movcs	r0, #2000
- 2000              	.LVL120:
- 2001 03c8 80B2     		uxth	r0, r0
- 2002              	.L100:
- 2003 03ca 0C4B     		ldr	r3, .L105+28
- 2004 03cc D880     		strh	r0, [r3, #6]	@ movhi
- 2005 03ce 0C4B     		ldr	r3, .L105+32
- 2006 03d0 D860     		str	r0, [r3, #12]
- 2007 03d2 FFF7FEFF 		bl	actuators_pwm_commit
- 2008              	.LBE167:
+ 1910              		.loc 2 159 0
+ 1911 02f2 00B2     		sxth	r0, r0
+ 1912 02f4 FFF7FEFF 		bl	__aeabi_i2f
+ 1913 02f8 0021     		movs	r1, #0
+ 1914 02fa 8246     		mov	sl, r0
+ 1915              	.LVL108:
+ 1916 02fc FFF7FEFF 		bl	__aeabi_fcmpgt
+ 1917 0300 20B9     		cbnz	r0, .L93
+ 1918 0302 4FF00008 		mov	r8, #0
+ 1919 0306 4FF00009 		mov	r9, #0
+ 1920 030a 03E0     		b	.L94
+ 1921              	.L93:
+ 1922 030c 0FF2D009 		adr	r9, .L105
+ 1923 0310 D9E90089 		ldrd	r8, [r9]
+ 1924              	.L94:
+ 1925 0314 5046     		mov	r0, sl
+ 1926 0316 FFF7FEFF 		bl	__aeabi_f2d
+ 1927 031a 4B46     		mov	r3, r9
+ 1928 031c 4246     		mov	r2, r8
+ 1929 031e FFF7FEFF 		bl	__aeabi_dmul
+ 1930 0322 FFF7FEFF 		bl	__aeabi_d2f
+ 1931 0326 FFF7FEFF 		bl	__aeabi_f2iz
+ 1932 032a 10F59663 		adds	r3, r0, #1200
+ 1933              	.LVL109:
+ 1934 032e 02D3     		bcc	.L95
+ 1935 0330 4FF49663 		mov	r3, #1200
+ 1936              	.LVL110:
+ 1937 0334 05E0     		b	.L96
+ 1938              	.LVL111:
+ 1939              	.L95:
+ 1940 0336 B3F5FA6F 		cmp	r3, #2000
+ 1941 033a 28BF     		it	cs
+ 1942 033c 4FF4FA63 		movcs	r3, #2000
+ 1943              	.LVL112:
+ 1944 0340 9BB2     		uxth	r3, r3
+ 1945              	.L96:
+ 1946 0342 2E4A     		ldr	r2, .L105+28
+ 1947 0344 ED19     		adds	r5, r5, r7
+ 1948 0346 5380     		strh	r3, [r2, #2]	@ movhi
+ 1949 0348 2D4A     		ldr	r2, .L105+32
+ 1950 034a 28B2     		sxth	r0, r5
+ 1951 034c 5360     		str	r3, [r2, #4]
+ 1952 034e FFF7FEFF 		bl	__aeabi_i2f
+ 1953 0352 FFF7FEFF 		bl	__aeabi_f2d
+ 1954 0356 24A3     		adr	r3, .L105+8
+ 1955 0358 D3E90023 		ldrd	r2, [r3]
+ 1956 035c FFF7FEFF 		bl	__aeabi_dmul
+ 1957 0360 FFF7FEFF 		bl	__aeabi_d2f
+ 1958 0364 FFF7FEFF 		bl	__aeabi_f2iz
+ 1959 0368 00F5BA60 		add	r0, r0, #1488
+ 1960              	.LVL113:
+ 1961 036c 0C30     		adds	r0, r0, #12
+ 1962 036e B0F57A7F 		cmp	r0, #1000
+ 1963 0372 02D2     		bcs	.L97
+ 1964 0374 4FF47A70 		mov	r0, #1000
+ 1965              	.LVL114:
+ 1966 0378 05E0     		b	.L98
+ 1967              	.LVL115:
+ 1968              	.L97:
+ 1969 037a B0F5FA6F 		cmp	r0, #2000
+ 1970 037e 28BF     		it	cs
+ 1971 0380 4FF4FA60 		movcs	r0, #2000
+ 1972              	.LVL116:
+ 1973 0384 80B2     		uxth	r0, r0
+ 1974              	.L98:
+ 1975 0386 1D4B     		ldr	r3, .L105+28
+ 1976 0388 A419     		adds	r4, r4, r6
+ 1977 038a 1881     		strh	r0, [r3, #8]	@ movhi
+ 1978 038c 1C4B     		ldr	r3, .L105+32
+ 1979 038e 1861     		str	r0, [r3, #16]
+ 1980 0390 20B2     		sxth	r0, r4
+ 1981 0392 FFF7FEFF 		bl	__aeabi_i2f
+ 1982 0396 FFF7FEFF 		bl	__aeabi_f2d
+ 1983 039a 15A3     		adr	r3, .L105+16
+ 1984 039c D3E90023 		ldrd	r2, [r3]
+ 1985 03a0 FFF7FEFF 		bl	__aeabi_dmul
+ 1986 03a4 FFF7FEFF 		bl	__aeabi_d2f
+ 1987 03a8 FFF7FEFF 		bl	__aeabi_f2iz
+ 1988 03ac 00F5BA60 		add	r0, r0, #1488
+ 1989              	.LVL117:
+ 1990 03b0 0C30     		adds	r0, r0, #12
+ 1991 03b2 B0F57A7F 		cmp	r0, #1000
+ 1992 03b6 02D2     		bcs	.L99
+ 1993 03b8 4FF47A70 		mov	r0, #1000
+ 1994              	.LVL118:
+ 1995 03bc 05E0     		b	.L100
+ 1996              	.LVL119:
+ 1997              	.L99:
+ 1998 03be B0F5FA6F 		cmp	r0, #2000
+ 1999 03c2 28BF     		it	cs
+ 2000 03c4 4FF4FA60 		movcs	r0, #2000
+ 2001              	.LVL120:
+ 2002 03c8 80B2     		uxth	r0, r0
+ 2003              	.L100:
+ 2004 03ca 0C4B     		ldr	r3, .L105+28
+ 2005 03cc D880     		strh	r0, [r3, #6]	@ movhi
+ 2006 03ce 0C4B     		ldr	r3, .L105+32
+ 2007 03d0 D860     		str	r0, [r3, #12]
+ 2008 03d2 FFF7FEFF 		bl	actuators_pwm_commit
+ 2009              	.LBE167:
  160:firmwares/fixedwing/main_fbw.c ****     fbw_new_actuators = 0;
- 2009              		.loc 2 160 0
- 2010 03d6 0B4B     		ldr	r3, .L105+36
- 2011 03d8 0022     		movs	r2, #0
- 2012 03da 1A70     		strb	r2, [r3, #0]
- 2013              	.L101:
- 2014 03dc BDE8F087 		pop	{r4, r5, r6, r7, r8, r9, sl, pc}
- 2015              	.L106:
- 2016              		.align	3
- 2017              	.L105:
- 2018 03e0 F34B5555 		.word	1431653363
- 2019 03e4 5555B53F 		.word	1068848469
- 2020 03e8 E797AAAA 		.word	-1431660569
- 2021 03ec AAAAAABF 		.word	-1079334230
- 2022 03f0 E797AAAA 		.word	-1431660569
- 2023 03f4 AAAAAA3F 		.word	1068149418
- 2024 03f8 00000000 		.word	command_pitch_trim
- 2025 03fc 00000000 		.word	actuators
- 2026 0400 00000000 		.word	actuators_pwm_values
- 2027 0404 00000000 		.word	.LANCHOR3
- 2028              	.LBE166:
- 2029              		.cfi_endproc
- 2030              	.LFE42:
- 2032              		.section	.text.init_fbw,"ax",%progbits
- 2033              		.align	1
- 2034              		.global	init_fbw
- 2035              		.thumb
- 2036              		.thumb_func
- 2038              	init_fbw:
- 2039              	.LFB39:
+ 2010              		.loc 2 160 0
+ 2011 03d6 0B4B     		ldr	r3, .L105+36
+ 2012 03d8 0022     		movs	r2, #0
+ 2013 03da 1A70     		strb	r2, [r3, #0]
+ 2014              	.L101:
+ 2015 03dc BDE8F087 		pop	{r4, r5, r6, r7, r8, r9, sl, pc}
+ 2016              	.L106:
+ 2017              		.align	3
+ 2018              	.L105:
+ 2019 03e0 F34B5555 		.word	1431653363
+ 2020 03e4 5555B53F 		.word	1068848469
+ 2021 03e8 E797AAAA 		.word	-1431660569
+ 2022 03ec AAAAAABF 		.word	-1079334230
+ 2023 03f0 E797AAAA 		.word	-1431660569
+ 2024 03f4 AAAAAA3F 		.word	1068149418
+ 2025 03f8 00000000 		.word	command_pitch_trim
+ 2026 03fc 00000000 		.word	actuators
+ 2027 0400 00000000 		.word	actuators_pwm_values
+ 2028 0404 00000000 		.word	.LANCHOR3
+ 2029              	.LBE166:
+ 2030              		.cfi_endproc
+ 2031              	.LFE42:
+ 2033              		.section	.text.init_fbw,"ax",%progbits
+ 2034              		.align	1
+ 2035              		.global	init_fbw
+ 2036              		.thumb
+ 2037              		.thumb_func
+ 2039              	init_fbw:
+ 2040              	.LFB39:
   60:firmwares/fixedwing/main_fbw.c **** void init_fbw( void ) {
- 2040              		.loc 2 60 0
- 2041              		.cfi_startproc
- 2042              		@ args = 0, pretend = 0, frame = 0
- 2043              		@ frame_needed = 0, uses_anonymous_args = 0
- 2044 0000 38B5     		push	{r3, r4, r5, lr}
- 2045              	.LCFI3:
- 2046              		.cfi_def_cfa_offset 16
+ 2041              		.loc 2 60 0
+ 2042              		.cfi_startproc
+ 2043              		@ args = 0, pretend = 0, frame = 0
+ 2044              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2045 0000 38B5     		push	{r3, r4, r5, lr}
+ 2046              	.LCFI3:
+ 2047              		.cfi_def_cfa_offset 16
   62:firmwares/fixedwing/main_fbw.c ****   mcu_init();
- 2047              		.loc 2 62 0
- 2048              		.cfi_offset 14, -4
- 2049              		.cfi_offset 5, -8
- 2050              		.cfi_offset 4, -12
- 2051              		.cfi_offset 3, -16
- 2052 0002 FFF7FEFF 		bl	mcu_init
+ 2048              		.loc 2 62 0
+ 2049              		.cfi_offset 14, -4
+ 2050              		.cfi_offset 5, -8
+ 2051              		.cfi_offset 4, -12
+ 2052              		.cfi_offset 3, -16
+ 2053 0002 FFF7FEFF 		bl	mcu_init
   63:firmwares/fixedwing/main_fbw.c ****   sys_time_init();
- 2053              		.loc 2 63 0
- 2054 0006 FFF7FEFF 		bl	sys_time_init
+ 2054              		.loc 2 63 0
+ 2055 0006 FFF7FEFF 		bl	sys_time_init
   64:firmwares/fixedwing/main_fbw.c ****   electrical_init();
- 2055              		.loc 2 64 0
- 2056 000a FFF7FEFF 		bl	electrical_init
+ 2056              		.loc 2 64 0
+ 2057 000a FFF7FEFF 		bl	electrical_init
   67:firmwares/fixedwing/main_fbw.c ****   actuators_init();
- 2057              		.loc 2 67 0
- 2058 000e FFF7FEFF 		bl	actuators_init
- 2059              	.LBB173:
+ 2058              		.loc 2 67 0
+ 2059 000e FFF7FEFF 		bl	actuators_init
+ 2060              	.LBB173:
   69:firmwares/fixedwing/main_fbw.c ****   SetCommands(commands_failsafe);
- 2060              		.loc 2 69 0
- 2061 0012 134A     		ldr	r2, .L110
- 2062 0014 134B     		ldr	r3, .L110+4
- 2063 0016 1188     		ldrh	r1, [r2, #0]
- 2064 0018 1980     		strh	r1, [r3, #0]	@ movhi
- 2065 001a 5188     		ldrh	r1, [r2, #2]
- 2066 001c 9288     		ldrh	r2, [r2, #4]
- 2067 001e 5980     		strh	r1, [r3, #2]	@ movhi
- 2068 0020 9A80     		strh	r2, [r3, #4]	@ movhi
- 2069              	.LBE173:
+ 2061              		.loc 2 69 0
+ 2062 0012 134A     		ldr	r2, .L110
+ 2063 0014 134B     		ldr	r3, .L110+4
+ 2064 0016 1188     		ldrh	r1, [r2, #0]
+ 2065 0018 1980     		strh	r1, [r3, #0]	@ movhi
+ 2066 001a 5188     		ldrh	r1, [r2, #2]
+ 2067 001c 9288     		ldrh	r2, [r2, #4]
+ 2068 001e 5980     		strh	r1, [r3, #2]	@ movhi
+ 2069 0020 9A80     		strh	r2, [r3, #4]	@ movhi
+ 2070              	.LBE173:
   70:firmwares/fixedwing/main_fbw.c ****   fbw_new_actuators = 1;
- 2070              		.loc 2 70 0
- 2071 0022 114B     		ldr	r3, .L110+8
- 2072 0024 0122     		movs	r2, #1
- 2073 0026 1A70     		strb	r2, [r3, #0]
- 2074 0028 013A     		subs	r2, r2, #1
- 2075              	.L108:
- 2076              	.LBB174:
- 2077              	.LBB175:
+ 2071              		.loc 2 70 0
+ 2072 0022 114B     		ldr	r3, .L110+8
+ 2073 0024 0122     		movs	r2, #1
+ 2074 0026 1A70     		strb	r2, [r3, #0]
+ 2075 0028 013A     		subs	r2, r2, #1
+ 2076              	.L108:
+ 2077              	.LBB174:
+ 2078              	.LBB175:
   67:./subsystems/radio_control.h ****     radio_control.values[i] = 0;
- 2078              		.loc 3 67 0
- 2079 002a 104B     		ldr	r3, .L110+12
- 2080 002c 0021     		movs	r1, #0
- 2081 002e 9818     		adds	r0, r3, r2
- 2082 0030 0232     		adds	r2, r2, #2
+ 2079              		.loc 3 67 0
+ 2080 002a 104B     		ldr	r3, .L110+12
+ 2081 002c 0021     		movs	r1, #0
+ 2082 002e 9818     		adds	r0, r3, r2
+ 2083 0030 0232     		adds	r2, r2, #2
   66:./subsystems/radio_control.h ****   for (i=0; i<RADIO_CONTROL_NB_CHANNEL; i++)
- 2083              		.loc 3 66 0
- 2084 0032 0E2A     		cmp	r2, #14
+ 2084              		.loc 3 66 0
+ 2085 0032 0E2A     		cmp	r2, #14
   67:./subsystems/radio_control.h ****     radio_control.values[i] = 0;
- 2085              		.loc 3 67 0
- 2086 0034 0C46     		mov	r4, r1	@ movhi
- 2087 0036 C180     		strh	r1, [r0, #6]	@ movhi
+ 2086              		.loc 3 67 0
+ 2087 0034 0C46     		mov	r4, r1	@ movhi
+ 2088 0036 C180     		strh	r1, [r0, #6]	@ movhi
   66:./subsystems/radio_control.h ****   for (i=0; i<RADIO_CONTROL_NB_CHANNEL; i++)
- 2088              		.loc 3 66 0
- 2089 0038 F7D1     		bne	.L108
+ 2089              		.loc 3 66 0
+ 2090 0038 F7D1     		bne	.L108
   68:./subsystems/radio_control.h ****   radio_control.status = RC_REALLY_LOST;
- 2090              		.loc 3 68 0
- 2091 003a 0225     		movs	r5, #2
+ 2091              		.loc 3 68 0
+ 2092 003a 0225     		movs	r5, #2
   69:./subsystems/radio_control.h ****   radio_control.time_since_last_frame = RC_REALLY_LOST_TIME;
- 2092              		.loc 3 69 0
- 2093 003c 2E32     		adds	r2, r2, #46
+ 2093              		.loc 3 69 0
+ 2094 003c 2E32     		adds	r2, r2, #46
   68:./subsystems/radio_control.h ****   radio_control.status = RC_REALLY_LOST;
- 2094              		.loc 3 68 0
- 2095 003e 1D70     		strb	r5, [r3, #0]
+ 2095              		.loc 3 68 0
+ 2096 003e 1D70     		strb	r5, [r3, #0]
   69:./subsystems/radio_control.h ****   radio_control.time_since_last_frame = RC_REALLY_LOST_TIME;
- 2096              		.loc 3 69 0
- 2097 0040 5A70     		strb	r2, [r3, #1]
+ 2097              		.loc 3 69 0
+ 2098 0040 5A70     		strb	r2, [r3, #1]
   70:./subsystems/radio_control.h ****   radio_control.radio_ok_cpt = 0;
- 2098              		.loc 3 70 0
- 2099 0042 9970     		strb	r1, [r3, #2]
+ 2099              		.loc 3 70 0
+ 2100 0042 9970     		strb	r1, [r3, #2]
   71:./subsystems/radio_control.h ****   radio_control.frame_rate = 0;
- 2100              		.loc 3 71 0
- 2101 0044 D970     		strb	r1, [r3, #3]
+ 2101              		.loc 3 71 0
+ 2102 0044 D970     		strb	r1, [r3, #3]
   72:./subsystems/radio_control.h ****   radio_control.frame_cpt = 0;
- 2102              		.loc 3 72 0
- 2103 0046 1971     		strb	r1, [r3, #4]
+ 2103              		.loc 3 72 0
+ 2104 0046 1971     		strb	r1, [r3, #4]
   73:./subsystems/radio_control.h ****   radio_control_impl_init();
- 2104              		.loc 3 73 0
- 2105 0048 FFF7FEFF 		bl	radio_control_impl_init
- 2106              	.LBE175:
- 2107              	.LBE174:
- 2108              	.LBB176:
- 2109              	.LBB177:
+ 2105              		.loc 3 73 0
+ 2106 0048 FFF7FEFF 		bl	radio_control_impl_init
+ 2107              	.LBE175:
+ 2108              	.LBE174:
+ 2109              	.LBB176:
+ 2110              	.LBB177:
   94:./inter_mcu.h ****   fbw_state->status = 0;
- 2110              		.loc 1 94 0
- 2111 004c 084B     		ldr	r3, .L110+16
- 2112 004e 1B68     		ldr	r3, [r3, #0]
- 2113 0050 DC73     		strb	r4, [r3, #15]
+ 2111              		.loc 1 94 0
+ 2112 004c 084B     		ldr	r3, .L110+16
+ 2113 004e 1B68     		ldr	r3, [r3, #0]
+ 2114 0050 DC73     		strb	r4, [r3, #15]
   95:./inter_mcu.h ****   fbw_state->nb_err = 0;
- 2114              		.loc 1 95 0
- 2115 0052 1C74     		strb	r4, [r3, #16]
+ 2115              		.loc 1 95 0
+ 2116 0052 1C74     		strb	r4, [r3, #16]
   97:./inter_mcu.h ****   ap_ok = FALSE;
- 2116              		.loc 1 97 0
- 2117 0054 074B     		ldr	r3, .L110+20
- 2118 0056 1C70     		strb	r4, [r3, #0]
- 2119              	.LBE177:
- 2120              	.LBE176:
+ 2117              		.loc 1 97 0
+ 2118 0054 074B     		ldr	r3, .L110+20
+ 2119 0056 1C70     		strb	r4, [r3, #0]
+ 2120              	.LBE177:
+ 2121              	.LBE176:
   82:firmwares/fixedwing/main_fbw.c ****   fbw_mode = FBW_MODE_FAILSAFE;
- 2121              		.loc 2 82 0
- 2122 0058 074B     		ldr	r3, .L110+24
- 2123 005a 1D70     		strb	r5, [r3, #0]
+ 2122              		.loc 2 82 0
+ 2123 0058 074B     		ldr	r3, .L110+24
+ 2124 005a 1D70     		strb	r5, [r3, #0]
   87:firmwares/fixedwing/main_fbw.c **** }
- 2124              		.loc 2 87 0
- 2125 005c 38BD     		pop	{r3, r4, r5, pc}
- 2126              	.L111:
- 2127 005e 00BF     		.align	2
- 2128              	.L110:
- 2129 0060 00000000 		.word	commands_failsafe
- 2130 0064 00000000 		.word	commands
- 2131 0068 00000000 		.word	.LANCHOR3
- 2132 006c 00000000 		.word	radio_control
- 2133 0070 00000000 		.word	fbw_state
- 2134 0074 00000000 		.word	ap_ok
- 2135 0078 00000000 		.word	.LANCHOR0
- 2136              		.cfi_endproc
- 2137              	.LFE39:
- 2139              		.global	fbw_new_actuators
- 2140              		.global	fbw_mode
- 2141              		.section	.bss.i300.3392,"aw",%nobits
- 2142              		.align	1
- 2143              		.set	.LANCHOR5,. + 0
- 2146              	i300.3392:
- 2147 0000 0000     		.space	2
- 2148              		.section	.bss.fbw_mode,"aw",%nobits
- 2149              		.set	.LANCHOR0,. + 0
- 2152              	fbw_mode:
- 2153 0000 00       		.space	1
- 2154              		.section	.bss._1Hz.3087,"aw",%nobits
- 2155              		.set	.LANCHOR2,. + 0
- 2158              	_1Hz.3087:
- 2159 0000 00       		.space	1
- 2160              		.section	.bss.fbw_new_actuators,"aw",%nobits
- 2161              		.set	.LANCHOR3,. + 0
- 2164              	fbw_new_actuators:
- 2165 0000 00       		.space	1
- 2166              		.section	.bss.i60.3417,"aw",%nobits
- 2167              		.set	.LANCHOR7,. + 0
- 2170              	i60.3417:
- 2171 0000 00       		.space	1
- 2172              		.section	.bss.i120.3391,"aw",%nobits
- 2173              		.set	.LANCHOR4,. + 0
- 2176              	i120.3391:
- 2177 0000 00       		.space	1
- 2178              		.section	.bss.i30.3416,"aw",%nobits
- 2179              		.set	.LANCHOR6,. + 0
- 2182              	i30.3416:
- 2183 0000 00       		.space	1
- 2184              		.section	.bss._10Hz.3854,"aw",%nobits
- 2185              		.set	.LANCHOR1,. + 0
- 2188              	_10Hz.3854:
- 2189 0000 00       		.space	1
- 2190              		.section	.bss.i300.3418,"aw",%nobits
- 2191              		.align	1
- 2192              		.set	.LANCHOR8,. + 0
- 2195              	i300.3418:
- 2196 0000 0000     		.space	2
- 2197              		.text
- 2198              	.Letext0:
+ 2125              		.loc 2 87 0
+ 2126 005c 38BD     		pop	{r3, r4, r5, pc}
+ 2127              	.L111:
+ 2128 005e 00BF     		.align	2
+ 2129              	.L110:
+ 2130 0060 00000000 		.word	commands_failsafe
+ 2131 0064 00000000 		.word	commands
+ 2132 0068 00000000 		.word	.LANCHOR3
+ 2133 006c 00000000 		.word	radio_control
+ 2134 0070 00000000 		.word	fbw_state
+ 2135 0074 00000000 		.word	ap_ok
+ 2136 0078 00000000 		.word	.LANCHOR0
+ 2137              		.cfi_endproc
+ 2138              	.LFE39:
+ 2140              		.global	fbw_new_actuators
+ 2141              		.global	fbw_mode
+ 2142              		.section	.bss.i300.3392,"aw",%nobits
+ 2143              		.align	1
+ 2144              		.set	.LANCHOR5,. + 0
+ 2147              	i300.3392:
+ 2148 0000 0000     		.space	2
+ 2149              		.section	.bss.fbw_mode,"aw",%nobits
+ 2150              		.set	.LANCHOR0,. + 0
+ 2153              	fbw_mode:
+ 2154 0000 00       		.space	1
+ 2155              		.section	.bss._1Hz.3087,"aw",%nobits
+ 2156              		.set	.LANCHOR2,. + 0
+ 2159              	_1Hz.3087:
+ 2160 0000 00       		.space	1
+ 2161              		.section	.bss.fbw_new_actuators,"aw",%nobits
+ 2162              		.set	.LANCHOR3,. + 0
+ 2165              	fbw_new_actuators:
+ 2166 0000 00       		.space	1
+ 2167              		.section	.bss.i60.3417,"aw",%nobits
+ 2168              		.set	.LANCHOR7,. + 0
+ 2171              	i60.3417:
+ 2172 0000 00       		.space	1
+ 2173              		.section	.bss.i120.3391,"aw",%nobits
+ 2174              		.set	.LANCHOR4,. + 0
+ 2177              	i120.3391:
+ 2178 0000 00       		.space	1
+ 2179              		.section	.bss.i30.3416,"aw",%nobits
+ 2180              		.set	.LANCHOR6,. + 0
+ 2183              	i30.3416:
+ 2184 0000 00       		.space	1
+ 2185              		.section	.bss._10Hz.3854,"aw",%nobits
+ 2186              		.set	.LANCHOR1,. + 0
+ 2189              	_10Hz.3854:
+ 2190 0000 00       		.space	1
+ 2191              		.section	.bss.i300.3418,"aw",%nobits
+ 2192              		.align	1
+ 2193              		.set	.LANCHOR8,. + 0
+ 2196              	i300.3418:
+ 2197 0000 0000     		.space	2
+ 2198              		.text
+ 2199              	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 main_fbw.c
-     /tmp/ccCnx5Fw.s:24     .text.inter_mcu_fill_fbw_state:00000000 $t
-     /tmp/ccCnx5Fw.s:28     .text.inter_mcu_fill_fbw_state:00000000 inter_mcu_fill_fbw_state
-     /tmp/ccCnx5Fw.s:120    .text.inter_mcu_fill_fbw_state:00000078 $d
-     /tmp/ccCnx5Fw.s:129    .text.periodic_task_fbw:00000000 $t
-     /tmp/ccCnx5Fw.s:134    .text.periodic_task_fbw:00000000 periodic_task_fbw
-     /tmp/ccCnx5Fw.s:494    .text.periodic_task_fbw:00000200 $d
-     /tmp/ccCnx5Fw.s:513    .text.periodic_task_fbw:00000248 $t
-     /tmp/ccCnx5Fw.s:733    .text.periodic_task_fbw:000003c0 $d
-     /tmp/ccCnx5Fw.s:743    .text.periodic_task_fbw:000003e4 $t
-     /tmp/ccCnx5Fw.s:1006   .text.periodic_task_fbw:000005ac $d
-     /tmp/ccCnx5Fw.s:1021   .text.periodic_task_fbw:000005e0 $t
-     /tmp/ccCnx5Fw.s:1323   .text.periodic_task_fbw:000007d4 $d
-     /tmp/ccCnx5Fw.s:1335   .text.periodic_task_fbw:00000800 $t
-     /tmp/ccCnx5Fw.s:1470   .text.periodic_task_fbw:000008e4 $d
-     /tmp/ccCnx5Fw.s:1489   .text.event_task_fbw:00000000 $t
-     /tmp/ccCnx5Fw.s:1494   .text.event_task_fbw:00000000 event_task_fbw
-     /tmp/ccCnx5Fw.s:1875   .text.event_task_fbw:00000290 $d
-     /tmp/ccCnx5Fw.s:1890   .text.event_task_fbw:000002c8 $t
-     /tmp/ccCnx5Fw.s:2018   .text.event_task_fbw:000003e0 $d
-     /tmp/ccCnx5Fw.s:2033   .text.init_fbw:00000000 $t
-     /tmp/ccCnx5Fw.s:2038   .text.init_fbw:00000000 init_fbw
-     /tmp/ccCnx5Fw.s:2129   .text.init_fbw:00000060 $d
-     /tmp/ccCnx5Fw.s:2164   .bss.fbw_new_actuators:00000000 fbw_new_actuators
-     /tmp/ccCnx5Fw.s:2152   .bss.fbw_mode:00000000 fbw_mode
-     /tmp/ccCnx5Fw.s:2142   .bss.i300.3392:00000000 $d
-     /tmp/ccCnx5Fw.s:2146   .bss.i300.3392:00000000 i300.3392
-     /tmp/ccCnx5Fw.s:2153   .bss.fbw_mode:00000000 $d
-     /tmp/ccCnx5Fw.s:2158   .bss._1Hz.3087:00000000 _1Hz.3087
-     /tmp/ccCnx5Fw.s:2159   .bss._1Hz.3087:00000000 $d
-     /tmp/ccCnx5Fw.s:2165   .bss.fbw_new_actuators:00000000 $d
-     /tmp/ccCnx5Fw.s:2170   .bss.i60.3417:00000000 i60.3417
-     /tmp/ccCnx5Fw.s:2171   .bss.i60.3417:00000000 $d
-     /tmp/ccCnx5Fw.s:2176   .bss.i120.3391:00000000 i120.3391
-     /tmp/ccCnx5Fw.s:2177   .bss.i120.3391:00000000 $d
-     /tmp/ccCnx5Fw.s:2182   .bss.i30.3416:00000000 i30.3416
-     /tmp/ccCnx5Fw.s:2183   .bss.i30.3416:00000000 $d
-     /tmp/ccCnx5Fw.s:2188   .bss._10Hz.3854:00000000 _10Hz.3854
-     /tmp/ccCnx5Fw.s:2189   .bss._10Hz.3854:00000000 $d
-     /tmp/ccCnx5Fw.s:2191   .bss.i300.3418:00000000 $d
-     /tmp/ccCnx5Fw.s:2195   .bss.i300.3418:00000000 i300.3418
+     /tmp/cck73I6d.s:24     .text.inter_mcu_fill_fbw_state:00000000 $t
+     /tmp/cck73I6d.s:28     .text.inter_mcu_fill_fbw_state:00000000 inter_mcu_fill_fbw_state
+     /tmp/cck73I6d.s:120    .text.inter_mcu_fill_fbw_state:00000078 $d
+     /tmp/cck73I6d.s:129    .text.periodic_task_fbw:00000000 $t
+     /tmp/cck73I6d.s:134    .text.periodic_task_fbw:00000000 periodic_task_fbw
+     /tmp/cck73I6d.s:494    .text.periodic_task_fbw:00000200 $d
+     /tmp/cck73I6d.s:513    .text.periodic_task_fbw:00000248 $t
+     /tmp/cck73I6d.s:733    .text.periodic_task_fbw:000003c0 $d
+     /tmp/cck73I6d.s:743    .text.periodic_task_fbw:000003e4 $t
+     /tmp/cck73I6d.s:1006   .text.periodic_task_fbw:000005ac $d
+     /tmp/cck73I6d.s:1021   .text.periodic_task_fbw:000005e0 $t
+     /tmp/cck73I6d.s:1323   .text.periodic_task_fbw:000007d4 $d
+     /tmp/cck73I6d.s:1335   .text.periodic_task_fbw:00000800 $t
+     /tmp/cck73I6d.s:1471   .text.periodic_task_fbw:000008e4 $d
+     /tmp/cck73I6d.s:1490   .text.event_task_fbw:00000000 $t
+     /tmp/cck73I6d.s:1495   .text.event_task_fbw:00000000 event_task_fbw
+     /tmp/cck73I6d.s:1876   .text.event_task_fbw:00000290 $d
+     /tmp/cck73I6d.s:1891   .text.event_task_fbw:000002c8 $t
+     /tmp/cck73I6d.s:2019   .text.event_task_fbw:000003e0 $d
+     /tmp/cck73I6d.s:2034   .text.init_fbw:00000000 $t
+     /tmp/cck73I6d.s:2039   .text.init_fbw:00000000 init_fbw
+     /tmp/cck73I6d.s:2130   .text.init_fbw:00000060 $d
+     /tmp/cck73I6d.s:2165   .bss.fbw_new_actuators:00000000 fbw_new_actuators
+     /tmp/cck73I6d.s:2153   .bss.fbw_mode:00000000 fbw_mode
+     /tmp/cck73I6d.s:2143   .bss.i300.3392:00000000 $d
+     /tmp/cck73I6d.s:2147   .bss.i300.3392:00000000 i300.3392
+     /tmp/cck73I6d.s:2154   .bss.fbw_mode:00000000 $d
+     /tmp/cck73I6d.s:2159   .bss._1Hz.3087:00000000 _1Hz.3087
+     /tmp/cck73I6d.s:2160   .bss._1Hz.3087:00000000 $d
+     /tmp/cck73I6d.s:2166   .bss.fbw_new_actuators:00000000 $d
+     /tmp/cck73I6d.s:2171   .bss.i60.3417:00000000 i60.3417
+     /tmp/cck73I6d.s:2172   .bss.i60.3417:00000000 $d
+     /tmp/cck73I6d.s:2177   .bss.i120.3391:00000000 i120.3391
+     /tmp/cck73I6d.s:2178   .bss.i120.3391:00000000 $d
+     /tmp/cck73I6d.s:2183   .bss.i30.3416:00000000 i30.3416
+     /tmp/cck73I6d.s:2184   .bss.i30.3416:00000000 $d
+     /tmp/cck73I6d.s:2189   .bss._10Hz.3854:00000000 _10Hz.3854
+     /tmp/cck73I6d.s:2190   .bss._10Hz.3854:00000000 $d
+     /tmp/cck73I6d.s:2192   .bss.i300.3418:00000000 $d
+     /tmp/cck73I6d.s:2196   .bss.i300.3418:00000000 i300.3418
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS

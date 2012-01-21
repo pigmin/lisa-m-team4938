@@ -20,7 +20,7 @@
   27              		.thumb
   28              		.thumb_func
   30              	Vector_Dot_Product:
-  31              	.LFB3:
+  31              	.LFB34:
   32              		.file 1 "./subsystems/ahrs/ahrs_float_dcm_algebra.h"
    1:./subsystems/ahrs/ahrs_float_dcm_algebra.h **** //Algebra helper functions for DCM
    2:./subsystems/ahrs/ahrs_float_dcm_algebra.h **** 
@@ -65,14 +65,14 @@
   67              		.loc 1 6 0
   68 0032 70BD     		pop	{r4, r5, r6, pc}
   69              		.cfi_endproc
-  70              	.LFE3:
+  70              	.LFE34:
   72              		.global	__aeabi_fsub
   73              		.section	.text.Vector_Cross_Product,"ax",%progbits
   74              		.align	1
   75              		.thumb
   76              		.thumb_func
   78              	Vector_Cross_Product:
-  79              	.LFB4:
+  79              	.LFB35:
    7:./subsystems/ahrs/ahrs_float_dcm_algebra.h **** 
    8:./subsystems/ahrs/ahrs_float_dcm_algebra.h **** static inline void Vector_Cross_Product(float vectorOut[3], float v1[3],float v2[3])
    9:./subsystems/ahrs/ahrs_float_dcm_algebra.h **** {
@@ -143,13 +143,13 @@
  139              		.loc 1 13 0
  140 005c F8BD     		pop	{r3, r4, r5, r6, r7, pc}
  141              		.cfi_endproc
- 142              	.LFE4:
+ 142              	.LFE35:
  144              		.section	.text.Vector_Scale,"ax",%progbits
  145              		.align	1
  146              		.thumb
  147              		.thumb_func
  149              	Vector_Scale:
- 150              	.LFB5:
+ 150              	.LFB36:
   14:./subsystems/ahrs/ahrs_float_dcm_algebra.h **** 
   15:./subsystems/ahrs/ahrs_float_dcm_algebra.h **** static inline void Vector_Scale(float vectorOut[3],float vectorIn[3], float scale2)
   16:./subsystems/ahrs/ahrs_float_dcm_algebra.h **** {
@@ -197,13 +197,13 @@
  187              		.loc 1 20 0
  188 0026 70BD     		pop	{r4, r5, r6, pc}
  189              		.cfi_endproc
- 190              	.LFE5:
+ 190              	.LFE36:
  192              		.section	.text.Vector_Add,"ax",%progbits
  193              		.align	1
  194              		.thumb
  195              		.thumb_func
  197              	Vector_Add:
- 198              	.LFB6:
+ 198              	.LFB37:
   21:./subsystems/ahrs/ahrs_float_dcm_algebra.h **** 
   22:./subsystems/ahrs/ahrs_float_dcm_algebra.h **** static inline void Vector_Add(float vectorOut[3],float vectorIn1[3], float vectorIn2[3])
   23:./subsystems/ahrs/ahrs_float_dcm_algebra.h **** {
@@ -251,13 +251,13 @@
  235              		.loc 1 27 0
  236 0026 70BD     		pop	{r4, r5, r6, pc}
  237              		.cfi_endproc
- 238              	.LFE6:
+ 238              	.LFE37:
  240              		.section	.text.set_dcm_matrix_from_rmat,"ax",%progbits
  241              		.align	1
  242              		.thumb
  243              		.thumb_func
  245              	set_dcm_matrix_from_rmat:
- 246              	.LFB37:
+ 246              	.LFB44:
  247              		.file 2 "subsystems/ahrs/ahrs_float_dcm.c"
    1:subsystems/ahrs/ahrs_float_dcm.c **** /*
    2:subsystems/ahrs/ahrs_float_dcm.c ****  * Released under Creative Commons License
@@ -410,14 +410,14 @@
  280              	.L13:
  281 001c 00000000 		.word	.LANCHOR0
  282              		.cfi_endproc
- 283              	.LFE37:
+ 283              	.LFE44:
  285              		.section	.text.ahrs_update_mag,"ax",%progbits
  286              		.align	1
  287              		.global	ahrs_update_mag
  288              		.thumb
  289              		.thumb_func
  291              	ahrs_update_mag:
- 292              	.LFB43:
+ 292              	.LFB50:
  115:subsystems/ahrs/ahrs_float_dcm.c **** 
  116:subsystems/ahrs/ahrs_float_dcm.c **** 
  117:subsystems/ahrs/ahrs_float_dcm.c **** /**************************************************/
@@ -637,7 +637,7 @@
  298              		.loc 2 325 0
  299 0000 7047     		bx	lr
  300              		.cfi_endproc
- 301              	.LFE43:
+ 301              	.LFE50:
  303              		.global	__aeabi_fcmplt
  304              		.global	__aeabi_fcmpgt
  305              		.global	__aeabi_f2d
@@ -649,7 +649,7 @@
  311              		.thumb
  312              		.thumb_func
  314              	Normalize:
- 315              	.LFB44:
+ 315              	.LFB51:
  326:subsystems/ahrs/ahrs_float_dcm.c **** 
  327:subsystems/ahrs/ahrs_float_dcm.c **** void Normalize(void)
  328:subsystems/ahrs/ahrs_float_dcm.c **** {
@@ -1037,7 +1037,7 @@
  605 0204 18000000 		.word	.LANCHOR0+24
  606 0208 28000000 		.word	.LANCHOR3+40
  607              		.cfi_endproc
- 608              	.LFE44:
+ 608              	.LFE51:
  610              		.global	__aeabi_dmul
  611              		.global	__aeabi_dadd
  612              		.global	__aeabi_dcmplt
@@ -1050,7 +1050,7 @@
  619              		.thumb
  620              		.thumb_func
  622              	Drift_correction:
- 623              	.LFB45:
+ 623              	.LFB52:
  406:subsystems/ahrs/ahrs_float_dcm.c **** 
  407:subsystems/ahrs/ahrs_float_dcm.c **** 
  408:subsystems/ahrs/ahrs_float_dcm.c **** void Drift_correction(void)
@@ -1443,7 +1443,7 @@
  908 0284 6666663F 		.word	1063675494
  909 0288 17B75138 		.word	944879383
  910              		.cfi_endproc
- 911              	.LFE45:
+ 911              	.LFE52:
  913              		.global	__aeabi_i2d
  914 028c AFF30080 		.section	.text.ahrs_update_accel,"ax",%progbits
  915              		.align	1
@@ -1451,7 +1451,7 @@
  917              		.thumb
  918              		.thumb_func
  920              	ahrs_update_accel:
- 921              	.LFB42:
+ 921              	.LFB49:
  252:subsystems/ahrs/ahrs_float_dcm.c **** {
  922              		.loc 2 252 0
  923              		.cfi_startproc
@@ -1601,14 +1601,14 @@
  1049 00f8 00000000 		.word	.LANCHOR10
  1050 00fc 000059C0 		.word	-1067909120
  1051              		.cfi_endproc
- 1052              	.LFE42:
+ 1052              	.LFE49:
  1054              		.section	.text.ahrs_init,"ax",%progbits
  1055              		.align	1
  1056              		.global	ahrs_init
  1057              		.thumb
  1058              		.thumb_func
  1060              	ahrs_init:
- 1061              	.LFB39:
+ 1061              	.LFB46:
  164:subsystems/ahrs/ahrs_float_dcm.c **** void ahrs_init(void) {
  1062              		.loc 2 164 0
  1063              		.cfi_startproc
@@ -1751,13 +1751,13 @@
  1174 00d8 00000000 		.word	ahrs_float
  1175 00dc 00000000 		.word	.LANCHOR3
  1176              		.cfi_endproc
- 1177              	.LFE39:
+ 1177              	.LFE46:
  1179              		.section	.text.compute_body_orientation_and_rates,"ax",%progbits
  1180              		.align	1
  1181              		.thumb
  1182              		.thumb_func
  1184              	compute_body_orientation_and_rates:
- 1185              	.LFB47:
+ 1185              	.LFB54:
  507:subsystems/ahrs/ahrs_float_dcm.c **** /**************************************************/
  508:subsystems/ahrs/ahrs_float_dcm.c **** 
  509:subsystems/ahrs/ahrs_float_dcm.c **** void Matrix_update(void)
@@ -2213,14 +2213,14 @@
  1583              		.loc 2 559 0
  1584 03ba BDE8FE8F 		pop	{r1, r2, r3, r4, r5, r6, r7, r8, r9, sl, fp, pc}
  1585              		.cfi_endproc
- 1586              	.LFE47:
+ 1586              	.LFE54:
  1588 03be 00BF     		.section	.text.ahrs_update_fw_estimator,"ax",%progbits
  1589              		.align	1
  1590              		.global	ahrs_update_fw_estimator
  1591              		.thumb
  1592              		.thumb_func
  1594              	ahrs_update_fw_estimator:
- 1595              	.LFB38:
+ 1595              	.LFB45:
  120:subsystems/ahrs/ahrs_float_dcm.c **** {
  1596              		.loc 2 120 0
  1597              		.cfi_startproc
@@ -2574,7 +2574,7 @@
  1924 02b4 05B0     		add	sp, sp, #20
  1925 02b6 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, sl, fp, pc}
  1926              		.cfi_endproc
- 1927              	.LFE38:
+ 1927              	.LFE45:
  1929 02ba 00BFAFF3 		.section	.text.Matrix_update,"ax",%progbits
  1929      0080
  1930              		.align	1
@@ -2582,7 +2582,7 @@
  1932              		.thumb
  1933              		.thumb_func
  1935              	Matrix_update:
- 1936              	.LFB46:
+ 1936              	.LFB53:
  510:subsystems/ahrs/ahrs_float_dcm.c **** {
  1937              		.loc 2 510 0
  1938              		.cfi_startproc
@@ -2844,14 +2844,14 @@
  2131 0120 00000000 		.word	.LANCHOR0
  2132 0124 24000000 		.word	.LANCHOR0+36
  2133              		.cfi_endproc
- 2134              	.LFE46:
+ 2134              	.LFE53:
  2136              		.section	.text.ahrs_propagate,"ax",%progbits
  2137              		.align	1
  2138              		.global	ahrs_propagate
  2139              		.thumb
  2140              		.thumb_func
  2142              	ahrs_propagate:
- 2143              	.LFB41:
+ 2143              	.LFB48:
  222:subsystems/ahrs/ahrs_float_dcm.c **** {
  2144              		.loc 2 222 0
  2145              		.cfi_startproc
@@ -2918,14 +2918,14 @@
  2199 0064 00000000 		.word	ahrs_float
  2200 0068 00000000 		.word	.LANCHOR3
  2201              		.cfi_endproc
- 2202              	.LFE41:
+ 2202              	.LFE48:
  2204              		.section	.text.ahrs_align,"ax",%progbits
  2205              		.align	1
  2206              		.global	ahrs_align
  2207              		.thumb
  2208              		.thumb_func
  2210              	ahrs_align:
- 2211              	.LFB40:
+ 2211              	.LFB47:
  198:subsystems/ahrs/ahrs_float_dcm.c **** {
  2212              		.loc 2 198 0
  2213              		.cfi_startproc
@@ -3461,7 +3461,7 @@
  2701 043c CD3B7F66 		.word	1719614413
  2702 0440 9EA0F63F 		.word	1073127582
  2703              		.cfi_endproc
- 2704              	.LFE40:
+ 2704              	.LFE47:
  2706              		.global	ins_roll_neutral
  2707              		.global	ins_pitch_neutral
  2708              		.global	G_Dt
@@ -3477,64 +3477,64 @@
  2718              		.global	renorm_blowup_count
  2719              		.global	imu_health
  2720              		.global	ahrs_impl
- 2721 0444 AFF30080 		.section	.bss.Temporary_Matrix,"aw",%nobits
+ 2721 0444 AFF30080 		.section	.bss.Omega_I,"aw",%nobits
  2722              		.align	2
- 2723              		.set	.LANCHOR15,. + 0
- 2726              	Temporary_Matrix:
- 2727 0000 00000000 		.space	36
+ 2723              		.set	.LANCHOR8,. + 0
+ 2726              	Omega_I:
+ 2727 0000 00000000 		.space	12
  2727      00000000 
  2727      00000000 
- 2727      00000000 
- 2727      00000000 
- 2728              		.section	.bss.ahrs_impl,"aw",%nobits
+ 2728              		.section	.bss.Scaled_Omega_P.5103,"aw",%nobits
  2729              		.align	2
- 2730              		.set	.LANCHOR3,. + 0
- 2733              	ahrs_impl:
- 2734 0000 00000000 		.space	76
+ 2730              		.set	.LANCHOR9,. + 0
+ 2733              	Scaled_Omega_P.5103:
+ 2734 0000 00000000 		.space	12
  2734      00000000 
  2734      00000000 
- 2734      00000000 
- 2734      00000000 
- 2735              		.section	.rodata.G_Dt,"a",%progbits
+ 2735              		.section	.bss.Temporary_Matrix,"aw",%nobits
  2736              		.align	2
- 2739              	G_Dt:
- 2740 0000 8988883C 		.word	1015580809
- 2741              		.section	.bss.Omega,"aw",%nobits
- 2742              		.align	2
- 2743              		.set	.LANCHOR10,. + 0
- 2746              	Omega:
- 2747 0000 00000000 		.space	12
- 2747      00000000 
- 2747      00000000 
- 2748              		.section	.bss.Scaled_Omega_I.4747,"aw",%nobits
- 2749              		.align	2
- 2750              		.set	.LANCHOR7,. + 0
- 2753              	Scaled_Omega_I.4747:
- 2754 0000 00000000 		.space	12
- 2754      00000000 
- 2754      00000000 
- 2755              		.section	.bss.renorm_sqrt_count,"aw",%nobits
- 2756              		.align	2
- 2757              		.set	.LANCHOR1,. + 0
- 2760              	renorm_sqrt_count:
- 2761 0000 00000000 		.space	4
- 2762              		.section	.bss.renorm_blowup_count,"aw",%nobits
+ 2737              		.set	.LANCHOR15,. + 0
+ 2740              	Temporary_Matrix:
+ 2741 0000 00000000 		.space	36
+ 2741      00000000 
+ 2741      00000000 
+ 2741      00000000 
+ 2741      00000000 
+ 2742              		.section	.bss.ahrs_impl,"aw",%nobits
+ 2743              		.align	2
+ 2744              		.set	.LANCHOR3,. + 0
+ 2747              	ahrs_impl:
+ 2748 0000 00000000 		.space	76
+ 2748      00000000 
+ 2748      00000000 
+ 2748      00000000 
+ 2748      00000000 
+ 2749              		.section	.bss.Omega,"aw",%nobits
+ 2750              		.align	2
+ 2751              		.set	.LANCHOR10,. + 0
+ 2754              	Omega:
+ 2755 0000 00000000 		.space	12
+ 2755      00000000 
+ 2755      00000000 
+ 2756              		.section	.rodata.G_Dt,"a",%progbits
+ 2757              		.align	2
+ 2760              	G_Dt:
+ 2761 0000 8988883C 		.word	1015580809
+ 2762              		.section	.bss.renorm_sqrt_count,"aw",%nobits
  2763              		.align	2
- 2764              		.set	.LANCHOR2,. + 0
- 2767              	renorm_blowup_count:
+ 2764              		.set	.LANCHOR1,. + 0
+ 2767              	renorm_sqrt_count:
  2768 0000 00000000 		.space	4
- 2769              		.section	.bss.ins_pitch_neutral,"aw",%nobits
+ 2769              		.section	.bss.renorm_blowup_count,"aw",%nobits
  2770              		.align	2
- 2771              		.set	.LANCHOR12,. + 0
- 2774              	ins_pitch_neutral:
+ 2771              		.set	.LANCHOR2,. + 0
+ 2774              	renorm_blowup_count:
  2775 0000 00000000 		.space	4
- 2776              		.section	.bss.Scaled_Omega_P.4746,"aw",%nobits
+ 2776              		.section	.bss.ins_pitch_neutral,"aw",%nobits
  2777              		.align	2
- 2778              		.set	.LANCHOR9,. + 0
- 2781              	Scaled_Omega_P.4746:
- 2782 0000 00000000 		.space	12
- 2782      00000000 
- 2782      00000000 
+ 2778              		.set	.LANCHOR12,. + 0
+ 2781              	ins_pitch_neutral:
+ 2782 0000 00000000 		.space	4
  2783              		.section	.bss.Omega_Vector,"aw",%nobits
  2784              		.align	2
  2785              		.set	.LANCHOR13,. + 0
@@ -3565,10 +3565,10 @@
  2816 0018 0000C040 		.word	1086324736
  2817 001c 0000E040 		.word	1088421888
  2818 0020 00000041 		.word	1090519040
- 2819              		.section	.bss.Omega_I,"aw",%nobits
+ 2819              		.section	.bss.Scaled_Omega_I.5104,"aw",%nobits
  2820              		.align	2
- 2821              		.set	.LANCHOR8,. + 0
- 2824              	Omega_I:
+ 2821              		.set	.LANCHOR7,. + 0
+ 2824              	Scaled_Omega_I.5104:
  2825 0000 00000000 		.space	12
  2825      00000000 
  2825      00000000 
@@ -3603,87 +3603,87 @@
  2856              	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 ahrs_float_dcm.c
-     /tmp/ccQO5RPE.s:26     .text.Vector_Dot_Product:00000000 $t
-     /tmp/ccQO5RPE.s:30     .text.Vector_Dot_Product:00000000 Vector_Dot_Product
-     /tmp/ccQO5RPE.s:74     .text.Vector_Cross_Product:00000000 $t
-     /tmp/ccQO5RPE.s:78     .text.Vector_Cross_Product:00000000 Vector_Cross_Product
-     /tmp/ccQO5RPE.s:145    .text.Vector_Scale:00000000 $t
-     /tmp/ccQO5RPE.s:149    .text.Vector_Scale:00000000 Vector_Scale
-     /tmp/ccQO5RPE.s:193    .text.Vector_Add:00000000 $t
-     /tmp/ccQO5RPE.s:197    .text.Vector_Add:00000000 Vector_Add
-     /tmp/ccQO5RPE.s:241    .text.set_dcm_matrix_from_rmat:00000000 $t
-     /tmp/ccQO5RPE.s:245    .text.set_dcm_matrix_from_rmat:00000000 set_dcm_matrix_from_rmat
-     /tmp/ccQO5RPE.s:281    .text.set_dcm_matrix_from_rmat:0000001c $d
-     /tmp/ccQO5RPE.s:286    .text.ahrs_update_mag:00000000 $t
-     /tmp/ccQO5RPE.s:291    .text.ahrs_update_mag:00000000 ahrs_update_mag
-     /tmp/ccQO5RPE.s:309    .text.Normalize:00000000 $t
-     /tmp/ccQO5RPE.s:314    .text.Normalize:00000000 Normalize
-     /tmp/ccQO5RPE.s:595    .text.Normalize:000001dc $d
-     /tmp/ccQO5RPE.s:617    .text.Drift_correction:00000000 $t
-     /tmp/ccQO5RPE.s:622    .text.Drift_correction:00000000 Drift_correction
-     /tmp/ccQO5RPE.s:881    .text.Drift_correction:00000218 $d
-     /tmp/ccQO5RPE.s:915    .text.ahrs_update_accel:00000000 $t
-     /tmp/ccQO5RPE.s:920    .text.ahrs_update_accel:00000000 ahrs_update_accel
-     /tmp/ccQO5RPE.s:1045   .text.ahrs_update_accel:000000e8 $d
-     /tmp/ccQO5RPE.s:1055   .text.ahrs_init:00000000 $t
-     /tmp/ccQO5RPE.s:1060   .text.ahrs_init:00000000 ahrs_init
-     /tmp/ccQO5RPE.s:1173   .text.ahrs_init:000000d4 $d
-     /tmp/ccQO5RPE.s:1180   .text.compute_body_orientation_and_rates:00000000 $t
-     /tmp/ccQO5RPE.s:1184   .text.compute_body_orientation_and_rates:00000000 compute_body_orientation_and_rates
-     /tmp/ccQO5RPE.s:1467   .text.compute_body_orientation_and_rates:0000029c $d
-     /tmp/ccQO5RPE.s:1470   .text.compute_body_orientation_and_rates:000002a4 $t
-     /tmp/ccQO5RPE.s:1589   .text.ahrs_update_fw_estimator:00000000 $t
-     /tmp/ccQO5RPE.s:1594   .text.ahrs_update_fw_estimator:00000000 ahrs_update_fw_estimator
-     /tmp/ccQO5RPE.s:1911   .text.ahrs_update_fw_estimator:00000288 $d
-     /tmp/ccQO5RPE.s:1924   .text.ahrs_update_fw_estimator:000002b4 $t
-     /tmp/ccQO5RPE.s:1930   .text.Matrix_update:00000000 $t
-     /tmp/ccQO5RPE.s:1935   .text.Matrix_update:00000000 Matrix_update
-     /tmp/ccQO5RPE.s:2122   .text.Matrix_update:000000fc $d
-     /tmp/ccQO5RPE.s:2137   .text.ahrs_propagate:00000000 $t
-     /tmp/ccQO5RPE.s:2142   .text.ahrs_propagate:00000000 ahrs_propagate
-     /tmp/ccQO5RPE.s:2198   .text.ahrs_propagate:00000060 $d
-     /tmp/ccQO5RPE.s:2205   .text.ahrs_align:00000000 $t
-     /tmp/ccQO5RPE.s:2210   .text.ahrs_align:00000000 ahrs_align
-     /tmp/ccQO5RPE.s:2546   .text.ahrs_align:000002a8 $d
-     /tmp/ccQO5RPE.s:2555   .text.ahrs_align:000002c8 $t
-     /tmp/ccQO5RPE.s:2698   .text.ahrs_align:00000430 $d
-     /tmp/ccQO5RPE.s:2795   .bss.ins_roll_neutral:00000000 ins_roll_neutral
-     /tmp/ccQO5RPE.s:2774   .bss.ins_pitch_neutral:00000000 ins_pitch_neutral
-     /tmp/ccQO5RPE.s:2739   .rodata.G_Dt:00000000 G_Dt
-     /tmp/ccQO5RPE.s:2853   .bss.accel_float:00000000 accel_float
-     /tmp/ccQO5RPE.s:2788   .bss.Omega_Vector:00000000 Omega_Vector
-     /tmp/ccQO5RPE.s:2846   .bss.Omega_P:00000000 Omega_P
-     /tmp/ccQO5RPE.s:2824   .bss.Omega_I:00000000 Omega_I
-     /tmp/ccQO5RPE.s:2746   .bss.Omega:00000000 Omega
-     /tmp/ccQO5RPE.s:2831   .data.DCM_Matrix:00000000 DCM_Matrix
-     /tmp/ccQO5RPE.s:2809   .data.Update_Matrix:00000000 Update_Matrix
-     /tmp/ccQO5RPE.s:2726   .bss.Temporary_Matrix:00000000 Temporary_Matrix
-     /tmp/ccQO5RPE.s:2760   .bss.renorm_sqrt_count:00000000 renorm_sqrt_count
-     /tmp/ccQO5RPE.s:2767   .bss.renorm_blowup_count:00000000 renorm_blowup_count
-     /tmp/ccQO5RPE.s:2802   .bss.imu_health:00000000 imu_health
-     /tmp/ccQO5RPE.s:2733   .bss.ahrs_impl:00000000 ahrs_impl
-     /tmp/ccQO5RPE.s:2722   .bss.Temporary_Matrix:00000000 $d
-     /tmp/ccQO5RPE.s:2729   .bss.ahrs_impl:00000000 $d
-     /tmp/ccQO5RPE.s:2736   .rodata.G_Dt:00000000 $d
-     /tmp/ccQO5RPE.s:2742   .bss.Omega:00000000 $d
-     /tmp/ccQO5RPE.s:2749   .bss.Scaled_Omega_I.4747:00000000 $d
-     /tmp/ccQO5RPE.s:2753   .bss.Scaled_Omega_I.4747:00000000 Scaled_Omega_I.4747
-     /tmp/ccQO5RPE.s:2756   .bss.renorm_sqrt_count:00000000 $d
-     /tmp/ccQO5RPE.s:2763   .bss.renorm_blowup_count:00000000 $d
-     /tmp/ccQO5RPE.s:2770   .bss.ins_pitch_neutral:00000000 $d
-     /tmp/ccQO5RPE.s:2777   .bss.Scaled_Omega_P.4746:00000000 $d
-     /tmp/ccQO5RPE.s:2781   .bss.Scaled_Omega_P.4746:00000000 Scaled_Omega_P.4746
-     /tmp/ccQO5RPE.s:2784   .bss.Omega_Vector:00000000 $d
-     /tmp/ccQO5RPE.s:2791   .bss.ins_roll_neutral:00000000 $d
-     /tmp/ccQO5RPE.s:2798   .bss.imu_health:00000000 $d
-     /tmp/ccQO5RPE.s:2805   .data.Update_Matrix:00000000 $d
-     /tmp/ccQO5RPE.s:2820   .bss.Omega_I:00000000 $d
-     /tmp/ccQO5RPE.s:2827   .data.DCM_Matrix:00000000 $d
-     /tmp/ccQO5RPE.s:2842   .bss.Omega_P:00000000 $d
-     /tmp/ccQO5RPE.s:2849   .bss.accel_float:00000000 $d
+     /tmp/ccwP8dWE.s:26     .text.Vector_Dot_Product:00000000 $t
+     /tmp/ccwP8dWE.s:30     .text.Vector_Dot_Product:00000000 Vector_Dot_Product
+     /tmp/ccwP8dWE.s:74     .text.Vector_Cross_Product:00000000 $t
+     /tmp/ccwP8dWE.s:78     .text.Vector_Cross_Product:00000000 Vector_Cross_Product
+     /tmp/ccwP8dWE.s:145    .text.Vector_Scale:00000000 $t
+     /tmp/ccwP8dWE.s:149    .text.Vector_Scale:00000000 Vector_Scale
+     /tmp/ccwP8dWE.s:193    .text.Vector_Add:00000000 $t
+     /tmp/ccwP8dWE.s:197    .text.Vector_Add:00000000 Vector_Add
+     /tmp/ccwP8dWE.s:241    .text.set_dcm_matrix_from_rmat:00000000 $t
+     /tmp/ccwP8dWE.s:245    .text.set_dcm_matrix_from_rmat:00000000 set_dcm_matrix_from_rmat
+     /tmp/ccwP8dWE.s:281    .text.set_dcm_matrix_from_rmat:0000001c $d
+     /tmp/ccwP8dWE.s:286    .text.ahrs_update_mag:00000000 $t
+     /tmp/ccwP8dWE.s:291    .text.ahrs_update_mag:00000000 ahrs_update_mag
+     /tmp/ccwP8dWE.s:309    .text.Normalize:00000000 $t
+     /tmp/ccwP8dWE.s:314    .text.Normalize:00000000 Normalize
+     /tmp/ccwP8dWE.s:595    .text.Normalize:000001dc $d
+     /tmp/ccwP8dWE.s:617    .text.Drift_correction:00000000 $t
+     /tmp/ccwP8dWE.s:622    .text.Drift_correction:00000000 Drift_correction
+     /tmp/ccwP8dWE.s:881    .text.Drift_correction:00000218 $d
+     /tmp/ccwP8dWE.s:915    .text.ahrs_update_accel:00000000 $t
+     /tmp/ccwP8dWE.s:920    .text.ahrs_update_accel:00000000 ahrs_update_accel
+     /tmp/ccwP8dWE.s:1045   .text.ahrs_update_accel:000000e8 $d
+     /tmp/ccwP8dWE.s:1055   .text.ahrs_init:00000000 $t
+     /tmp/ccwP8dWE.s:1060   .text.ahrs_init:00000000 ahrs_init
+     /tmp/ccwP8dWE.s:1173   .text.ahrs_init:000000d4 $d
+     /tmp/ccwP8dWE.s:1180   .text.compute_body_orientation_and_rates:00000000 $t
+     /tmp/ccwP8dWE.s:1184   .text.compute_body_orientation_and_rates:00000000 compute_body_orientation_and_rates
+     /tmp/ccwP8dWE.s:1467   .text.compute_body_orientation_and_rates:0000029c $d
+     /tmp/ccwP8dWE.s:1470   .text.compute_body_orientation_and_rates:000002a4 $t
+     /tmp/ccwP8dWE.s:1589   .text.ahrs_update_fw_estimator:00000000 $t
+     /tmp/ccwP8dWE.s:1594   .text.ahrs_update_fw_estimator:00000000 ahrs_update_fw_estimator
+     /tmp/ccwP8dWE.s:1911   .text.ahrs_update_fw_estimator:00000288 $d
+     /tmp/ccwP8dWE.s:1924   .text.ahrs_update_fw_estimator:000002b4 $t
+     /tmp/ccwP8dWE.s:1930   .text.Matrix_update:00000000 $t
+     /tmp/ccwP8dWE.s:1935   .text.Matrix_update:00000000 Matrix_update
+     /tmp/ccwP8dWE.s:2122   .text.Matrix_update:000000fc $d
+     /tmp/ccwP8dWE.s:2137   .text.ahrs_propagate:00000000 $t
+     /tmp/ccwP8dWE.s:2142   .text.ahrs_propagate:00000000 ahrs_propagate
+     /tmp/ccwP8dWE.s:2198   .text.ahrs_propagate:00000060 $d
+     /tmp/ccwP8dWE.s:2205   .text.ahrs_align:00000000 $t
+     /tmp/ccwP8dWE.s:2210   .text.ahrs_align:00000000 ahrs_align
+     /tmp/ccwP8dWE.s:2546   .text.ahrs_align:000002a8 $d
+     /tmp/ccwP8dWE.s:2555   .text.ahrs_align:000002c8 $t
+     /tmp/ccwP8dWE.s:2698   .text.ahrs_align:00000430 $d
+     /tmp/ccwP8dWE.s:2795   .bss.ins_roll_neutral:00000000 ins_roll_neutral
+     /tmp/ccwP8dWE.s:2781   .bss.ins_pitch_neutral:00000000 ins_pitch_neutral
+     /tmp/ccwP8dWE.s:2760   .rodata.G_Dt:00000000 G_Dt
+     /tmp/ccwP8dWE.s:2853   .bss.accel_float:00000000 accel_float
+     /tmp/ccwP8dWE.s:2788   .bss.Omega_Vector:00000000 Omega_Vector
+     /tmp/ccwP8dWE.s:2846   .bss.Omega_P:00000000 Omega_P
+     /tmp/ccwP8dWE.s:2726   .bss.Omega_I:00000000 Omega_I
+     /tmp/ccwP8dWE.s:2754   .bss.Omega:00000000 Omega
+     /tmp/ccwP8dWE.s:2831   .data.DCM_Matrix:00000000 DCM_Matrix
+     /tmp/ccwP8dWE.s:2809   .data.Update_Matrix:00000000 Update_Matrix
+     /tmp/ccwP8dWE.s:2740   .bss.Temporary_Matrix:00000000 Temporary_Matrix
+     /tmp/ccwP8dWE.s:2767   .bss.renorm_sqrt_count:00000000 renorm_sqrt_count
+     /tmp/ccwP8dWE.s:2774   .bss.renorm_blowup_count:00000000 renorm_blowup_count
+     /tmp/ccwP8dWE.s:2802   .bss.imu_health:00000000 imu_health
+     /tmp/ccwP8dWE.s:2747   .bss.ahrs_impl:00000000 ahrs_impl
+     /tmp/ccwP8dWE.s:2722   .bss.Omega_I:00000000 $d
+     /tmp/ccwP8dWE.s:2729   .bss.Scaled_Omega_P.5103:00000000 $d
+     /tmp/ccwP8dWE.s:2733   .bss.Scaled_Omega_P.5103:00000000 Scaled_Omega_P.5103
+     /tmp/ccwP8dWE.s:2736   .bss.Temporary_Matrix:00000000 $d
+     /tmp/ccwP8dWE.s:2743   .bss.ahrs_impl:00000000 $d
+     /tmp/ccwP8dWE.s:2750   .bss.Omega:00000000 $d
+     /tmp/ccwP8dWE.s:2757   .rodata.G_Dt:00000000 $d
+     /tmp/ccwP8dWE.s:2763   .bss.renorm_sqrt_count:00000000 $d
+     /tmp/ccwP8dWE.s:2770   .bss.renorm_blowup_count:00000000 $d
+     /tmp/ccwP8dWE.s:2777   .bss.ins_pitch_neutral:00000000 $d
+     /tmp/ccwP8dWE.s:2784   .bss.Omega_Vector:00000000 $d
+     /tmp/ccwP8dWE.s:2791   .bss.ins_roll_neutral:00000000 $d
+     /tmp/ccwP8dWE.s:2798   .bss.imu_health:00000000 $d
+     /tmp/ccwP8dWE.s:2805   .data.Update_Matrix:00000000 $d
+     /tmp/ccwP8dWE.s:2820   .bss.Scaled_Omega_I.5104:00000000 $d
+     /tmp/ccwP8dWE.s:2824   .bss.Scaled_Omega_I.5104:00000000 Scaled_Omega_I.5104
+     /tmp/ccwP8dWE.s:2827   .data.DCM_Matrix:00000000 $d
+     /tmp/ccwP8dWE.s:2842   .bss.Omega_P:00000000 $d
+     /tmp/ccwP8dWE.s:2849   .bss.accel_float:00000000 $d
                      .debug_frame:00000010 $d
-     /tmp/ccQO5RPE.s:914    .text.Drift_correction:0000028c $t
-     /tmp/ccQO5RPE.s:2721   .text.ahrs_align:00000444 $t
+     /tmp/ccwP8dWE.s:914    .text.Drift_correction:0000028c $t
+     /tmp/ccwP8dWE.s:2721   .text.ahrs_align:00000444 $t
 
 UNDEFINED SYMBOLS
 __aeabi_fmul

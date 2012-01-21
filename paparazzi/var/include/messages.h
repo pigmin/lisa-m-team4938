@@ -1,4 +1,4 @@
-/* Automatically generated from /home/mav/lisa-m-team4938/paparazzi/conf/messages.xml */
+/* Automatically generated from /home/woz/lisa-m-team4938/paparazzi/conf/messages.xml */
 /* Please DO NOT EDIT */
 /* Macros to send and receive messages of class telemetry */
 #ifdef DOWNLINK

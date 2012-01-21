@@ -19,7 +19,7 @@
   26              		.thumb
   27              		.thumb_func
   29              	ahrs_aligner_init:
-  30              	.LFB27:
+  30              	.LFB34:
   31              		.file 1 "subsystems/ahrs/ahrs_aligner.c"
    1:subsystems/ahrs/ahrs_aligner.c **** /*
    2:subsystems/ahrs/ahrs_aligner.c ****  * $Id$
@@ -122,14 +122,14 @@
   76 0038 00000000 		.word	.LANCHOR3
   77 003c 00000000 		.word	.LANCHOR4
   78              		.cfi_endproc
-  79              	.LFE27:
+  79              	.LFE34:
   81              		.section	.text.ahrs_aligner_run,"ax",%progbits
   82              		.align	1
   83              		.global	ahrs_aligner_run
   84              		.thumb
   85              		.thumb_func
   87              	ahrs_aligner_run:
-  88              	.LFB28:
+  88              	.LFB35:
   50:subsystems/ahrs/ahrs_aligner.c **** 
   51:subsystems/ahrs/ahrs_aligner.c **** #ifndef LOW_NOISE_THRESHOLD
   52:subsystems/ahrs/ahrs_aligner.c **** #define LOW_NOISE_THRESHOLD 90000
@@ -419,7 +419,7 @@
  303 0184 00000000 		.word	.LANCHOR5
  304              	.LBE2:
  305              		.cfi_endproc
- 306              	.LFE28:
+ 306              	.LFE35:
  308              		.global	ahrs_aligner
  309              		.section	.bss.gyro_sum,"aw",%nobits
  310              		.align	2
@@ -469,24 +469,24 @@
  352              	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 ahrs_aligner.c
-     /tmp/cc0cO7pv.s:24     .text.ahrs_aligner_init:00000000 $t
-     /tmp/cc0cO7pv.s:29     .text.ahrs_aligner_init:00000000 ahrs_aligner_init
-     /tmp/cc0cO7pv.s:73     .text.ahrs_aligner_init:0000002c $d
-     /tmp/cc0cO7pv.s:82     .text.ahrs_aligner_run:00000000 $t
-     /tmp/cc0cO7pv.s:87     .text.ahrs_aligner_run:00000000 ahrs_aligner_run
-     /tmp/cc0cO7pv.s:296    .text.ahrs_aligner_run:00000168 $d
-     /tmp/cc0cO7pv.s:335    .bss.ahrs_aligner:00000000 ahrs_aligner
-     /tmp/cc0cO7pv.s:310    .bss.gyro_sum:00000000 $d
-     /tmp/cc0cO7pv.s:314    .bss.gyro_sum:00000000 gyro_sum
-     /tmp/cc0cO7pv.s:317    .bss.mag_sum:00000000 $d
-     /tmp/cc0cO7pv.s:321    .bss.mag_sum:00000000 mag_sum
-     /tmp/cc0cO7pv.s:324    .bss.samples_idx:00000000 $d
-     /tmp/cc0cO7pv.s:328    .bss.samples_idx:00000000 samples_idx
-     /tmp/cc0cO7pv.s:331    .bss.ahrs_aligner:00000000 $d
-     /tmp/cc0cO7pv.s:338    .bss.ref_sensor_samples:00000000 $d
-     /tmp/cc0cO7pv.s:342    .bss.ref_sensor_samples:00000000 ref_sensor_samples
-     /tmp/cc0cO7pv.s:345    .bss.accel_sum:00000000 $d
-     /tmp/cc0cO7pv.s:349    .bss.accel_sum:00000000 accel_sum
+     /tmp/ccPtgP7k.s:24     .text.ahrs_aligner_init:00000000 $t
+     /tmp/ccPtgP7k.s:29     .text.ahrs_aligner_init:00000000 ahrs_aligner_init
+     /tmp/ccPtgP7k.s:73     .text.ahrs_aligner_init:0000002c $d
+     /tmp/ccPtgP7k.s:82     .text.ahrs_aligner_run:00000000 $t
+     /tmp/ccPtgP7k.s:87     .text.ahrs_aligner_run:00000000 ahrs_aligner_run
+     /tmp/ccPtgP7k.s:296    .text.ahrs_aligner_run:00000168 $d
+     /tmp/ccPtgP7k.s:335    .bss.ahrs_aligner:00000000 ahrs_aligner
+     /tmp/ccPtgP7k.s:310    .bss.gyro_sum:00000000 $d
+     /tmp/ccPtgP7k.s:314    .bss.gyro_sum:00000000 gyro_sum
+     /tmp/ccPtgP7k.s:317    .bss.mag_sum:00000000 $d
+     /tmp/ccPtgP7k.s:321    .bss.mag_sum:00000000 mag_sum
+     /tmp/ccPtgP7k.s:324    .bss.samples_idx:00000000 $d
+     /tmp/ccPtgP7k.s:328    .bss.samples_idx:00000000 samples_idx
+     /tmp/ccPtgP7k.s:331    .bss.ahrs_aligner:00000000 $d
+     /tmp/ccPtgP7k.s:338    .bss.ref_sensor_samples:00000000 $d
+     /tmp/ccPtgP7k.s:342    .bss.ref_sensor_samples:00000000 ref_sensor_samples
+     /tmp/ccPtgP7k.s:345    .bss.accel_sum:00000000 $d
+     /tmp/ccPtgP7k.s:349    .bss.accel_sum:00000000 accel_sum
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS

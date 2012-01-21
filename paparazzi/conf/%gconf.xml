@@ -1,8 +1,8 @@
 <gconf>
   <entry name="left_pane_width" value="340" application="paparazzi center"/>
-  <entry name="height" value="725" application="paparazzi center"/>
+  <entry name="height" value="721" application="paparazzi center"/>
   <entry name="width" value="1280" application="paparazzi center"/>
   <entry name="last target" value="sim" application="paparazzi center"/>
   <entry name="last session" value="Simulation" application="paparazzi center"/>
-  <entry name="last A/C" value="" application="paparazzi center"/>
+  <entry name="last A/C" value="Microjet" application="paparazzi center"/>
 </gconf>

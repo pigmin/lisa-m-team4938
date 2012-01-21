@@ -17,17 +17,16 @@
   24              		.section	.bss.actuators,"aw",%nobits
   25              		.align	2
   28              	actuators:
-  29 0000 00000000 		.space	16
+  29 0000 00000000 		.space	10
   29      00000000 
-  29      00000000 
-  29      00000000 
-  30              		.text
+  29      0000
+  30 000a 0000     		.text
   31              	.Letext0:
   32              		.file 1 "/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include
   33              		.file 2 "actuators.c"
 DEFINED SYMBOLS
                             *ABS*:00000000 actuators.c
-     /tmp/cccrhMCG.s:28     .bss.actuators:00000000 actuators
-     /tmp/cccrhMCG.s:25     .bss.actuators:00000000 $d
+     /tmp/cc2y3mqY.s:28     .bss.actuators:00000000 actuators
+     /tmp/cc2y3mqY.s:25     .bss.actuators:00000000 $d
 
 NO UNDEFINED SYMBOLS

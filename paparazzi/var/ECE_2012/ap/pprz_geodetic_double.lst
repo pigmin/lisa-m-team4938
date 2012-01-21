@@ -2247,40 +2247,40 @@
  1931              	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 pprz_geodetic_double.c
-     /tmp/ccW2FgtS.s:27     .text.enu_of_ecef_point_d:00000000 $t
-     /tmp/ccW2FgtS.s:32     .text.enu_of_ecef_point_d:00000000 enu_of_ecef_point_d
-     /tmp/ccW2FgtS.s:169    .text.ned_of_ecef_point_d:00000000 $t
-     /tmp/ccW2FgtS.s:174    .text.ned_of_ecef_point_d:00000000 ned_of_ecef_point_d
-     /tmp/ccW2FgtS.s:213    .text.enu_of_ecef_vect_d:00000000 $t
-     /tmp/ccW2FgtS.s:218    .text.enu_of_ecef_vect_d:00000000 enu_of_ecef_vect_d
-     /tmp/ccW2FgtS.s:340    .text.ned_of_ecef_vect_d:00000000 $t
-     /tmp/ccW2FgtS.s:345    .text.ned_of_ecef_vect_d:00000000 ned_of_ecef_vect_d
-     /tmp/ccW2FgtS.s:384    .text.ecef_of_enu_point_d:00000000 $t
-     /tmp/ccW2FgtS.s:389    .text.ecef_of_enu_point_d:00000000 ecef_of_enu_point_d
-     /tmp/ccW2FgtS.s:531    .text.ecef_of_ned_point_d:00000000 $t
-     /tmp/ccW2FgtS.s:536    .text.ecef_of_ned_point_d:00000000 ecef_of_ned_point_d
-     /tmp/ccW2FgtS.s:578    .text.ecef_of_enu_vect_d:00000000 $t
-     /tmp/ccW2FgtS.s:583    .text.ecef_of_enu_vect_d:00000000 ecef_of_enu_vect_d
-     /tmp/ccW2FgtS.s:705    .text.ecef_of_ned_vect_d:00000000 $t
-     /tmp/ccW2FgtS.s:710    .text.ecef_of_ned_vect_d:00000000 ecef_of_ned_vect_d
-     /tmp/ccW2FgtS.s:752    .text.gc_of_gd_lat_d:00000000 $t
-     /tmp/ccW2FgtS.s:757    .text.gc_of_gd_lat_d:00000000 gc_of_gd_lat_d
-     /tmp/ccW2FgtS.s:868    .text.gc_of_gd_lat_d:000000c0 $d
-     /tmp/ccW2FgtS.s:879    .text.ecef_of_lla_d:00000000 $t
-     /tmp/ccW2FgtS.s:884    .text.ecef_of_lla_d:00000000 ecef_of_lla_d
-     /tmp/ccW2FgtS.s:1012   .text.ecef_of_lla_d:000000e0 $d
-     /tmp/ccW2FgtS.s:1023   .text.lla_of_ecef_d:00000000 $t
-     /tmp/ccW2FgtS.s:1028   .text.lla_of_ecef_d:00000000 lla_of_ecef_d
-     /tmp/ccW2FgtS.s:1401   .text.lla_of_ecef_d:00000330 $d
-     /tmp/ccW2FgtS.s:1434   .text.ltp_def_from_ecef_d:00000000 $t
-     /tmp/ccW2FgtS.s:1439   .text.ltp_def_from_ecef_d:00000000 ltp_def_from_ecef_d
-     /tmp/ccW2FgtS.s:1580   .text.lla_of_utm_d:00000000 $t
-     /tmp/ccW2FgtS.s:1585   .text.lla_of_utm_d:00000000 lla_of_utm_d
-     /tmp/ccW2FgtS.s:1906   .text.lla_of_utm_d:000002a8 $d
+     /tmp/ccVOBbqh.s:27     .text.enu_of_ecef_point_d:00000000 $t
+     /tmp/ccVOBbqh.s:32     .text.enu_of_ecef_point_d:00000000 enu_of_ecef_point_d
+     /tmp/ccVOBbqh.s:169    .text.ned_of_ecef_point_d:00000000 $t
+     /tmp/ccVOBbqh.s:174    .text.ned_of_ecef_point_d:00000000 ned_of_ecef_point_d
+     /tmp/ccVOBbqh.s:213    .text.enu_of_ecef_vect_d:00000000 $t
+     /tmp/ccVOBbqh.s:218    .text.enu_of_ecef_vect_d:00000000 enu_of_ecef_vect_d
+     /tmp/ccVOBbqh.s:340    .text.ned_of_ecef_vect_d:00000000 $t
+     /tmp/ccVOBbqh.s:345    .text.ned_of_ecef_vect_d:00000000 ned_of_ecef_vect_d
+     /tmp/ccVOBbqh.s:384    .text.ecef_of_enu_point_d:00000000 $t
+     /tmp/ccVOBbqh.s:389    .text.ecef_of_enu_point_d:00000000 ecef_of_enu_point_d
+     /tmp/ccVOBbqh.s:531    .text.ecef_of_ned_point_d:00000000 $t
+     /tmp/ccVOBbqh.s:536    .text.ecef_of_ned_point_d:00000000 ecef_of_ned_point_d
+     /tmp/ccVOBbqh.s:578    .text.ecef_of_enu_vect_d:00000000 $t
+     /tmp/ccVOBbqh.s:583    .text.ecef_of_enu_vect_d:00000000 ecef_of_enu_vect_d
+     /tmp/ccVOBbqh.s:705    .text.ecef_of_ned_vect_d:00000000 $t
+     /tmp/ccVOBbqh.s:710    .text.ecef_of_ned_vect_d:00000000 ecef_of_ned_vect_d
+     /tmp/ccVOBbqh.s:752    .text.gc_of_gd_lat_d:00000000 $t
+     /tmp/ccVOBbqh.s:757    .text.gc_of_gd_lat_d:00000000 gc_of_gd_lat_d
+     /tmp/ccVOBbqh.s:868    .text.gc_of_gd_lat_d:000000c0 $d
+     /tmp/ccVOBbqh.s:879    .text.ecef_of_lla_d:00000000 $t
+     /tmp/ccVOBbqh.s:884    .text.ecef_of_lla_d:00000000 ecef_of_lla_d
+     /tmp/ccVOBbqh.s:1012   .text.ecef_of_lla_d:000000e0 $d
+     /tmp/ccVOBbqh.s:1023   .text.lla_of_ecef_d:00000000 $t
+     /tmp/ccVOBbqh.s:1028   .text.lla_of_ecef_d:00000000 lla_of_ecef_d
+     /tmp/ccVOBbqh.s:1401   .text.lla_of_ecef_d:00000330 $d
+     /tmp/ccVOBbqh.s:1434   .text.ltp_def_from_ecef_d:00000000 $t
+     /tmp/ccVOBbqh.s:1439   .text.ltp_def_from_ecef_d:00000000 ltp_def_from_ecef_d
+     /tmp/ccVOBbqh.s:1580   .text.lla_of_utm_d:00000000 $t
+     /tmp/ccVOBbqh.s:1585   .text.lla_of_utm_d:00000000 lla_of_utm_d
+     /tmp/ccVOBbqh.s:1906   .text.lla_of_utm_d:000002a8 $d
                      .debug_frame:00000010 $d
-     /tmp/ccW2FgtS.s:1022   .text.ecef_of_lla_d:000000fc $t
-     /tmp/ccW2FgtS.s:1433   .text.lla_of_ecef_d:000003a4 $t
-     /tmp/ccW2FgtS.s:1930   .text.lla_of_utm_d:000002fc $t
+     /tmp/ccVOBbqh.s:1022   .text.ecef_of_lla_d:000000fc $t
+     /tmp/ccVOBbqh.s:1433   .text.lla_of_ecef_d:000003a4 $t
+     /tmp/ccVOBbqh.s:1930   .text.lla_of_utm_d:000002fc $t
 
 UNDEFINED SYMBOLS
 __aeabi_dsub

@@ -1,4 +1,4 @@
-/* This file has been generated from /home/mav/lisa-m-team4938/paparazzi/conf/airframes/lisa_m.xml */
+/* This file has been generated from /home/woz/lisa-m-team4938/paparazzi/conf/airframes/lisa_m.xml */
 /* Please DO NOT EDIT */
 
 #ifndef MODULES_H

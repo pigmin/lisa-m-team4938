@@ -41,14 +41,14 @@
   58              		.file 2 "downlink.c"
 DEFINED SYMBOLS
                             *ABS*:00000000 downlink.c
-     /tmp/ccExvHXM.s:53     .data.telemetry_mode_Fbw_DefaultChannel:00000000 telemetry_mode_Fbw_DefaultChannel
-     /tmp/ccExvHXM.s:48     .bss.telemetry_mode_Ap_DefaultChannel:00000000 telemetry_mode_Ap_DefaultChannel
-     /tmp/ccExvHXM.s:37     .bss.downlink_nb_ovrn:00000000 downlink_nb_ovrn
-     /tmp/ccExvHXM.s:43     .bss.downlink_nb_bytes:00000000 downlink_nb_bytes
-     /tmp/ccExvHXM.s:32     .bss.downlink_nb_msgs:00000000 downlink_nb_msgs
-     /tmp/ccExvHXM.s:29     .bss.downlink_nb_msgs:00000000 $d
-     /tmp/ccExvHXM.s:38     .bss.downlink_nb_ovrn:00000000 $d
-     /tmp/ccExvHXM.s:40     .bss.downlink_nb_bytes:00000000 $d
-     /tmp/ccExvHXM.s:49     .bss.telemetry_mode_Ap_DefaultChannel:00000000 $d
+     /tmp/cc1q3022.s:53     .data.telemetry_mode_Fbw_DefaultChannel:00000000 telemetry_mode_Fbw_DefaultChannel
+     /tmp/cc1q3022.s:48     .bss.telemetry_mode_Ap_DefaultChannel:00000000 telemetry_mode_Ap_DefaultChannel
+     /tmp/cc1q3022.s:37     .bss.downlink_nb_ovrn:00000000 downlink_nb_ovrn
+     /tmp/cc1q3022.s:43     .bss.downlink_nb_bytes:00000000 downlink_nb_bytes
+     /tmp/cc1q3022.s:32     .bss.downlink_nb_msgs:00000000 downlink_nb_msgs
+     /tmp/cc1q3022.s:29     .bss.downlink_nb_msgs:00000000 $d
+     /tmp/cc1q3022.s:38     .bss.downlink_nb_ovrn:00000000 $d
+     /tmp/cc1q3022.s:40     .bss.downlink_nb_bytes:00000000 $d
+     /tmp/cc1q3022.s:49     .bss.telemetry_mode_Ap_DefaultChannel:00000000 $d
 
 NO UNDEFINED SYMBOLS

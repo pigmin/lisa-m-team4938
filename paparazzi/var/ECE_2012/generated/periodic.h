@@ -1,4 +1,4 @@
-/* This file has been generated from /home/mav/lisa-m-team4938/paparazzi/conf/messages.xml and /home/mav/lisa-m-team4938/paparazzi/conf/telemetry/default.xml */
+/* This file has been generated from /home/woz/lisa-m-team4938/paparazzi/conf/messages.xml and /home/woz/lisa-m-team4938/paparazzi/conf/telemetry/default.xml */
 /* Please DO NOT EDIT */
 
 #ifndef _VAR_PERIODIC_H_

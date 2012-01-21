@@ -68,142 +68,143 @@
   36              		@ link register save eliminated.
   41:subsystems/navigation/common_flight_plan.c ****   if (nav_block >= NB_BLOCK)
   37              		.loc 1 41 0
-  38 0000 054B     		ldr	r3, .L5
+  38 0000 064B     		ldr	r3, .L5
   39 0002 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
-  40 0004 0AB1     		cbz	r2, .L2
+  40 0004 102A     		cmp	r2, #16
+  41 0006 01D9     		bls	.L2
   42:subsystems/navigation/common_flight_plan.c ****     nav_block=NB_BLOCK-1;
-  41              		.loc 1 42 0
-  42 0006 0022     		movs	r2, #0
-  43 0008 1A70     		strb	r2, [r3, #0]
-  44              	.L2:
+  42              		.loc 1 42 0
+  43 0008 1022     		movs	r2, #16
+  44 000a 1A70     		strb	r2, [r3, #0]
+  45              	.L2:
   43:subsystems/navigation/common_flight_plan.c ****   nav_stage = 0;
-  45              		.loc 1 43 0
-  46 000a 044A     		ldr	r2, .L5+4
-  47 000c 0023     		movs	r3, #0
-  48 000e 1370     		strb	r3, [r2, #0]
+  46              		.loc 1 43 0
+  47 000c 044A     		ldr	r2, .L5+4
+  48 000e 0023     		movs	r3, #0
+  49 0010 1370     		strb	r3, [r2, #0]
   44:subsystems/navigation/common_flight_plan.c ****   block_time = 0;
-  49              		.loc 1 44 0
-  50 0010 034A     		ldr	r2, .L5+8
-  51 0012 1380     		strh	r3, [r2, #0]	@ movhi
+  50              		.loc 1 44 0
+  51 0012 044A     		ldr	r2, .L5+8
+  52 0014 1380     		strh	r3, [r2, #0]	@ movhi
   45:subsystems/navigation/common_flight_plan.c ****   InitStage();
   46:subsystems/navigation/common_flight_plan.c **** }
-  52              		.loc 1 46 0
+  53              		.loc 1 46 0
   45:subsystems/navigation/common_flight_plan.c ****   InitStage();
-  53              		.loc 1 45 0
-  54 0014 FFF7FEBF 		b	nav_init_stage
-  55              	.L6:
-  56              		.align	2
-  57              	.L5:
-  58 0018 00000000 		.word	.LANCHOR0
-  59 001c 00000000 		.word	.LANCHOR1
-  60 0020 00000000 		.word	.LANCHOR2
-  61              		.cfi_endproc
-  62              	.LFE0:
-  64              		.section	.text.nav_goto_block,"ax",%progbits
-  65              		.align	1
-  66              		.global	nav_goto_block
-  67              		.thumb
-  68              		.thumb_func
-  70              	nav_goto_block:
-  71              	.LFB1:
+  54              		.loc 1 45 0
+  55 0016 FFF7FEBF 		b	nav_init_stage
+  56              	.L6:
+  57 001a 00BF     		.align	2
+  58              	.L5:
+  59 001c 00000000 		.word	.LANCHOR0
+  60 0020 00000000 		.word	.LANCHOR1
+  61 0024 00000000 		.word	.LANCHOR2
+  62              		.cfi_endproc
+  63              	.LFE0:
+  65              		.section	.text.nav_goto_block,"ax",%progbits
+  66              		.align	1
+  67              		.global	nav_goto_block
+  68              		.thumb
+  69              		.thumb_func
+  71              	nav_goto_block:
+  72              	.LFB1:
   47:subsystems/navigation/common_flight_plan.c **** 
   48:subsystems/navigation/common_flight_plan.c **** void nav_goto_block(uint8_t b) {
-  72              		.loc 1 48 0
-  73              		.cfi_startproc
-  74              		@ args = 0, pretend = 0, frame = 0
-  75              		@ frame_needed = 0, uses_anonymous_args = 0
-  76              		@ link register save eliminated.
-  77              	.LVL0:
+  73              		.loc 1 48 0
+  74              		.cfi_startproc
+  75              		@ args = 0, pretend = 0, frame = 0
+  76              		@ frame_needed = 0, uses_anonymous_args = 0
+  77              		@ link register save eliminated.
+  78              	.LVL0:
   49:subsystems/navigation/common_flight_plan.c ****   if (b != nav_block) { /* To avoid a loop in a the current block */
-  78              		.loc 1 49 0
-  79 0000 064B     		ldr	r3, .L10
-  80 0002 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
-  81 0004 9842     		cmp	r0, r3
-  82 0006 05D0     		beq	.L8
+  79              		.loc 1 49 0
+  80 0000 064B     		ldr	r3, .L10
+  81 0002 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+  82 0004 9842     		cmp	r0, r3
+  83 0006 05D0     		beq	.L8
   50:subsystems/navigation/common_flight_plan.c ****     last_block = nav_block;
-  83              		.loc 1 50 0
-  84 0008 054A     		ldr	r2, .L10+4
-  85 000a 1370     		strb	r3, [r2, #0]
+  84              		.loc 1 50 0
+  85 0008 054A     		ldr	r2, .L10+4
+  86 000a 1370     		strb	r3, [r2, #0]
   51:subsystems/navigation/common_flight_plan.c ****     last_stage = nav_stage;
-  86              		.loc 1 51 0
-  87 000c 054B     		ldr	r3, .L10+8
-  88 000e 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
-  89 0010 054B     		ldr	r3, .L10+12
-  90 0012 1A70     		strb	r2, [r3, #0]
-  91              	.L8:
+  87              		.loc 1 51 0
+  88 000c 054B     		ldr	r3, .L10+8
+  89 000e 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
+  90 0010 054B     		ldr	r3, .L10+12
+  91 0012 1A70     		strb	r2, [r3, #0]
+  92              	.L8:
   52:subsystems/navigation/common_flight_plan.c ****   }
   53:subsystems/navigation/common_flight_plan.c ****   GotoBlock(b);
-  92              		.loc 1 53 0
-  93 0014 014B     		ldr	r3, .L10
-  94 0016 1870     		strb	r0, [r3, #0]
+  93              		.loc 1 53 0
+  94 0014 014B     		ldr	r3, .L10
+  95 0016 1870     		strb	r0, [r3, #0]
   54:subsystems/navigation/common_flight_plan.c **** }
-  95              		.loc 1 54 0
+  96              		.loc 1 54 0
   53:subsystems/navigation/common_flight_plan.c ****   GotoBlock(b);
-  96              		.loc 1 53 0
-  97 0018 FFF7FEBF 		b	nav_init_block
-  98              	.LVL1:
-  99              	.L11:
- 100              		.align	2
- 101              	.L10:
- 102 001c 00000000 		.word	.LANCHOR0
- 103 0020 00000000 		.word	.LANCHOR3
- 104 0024 00000000 		.word	.LANCHOR1
- 105 0028 00000000 		.word	.LANCHOR4
- 106              		.cfi_endproc
- 107              	.LFE1:
- 109              		.global	stage_time
- 110              		.global	block_time
- 111              		.global	nav_stage
- 112              		.global	nav_block
- 113              		.global	last_block
- 114              		.global	last_stage
- 115              		.section	.bss.stage_time,"aw",%nobits
- 116              		.align	1
- 119              	stage_time:
- 120 0000 0000     		.space	2
- 121              		.section	.bss.last_block,"aw",%nobits
- 122              		.set	.LANCHOR3,. + 0
- 125              	last_block:
- 126 0000 00       		.space	1
- 127              		.section	.bss.block_time,"aw",%nobits
- 128              		.align	1
- 129              		.set	.LANCHOR2,. + 0
- 132              	block_time:
- 133 0000 0000     		.space	2
- 134              		.section	.bss.nav_block,"aw",%nobits
- 135              		.set	.LANCHOR0,. + 0
- 138              	nav_block:
- 139 0000 00       		.space	1
- 140              		.section	.bss.last_stage,"aw",%nobits
- 141              		.set	.LANCHOR4,. + 0
- 144              	last_stage:
- 145 0000 00       		.space	1
- 146              		.section	.bss.nav_stage,"aw",%nobits
- 147              		.set	.LANCHOR1,. + 0
- 150              	nav_stage:
- 151 0000 00       		.space	1
- 152              		.text
- 153              	.Letext0:
+  97              		.loc 1 53 0
+  98 0018 FFF7FEBF 		b	nav_init_block
+  99              	.LVL1:
+ 100              	.L11:
+ 101              		.align	2
+ 102              	.L10:
+ 103 001c 00000000 		.word	.LANCHOR0
+ 104 0020 00000000 		.word	.LANCHOR3
+ 105 0024 00000000 		.word	.LANCHOR1
+ 106 0028 00000000 		.word	.LANCHOR4
+ 107              		.cfi_endproc
+ 108              	.LFE1:
+ 110              		.global	stage_time
+ 111              		.global	block_time
+ 112              		.global	nav_stage
+ 113              		.global	nav_block
+ 114              		.global	last_block
+ 115              		.global	last_stage
+ 116              		.section	.bss.stage_time,"aw",%nobits
+ 117              		.align	1
+ 120              	stage_time:
+ 121 0000 0000     		.space	2
+ 122              		.section	.bss.last_block,"aw",%nobits
+ 123              		.set	.LANCHOR3,. + 0
+ 126              	last_block:
+ 127 0000 00       		.space	1
+ 128              		.section	.bss.block_time,"aw",%nobits
+ 129              		.align	1
+ 130              		.set	.LANCHOR2,. + 0
+ 133              	block_time:
+ 134 0000 0000     		.space	2
+ 135              		.section	.bss.nav_block,"aw",%nobits
+ 136              		.set	.LANCHOR0,. + 0
+ 139              	nav_block:
+ 140 0000 00       		.space	1
+ 141              		.section	.bss.last_stage,"aw",%nobits
+ 142              		.set	.LANCHOR4,. + 0
+ 145              	last_stage:
+ 146 0000 00       		.space	1
+ 147              		.section	.bss.nav_stage,"aw",%nobits
+ 148              		.set	.LANCHOR1,. + 0
+ 151              	nav_stage:
+ 152 0000 00       		.space	1
+ 153              		.text
+ 154              	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 common_flight_plan.c
-     /tmp/ccdbPmgs.s:24     .text.nav_init_block:00000000 $t
-     /tmp/ccdbPmgs.s:29     .text.nav_init_block:00000000 nav_init_block
-     /tmp/ccdbPmgs.s:58     .text.nav_init_block:00000018 $d
-     /tmp/ccdbPmgs.s:65     .text.nav_goto_block:00000000 $t
-     /tmp/ccdbPmgs.s:70     .text.nav_goto_block:00000000 nav_goto_block
-     /tmp/ccdbPmgs.s:102    .text.nav_goto_block:0000001c $d
-     /tmp/ccdbPmgs.s:119    .bss.stage_time:00000000 stage_time
-     /tmp/ccdbPmgs.s:132    .bss.block_time:00000000 block_time
-     /tmp/ccdbPmgs.s:150    .bss.nav_stage:00000000 nav_stage
-     /tmp/ccdbPmgs.s:138    .bss.nav_block:00000000 nav_block
-     /tmp/ccdbPmgs.s:125    .bss.last_block:00000000 last_block
-     /tmp/ccdbPmgs.s:144    .bss.last_stage:00000000 last_stage
-     /tmp/ccdbPmgs.s:116    .bss.stage_time:00000000 $d
-     /tmp/ccdbPmgs.s:126    .bss.last_block:00000000 $d
-     /tmp/ccdbPmgs.s:128    .bss.block_time:00000000 $d
-     /tmp/ccdbPmgs.s:139    .bss.nav_block:00000000 $d
-     /tmp/ccdbPmgs.s:145    .bss.last_stage:00000000 $d
-     /tmp/ccdbPmgs.s:151    .bss.nav_stage:00000000 $d
+     /tmp/cchv5RgM.s:24     .text.nav_init_block:00000000 $t
+     /tmp/cchv5RgM.s:29     .text.nav_init_block:00000000 nav_init_block
+     /tmp/cchv5RgM.s:59     .text.nav_init_block:0000001c $d
+     /tmp/cchv5RgM.s:66     .text.nav_goto_block:00000000 $t
+     /tmp/cchv5RgM.s:71     .text.nav_goto_block:00000000 nav_goto_block
+     /tmp/cchv5RgM.s:103    .text.nav_goto_block:0000001c $d
+     /tmp/cchv5RgM.s:120    .bss.stage_time:00000000 stage_time
+     /tmp/cchv5RgM.s:133    .bss.block_time:00000000 block_time
+     /tmp/cchv5RgM.s:151    .bss.nav_stage:00000000 nav_stage
+     /tmp/cchv5RgM.s:139    .bss.nav_block:00000000 nav_block
+     /tmp/cchv5RgM.s:126    .bss.last_block:00000000 last_block
+     /tmp/cchv5RgM.s:145    .bss.last_stage:00000000 last_stage
+     /tmp/cchv5RgM.s:117    .bss.stage_time:00000000 $d
+     /tmp/cchv5RgM.s:127    .bss.last_block:00000000 $d
+     /tmp/cchv5RgM.s:129    .bss.block_time:00000000 $d
+     /tmp/cchv5RgM.s:140    .bss.nav_block:00000000 $d
+     /tmp/cchv5RgM.s:146    .bss.last_stage:00000000 $d
+     /tmp/cchv5RgM.s:152    .bss.nav_stage:00000000 $d
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS

@@ -147,8 +147,8 @@
   54              	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 mcu_arch.c
-     /tmp/ccbLE1kW.s:24     .text.mcu_arch_init:00000000 $t
-     /tmp/ccbLE1kW.s:29     .text.mcu_arch_init:00000000 mcu_arch_init
+     /tmp/ccAJ0lsa.s:24     .text.mcu_arch_init:00000000 $t
+     /tmp/ccAJ0lsa.s:29     .text.mcu_arch_init:00000000 mcu_arch_init
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS

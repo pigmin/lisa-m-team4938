@@ -1,4 +1,4 @@
-/* Generated from /home/mav/lisa-m-team4938/paparazzi/conf/mtk.xml */
+/* Generated from /home/woz/lisa-m-team4938/paparazzi/conf/mtk.xml */
 /* Please DO NOT EDIT */
 
 #define MTK_DIY14_SYNC1 0xB5

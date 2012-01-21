@@ -89,18 +89,18 @@
   65              		.text
   66              	.Letext0:
   67              		.file 2 "/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include
-  68              		.file 3 "/home/mav/lisa-m-team4938/paparazzi/sw/include/std.h"
+  68              		.file 3 "/home/woz/lisa-m-team4938/paparazzi/sw/include/std.h"
   69              		.file 4 "./paparazzi.h"
   70              		.file 5 "./subsystems/radio_control.h"
 DEFINED SYMBOLS
                             *ABS*:00000000 ppm.c
-     /tmp/ccbTH7dm.s:24     .text.radio_control_impl_init:00000000 $t
-     /tmp/ccbTH7dm.s:29     .text.radio_control_impl_init:00000000 radio_control_impl_init
-     /tmp/ccbTH7dm.s:47     .text.radio_control_impl_init:0000000c $d
-     /tmp/ccbTH7dm.s:57     .bss.ppm_pulses:00000000 ppm_pulses
-     /tmp/ccbTH7dm.s:63     .bss.ppm_frame_available:00000000 ppm_frame_available
-     /tmp/ccbTH7dm.s:54     .bss.ppm_pulses:00000000 $d
-     /tmp/ccbTH7dm.s:64     .bss.ppm_frame_available:00000000 $d
+     /tmp/cc4hdIyW.s:24     .text.radio_control_impl_init:00000000 $t
+     /tmp/cc4hdIyW.s:29     .text.radio_control_impl_init:00000000 radio_control_impl_init
+     /tmp/cc4hdIyW.s:47     .text.radio_control_impl_init:0000000c $d
+     /tmp/cc4hdIyW.s:57     .bss.ppm_pulses:00000000 ppm_pulses
+     /tmp/cc4hdIyW.s:63     .bss.ppm_frame_available:00000000 ppm_frame_available
+     /tmp/cc4hdIyW.s:54     .bss.ppm_pulses:00000000 $d
+     /tmp/cc4hdIyW.s:64     .bss.ppm_frame_available:00000000 $d
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS

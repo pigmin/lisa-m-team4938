@@ -1,4 +1,4 @@
-/* This file has been generated from /home/mav/lisa-m-team4938/paparazzi/conf/airframes/lisa_m.xml */
+/* This file has been generated from /home/woz/lisa-m-team4938/paparazzi/conf/airframes/lisa_m.xml */
 /* Please DO NOT EDIT */
 
 #ifndef AIRFRAME_H
@@ -6,11 +6,11 @@
 
 #define AIRFRAME_NAME "ECE_2012"
 #define AC_ID 1
-#define MD5SUM ((uint8_t*)"\047\344\147\223\037\021\055\261\273\272\165\220\237\323\255\343")
+#define MD5SUM ((uint8_t*)"\203\220\272\121\151\341\253\213\345\010\137\324\375\270\357\374")
 
-#define SERVOS_NB 8
+#define SERVOS_NB 5
 
-#define SERVO_THROTTLE 7
+#define SERVO_THROTTLE 1
 #define SERVO_THROTTLE_NEUTRAL 1200
 #define SERVO_THROTTLE_TRAVEL_UP 0.0833333333333
 #define SERVO_THROTTLE_TRAVEL_DOWN 0

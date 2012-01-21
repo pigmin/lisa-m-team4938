@@ -102,11 +102,11 @@
   63              		.file 4 "./subsystems/gps.h"
 DEFINED SYMBOLS
                             *ABS*:00000000 gps.c
-     /tmp/ccYYSa5y.s:24     .text.gps_init:00000000 $t
-     /tmp/ccYYSa5y.s:29     .text.gps_init:00000000 gps_init
-     /tmp/ccYYSa5y.s:47     .text.gps_init:0000000c $d
-     /tmp/ccYYSa5y.s:57     .bss.gps:00000000 gps
-     /tmp/ccYYSa5y.s:53     .bss.gps:00000000 $d
+     /tmp/ccLpUfmJ.s:24     .text.gps_init:00000000 $t
+     /tmp/ccLpUfmJ.s:29     .text.gps_init:00000000 gps_init
+     /tmp/ccLpUfmJ.s:47     .text.gps_init:0000000c $d
+     /tmp/ccLpUfmJ.s:57     .bss.gps:00000000 gps
+     /tmp/ccLpUfmJ.s:53     .bss.gps:00000000 $d
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS

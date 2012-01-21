@@ -1,4 +1,4 @@
-/* This file has been generated from /home/mav/lisa-m-team4938/paparazzi/conf/radios/cockpitSX.xml */
+/* This file has been generated from /home/woz/lisa-m-team4938/paparazzi/conf/radios/cockpitSX.xml */
 /* Please DO NOT EDIT */
 
 #ifndef RADIO_H

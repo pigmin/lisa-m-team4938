@@ -13,14 +13,13 @@
   13              		.file	"i2c_arch.c"
   21              	.Ltext0:
   22              		.cfi_sections	.debug_frame
-  23              		.section	.text.i2c_submit,"ax",%progbits
+  23              		.section	.text.i2c_delay,"ax",%progbits
   24              		.align	1
-  25              		.global	i2c_submit
-  26              		.thumb
-  27              		.thumb_func
-  29              	i2c_submit:
-  30              	.LFB29:
-  31              		.file 1 "arch/stm32/mcu_periph/i2c_arch.c"
+  25              		.thumb
+  26              		.thumb_func
+  28              	i2c_delay:
+  29              	.LFB24:
+  30              		.file 1 "arch/stm32/mcu_periph/i2c_arch.c"
    1:arch/stm32/mcu_periph/i2c_arch.c **** #include "mcu_periph/i2c.h"
    2:arch/stm32/mcu_periph/i2c_arch.c **** 
    3:arch/stm32/mcu_periph/i2c_arch.c **** #include <stm32/rcc.h>
@@ -69,8 +68,43 @@
   46:arch/stm32/mcu_periph/i2c_arch.c **** 
   47:arch/stm32/mcu_periph/i2c_arch.c **** static inline void i2c_delay(void)
   48:arch/stm32/mcu_periph/i2c_arch.c **** {
+  31              		.loc 1 48 0
+  32              		.cfi_startproc
+  33              		@ args = 0, pretend = 0, frame = 8
+  34              		@ frame_needed = 0, uses_anonymous_args = 0
+  35              		@ link register save eliminated.
+  36 0000 82B0     		sub	sp, sp, #8
+  37              	.LCFI0:
+  38              		.cfi_def_cfa_offset 8
+  39              	.LBB16:
   49:arch/stm32/mcu_periph/i2c_arch.c ****     for (__IO int j = 0; j < 50; j++);
+  40              		.loc 1 49 0
+  41 0002 0023     		movs	r3, #0
+  42 0004 01E0     		b	.L5
+  43              	.LVL0:
+  44              	.L3:
+  45 0006 019B     		ldr	r3, [sp, #4]
+  46 0008 0133     		adds	r3, r3, #1
+  47              	.LVL1:
+  48              	.L5:
+  49 000a 0193     		str	r3, [sp, #4]
+  50 000c 019B     		ldr	r3, [sp, #4]
+  51              	.LVL2:
+  52 000e 312B     		cmp	r3, #49
+  53 0010 F9DD     		ble	.L3
+  54              	.LBE16:
   50:arch/stm32/mcu_periph/i2c_arch.c **** }
+  55              		.loc 1 50 0
+  56 0012 02B0     		add	sp, sp, #8
+  57 0014 7047     		bx	lr
+  58              		.cfi_endproc
+  59              	.LFE24:
+  61              		.section	.text.start_transaction,"ax",%progbits
+  62              		.align	1
+  63              		.thumb
+  64              		.thumb_func
+  66              	start_transaction:
+  67              	.LFB45:
   51:arch/stm32/mcu_periph/i2c_arch.c **** 
   52:arch/stm32/mcu_periph/i2c_arch.c **** static inline void i2c_apply_config(struct i2c_periph *p)
   53:arch/stm32/mcu_periph/i2c_arch.c **** {
@@ -606,56 +640,128 @@
  583:arch/stm32/mcu_periph/i2c_arch.c **** }
  584:arch/stm32/mcu_periph/i2c_arch.c **** 
  585:arch/stm32/mcu_periph/i2c_arch.c **** bool_t i2c_submit(struct i2c_periph* p, struct i2c_transaction* t) {
-  32              		.loc 1 585 0
-  33              		.cfi_startproc
-  34              		@ args = 0, pretend = 0, frame = 0
-  35              		@ frame_needed = 0, uses_anonymous_args = 0
-  36              	.LVL0:
-  37 0000 38B5     		push	{r3, r4, r5, lr}
-  38              	.LCFI0:
-  39              		.cfi_def_cfa_offset 16
  586:arch/stm32/mcu_periph/i2c_arch.c **** 
  587:arch/stm32/mcu_periph/i2c_arch.c ****   uint8_t temp;
  588:arch/stm32/mcu_periph/i2c_arch.c ****   temp = p->trans_insert_idx + 1;
-  40              		.loc 1 588 0
-  41 0002 90F82020 		ldrb	r2, [r0, #32]	@ zero_extendqisi2
- 585:arch/stm32/mcu_periph/i2c_arch.c **** bool_t i2c_submit(struct i2c_periph* p, struct i2c_transaction* t) {
-  42              		.loc 1 585 0
-  43 0006 0446     		mov	r4, r0
-  44              		.cfi_offset 14, -4
-  45              		.cfi_offset 5, -8
-  46              		.cfi_offset 4, -12
-  47              		.cfi_offset 3, -16
-  48              		.loc 1 588 0
-  49 0008 531C     		adds	r3, r2, #1
-  50 000a DBB2     		uxtb	r3, r3
-  51              	.LVL1:
  589:arch/stm32/mcu_periph/i2c_arch.c ****   if (temp >= I2C_TRANSACTION_QUEUE_LEN) temp = 0;
  590:arch/stm32/mcu_periph/i2c_arch.c ****   if (temp == p->trans_extract_idx)
-  52              		.loc 1 590 0
-  53 000c 90F82100 		ldrb	r0, [r0, #33]	@ zero_extendqisi2
-  54              	.LVL2:
- 589:arch/stm32/mcu_periph/i2c_arch.c ****   if (temp >= I2C_TRANSACTION_QUEUE_LEN) temp = 0;
-  55              		.loc 1 589 0
-  56 0010 072B     		cmp	r3, #7
-  57 0012 88BF     		it	hi
-  58 0014 0023     		movhi	r3, #0
-  59              	.LVL3:
-  60              		.loc 1 590 0
-  61 0016 9842     		cmp	r0, r3
-  62 0018 01D1     		bne	.L3
-  63 001a 0020     		movs	r0, #0
-  64 001c 38BD     		pop	{r3, r4, r5, pc}
-  65              	.L3:
  591:arch/stm32/mcu_periph/i2c_arch.c ****     return FALSE;                          // queue full
  592:arch/stm32/mcu_periph/i2c_arch.c **** 
  593:arch/stm32/mcu_periph/i2c_arch.c ****   t->status = I2CTransPending;
-  66              		.loc 1 593 0
-  67 001e 0020     		movs	r0, #0
-  68 0020 81F82500 		strb	r0, [r1, #37]
-  69              	.LBB8:
-  70              	.LBB9:
-  71              		.file 2 "/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include
+ 594:arch/stm32/mcu_periph/i2c_arch.c **** 
+ 595:arch/stm32/mcu_periph/i2c_arch.c **** 
+ 596:arch/stm32/mcu_periph/i2c_arch.c ****   __disable_irq();
+ 597:arch/stm32/mcu_periph/i2c_arch.c ****   /* put transacation in queue */
+ 598:arch/stm32/mcu_periph/i2c_arch.c ****   p->trans[p->trans_insert_idx] = t;
+ 599:arch/stm32/mcu_periph/i2c_arch.c ****   p->trans_insert_idx = temp;
+ 600:arch/stm32/mcu_periph/i2c_arch.c **** 
+ 601:arch/stm32/mcu_periph/i2c_arch.c ****   /* if peripheral is idle, start the transaction */
+ 602:arch/stm32/mcu_periph/i2c_arch.c ****   if (p->status == I2CIdle)
+ 603:arch/stm32/mcu_periph/i2c_arch.c ****     start_transaction(p);
+ 604:arch/stm32/mcu_periph/i2c_arch.c ****   /* else it will be started by the interrupt handler when the previous transactions completes */
+ 605:arch/stm32/mcu_periph/i2c_arch.c ****   __enable_irq();
+ 606:arch/stm32/mcu_periph/i2c_arch.c **** 
+ 607:arch/stm32/mcu_periph/i2c_arch.c ****   return TRUE;
+ 608:arch/stm32/mcu_periph/i2c_arch.c **** }
+ 609:arch/stm32/mcu_periph/i2c_arch.c **** 
+ 610:arch/stm32/mcu_periph/i2c_arch.c **** 
+ 611:arch/stm32/mcu_periph/i2c_arch.c **** static void start_transaction(struct i2c_periph* p) {
+  68              		.loc 1 611 0
+  69              		.cfi_startproc
+  70              		@ args = 0, pretend = 0, frame = 0
+  71              		@ frame_needed = 0, uses_anonymous_args = 0
+  72              	.LVL3:
+  73 0000 70B5     		push	{r4, r5, r6, lr}
+  74              	.LCFI1:
+  75              		.cfi_def_cfa_offset 16
+ 612:arch/stm32/mcu_periph/i2c_arch.c ****   p->idx_buf = 0;
+  76              		.loc 1 612 0
+  77 0002 0023     		movs	r3, #0
+ 613:arch/stm32/mcu_periph/i2c_arch.c ****   p->status = I2CStartRequested;
+  78              		.loc 1 613 0
+  79 0004 0125     		movs	r5, #1
+  80              		.cfi_offset 14, -4
+  81              		.cfi_offset 6, -8
+  82              		.cfi_offset 5, -12
+  83              		.cfi_offset 4, -16
+ 612:arch/stm32/mcu_periph/i2c_arch.c ****   p->idx_buf = 0;
+  84              		.loc 1 612 0
+  85 0006 80F82330 		strb	r3, [r0, #35]
+ 611:arch/stm32/mcu_periph/i2c_arch.c **** static void start_transaction(struct i2c_periph* p) {
+  86              		.loc 1 611 0
+  87 000a 0446     		mov	r4, r0
+  88              		.loc 1 613 0
+  89 000c 80F82250 		strb	r5, [r0, #34]
+ 614:arch/stm32/mcu_periph/i2c_arch.c ****   I2C_ITConfig(p->reg_addr, I2C_IT_EVT, ENABLE);
+  90              		.loc 1 614 0
+  91 0010 4FF40071 		mov	r1, #512
+  92 0014 406A     		ldr	r0, [r0, #36]
+  93              	.LVL4:
+  94 0016 2A46     		mov	r2, r5
+  95 0018 FFF7FEFF 		bl	I2C_ITConfig
+ 615:arch/stm32/mcu_periph/i2c_arch.c ****   I2C_GenerateSTART(p->reg_addr, ENABLE);
+  96              		.loc 1 615 0
+  97 001c 606A     		ldr	r0, [r4, #36]
+  98 001e 2946     		mov	r1, r5
+ 616:arch/stm32/mcu_periph/i2c_arch.c **** }
+  99              		.loc 1 616 0
+ 100 0020 BDE87040 		pop	{r4, r5, r6, lr}
+ 615:arch/stm32/mcu_periph/i2c_arch.c ****   I2C_GenerateSTART(p->reg_addr, ENABLE);
+ 101              		.loc 1 615 0
+ 102 0024 FFF7FEBF 		b	I2C_GenerateSTART
+ 103              		.cfi_endproc
+ 104              	.LFE45:
+ 106              		.section	.text.i2c_submit,"ax",%progbits
+ 107              		.align	1
+ 108              		.global	i2c_submit
+ 109              		.thumb
+ 110              		.thumb_func
+ 112              	i2c_submit:
+ 113              	.LFB44:
+ 585:arch/stm32/mcu_periph/i2c_arch.c **** bool_t i2c_submit(struct i2c_periph* p, struct i2c_transaction* t) {
+ 114              		.loc 1 585 0
+ 115              		.cfi_startproc
+ 116              		@ args = 0, pretend = 0, frame = 0
+ 117              		@ frame_needed = 0, uses_anonymous_args = 0
+ 118              	.LVL5:
+ 119 0000 10B5     		push	{r4, lr}
+ 120              	.LCFI2:
+ 121              		.cfi_def_cfa_offset 8
+ 588:arch/stm32/mcu_periph/i2c_arch.c ****   temp = p->trans_insert_idx + 1;
+ 122              		.loc 1 588 0
+ 123 0002 90F820C0 		ldrb	ip, [r0, #32]	@ zero_extendqisi2
+ 590:arch/stm32/mcu_periph/i2c_arch.c ****   if (temp == p->trans_extract_idx)
+ 124              		.loc 1 590 0
+ 125 0006 90F82140 		ldrb	r4, [r0, #33]	@ zero_extendqisi2
+ 126              		.cfi_offset 14, -4
+ 127              		.cfi_offset 4, -8
+ 588:arch/stm32/mcu_periph/i2c_arch.c ****   temp = p->trans_insert_idx + 1;
+ 128              		.loc 1 588 0
+ 129 000a 0CF10102 		add	r2, ip, #1
+ 130 000e D2B2     		uxtb	r2, r2
+ 131              	.LVL6:
+ 589:arch/stm32/mcu_periph/i2c_arch.c ****   if (temp >= I2C_TRANSACTION_QUEUE_LEN) temp = 0;
+ 132              		.loc 1 589 0
+ 133 0010 072A     		cmp	r2, #7
+ 134 0012 88BF     		it	hi
+ 135 0014 0022     		movhi	r2, #0
+ 136              	.LVL7:
+ 590:arch/stm32/mcu_periph/i2c_arch.c ****   if (temp == p->trans_extract_idx)
+ 137              		.loc 1 590 0
+ 138 0016 9442     		cmp	r4, r2
+ 139 0018 01D1     		bne	.L11
+ 140 001a 0020     		movs	r0, #0
+ 141              	.LVL8:
+ 142 001c 10BD     		pop	{r4, pc}
+ 143              	.LVL9:
+ 144              	.L11:
+ 593:arch/stm32/mcu_periph/i2c_arch.c ****   t->status = I2CTransPending;
+ 145              		.loc 1 593 0
+ 146 001e 0024     		movs	r4, #0
+ 147 0020 81F82540 		strb	r4, [r1, #37]
+ 148              	.LBB21:
+ 149              	.LBB22:
+ 150              		.file 2 "/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include
    1:/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include/cmsis/core_cm3.h **** /******************************************************************************
    2:/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include/cmsis/core_cm3.h ****  * @file:    core_cm3.h
    3:/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include/cmsis/core_cm3.h ****  * @purpose: CMSIS Cortex-M3 Core Peripheral Access Layer Header File
@@ -1437,129 +1543,1544 @@
  779:/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include/cmsis/core_cm3.h **** static __INLINE void __NOP()                      { __ASM volatile ("nop"); }
  780:/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include/cmsis/core_cm3.h **** static __INLINE void __enable_irq()               { __ASM volatile ("cpsie i"); }
  781:/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include/cmsis/core_cm3.h **** static __INLINE void __disable_irq()              { __ASM volatile ("cpsid i"); }
-  72              		.loc 2 781 0
-  73              	@ 781 "/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include/cm
-  74 0024 72B6     		cpsid i
-  75              	@ 0 "" 2
-  76              		.thumb
-  77              	.LBE9:
-  78              	.LBE8:
- 594:arch/stm32/mcu_periph/i2c_arch.c **** 
- 595:arch/stm32/mcu_periph/i2c_arch.c **** 
- 596:arch/stm32/mcu_periph/i2c_arch.c ****   __disable_irq();
- 597:arch/stm32/mcu_periph/i2c_arch.c ****   /* put transacation in queue */
- 598:arch/stm32/mcu_periph/i2c_arch.c ****   p->trans[p->trans_insert_idx] = t;
- 599:arch/stm32/mcu_periph/i2c_arch.c ****   p->trans_insert_idx = temp;
-  79              		.loc 1 599 0
-  80 0026 84F82030 		strb	r3, [r4, #32]
- 600:arch/stm32/mcu_periph/i2c_arch.c **** 
- 601:arch/stm32/mcu_periph/i2c_arch.c ****   /* if peripheral is idle, start the transaction */
+ 151              		.loc 2 781 0
+ 152              	@ 781 "/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include/cm
+ 153 0024 72B6     		cpsid i
+ 154              	@ 0 "" 2
+ 155              		.thumb
+ 156              	.LBE22:
+ 157              	.LBE21:
  602:arch/stm32/mcu_periph/i2c_arch.c ****   if (p->status == I2CIdle)
-  81              		.loc 1 602 0
-  82 002a 94F82230 		ldrb	r3, [r4, #34]	@ zero_extendqisi2
-  83              	.LVL4:
+ 158              		.loc 1 602 0
+ 159 0026 90F82230 		ldrb	r3, [r0, #34]	@ zero_extendqisi2
  598:arch/stm32/mcu_periph/i2c_arch.c ****   p->trans[p->trans_insert_idx] = t;
-  84              		.loc 1 598 0
-  85 002e 44F82210 		str	r1, [r4, r2, lsl #2]
-  86              		.loc 1 602 0
-  87 0032 73B9     		cbnz	r3, .L5
-  88              	.LBB10:
-  89              	.LBB11:
+ 160              		.loc 1 598 0
+ 161 002a 40F82C10 		str	r1, [r0, ip, lsl #2]
+ 599:arch/stm32/mcu_periph/i2c_arch.c ****   p->trans_insert_idx = temp;
+ 162              		.loc 1 599 0
+ 163 002e 80F82020 		strb	r2, [r0, #32]
+ 602:arch/stm32/mcu_periph/i2c_arch.c ****   if (p->status == I2CIdle)
+ 164              		.loc 1 602 0
+ 165 0032 0BB9     		cbnz	r3, .L13
  603:arch/stm32/mcu_periph/i2c_arch.c ****     start_transaction(p);
- 604:arch/stm32/mcu_periph/i2c_arch.c ****   /* else it will be started by the interrupt handler when the previous transactions completes */
- 605:arch/stm32/mcu_periph/i2c_arch.c ****   __enable_irq();
- 606:arch/stm32/mcu_periph/i2c_arch.c **** 
- 607:arch/stm32/mcu_periph/i2c_arch.c ****   return TRUE;
- 608:arch/stm32/mcu_periph/i2c_arch.c **** }
- 609:arch/stm32/mcu_periph/i2c_arch.c **** 
- 610:arch/stm32/mcu_periph/i2c_arch.c **** 
- 611:arch/stm32/mcu_periph/i2c_arch.c **** static void start_transaction(struct i2c_periph* p) {
- 612:arch/stm32/mcu_periph/i2c_arch.c ****   p->idx_buf = 0;
- 613:arch/stm32/mcu_periph/i2c_arch.c ****   p->status = I2CStartRequested;
-  90              		.loc 1 613 0
-  91 0034 0125     		movs	r5, #1
- 612:arch/stm32/mcu_periph/i2c_arch.c ****   p->idx_buf = 0;
-  92              		.loc 1 612 0
-  93 0036 84F82330 		strb	r3, [r4, #35]
- 614:arch/stm32/mcu_periph/i2c_arch.c ****   I2C_ITConfig(p->reg_addr, I2C_IT_EVT, ENABLE);
-  94              		.loc 1 614 0
-  95 003a 606A     		ldr	r0, [r4, #36]
-  96 003c 4FF40071 		mov	r1, #512
-  97              	.LVL5:
- 613:arch/stm32/mcu_periph/i2c_arch.c ****   p->status = I2CStartRequested;
-  98              		.loc 1 613 0
-  99 0040 84F82250 		strb	r5, [r4, #34]
- 100              		.loc 1 614 0
- 101 0044 2A46     		mov	r2, r5
- 102 0046 FFF7FEFF 		bl	I2C_ITConfig
- 615:arch/stm32/mcu_periph/i2c_arch.c ****   I2C_GenerateSTART(p->reg_addr, ENABLE);
- 103              		.loc 1 615 0
- 104 004a 606A     		ldr	r0, [r4, #36]
- 105 004c 2946     		mov	r1, r5
- 106 004e FFF7FEFF 		bl	I2C_GenerateSTART
- 107              	.LVL6:
- 108              	.L5:
- 109              	.LBE11:
- 110              	.LBE10:
- 111              	.LBB12:
- 112              	.LBB13:
+ 166              		.loc 1 603 0
+ 167 0034 FFF7FEFF 		bl	start_transaction
+ 168              	.LVL10:
+ 169              	.L13:
+ 170              	.LBB23:
+ 171              	.LBB24:
  780:/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include/cmsis/core_cm3.h **** static __INLINE void __enable_irq()               { __ASM volatile ("cpsie i"); }
- 113              		.loc 2 780 0
- 114              	@ 780 "/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include/cm
- 115 0052 62B6     		cpsie i
- 116              	@ 0 "" 2
- 117              		.thumb
- 118 0054 0120     		movs	r0, #1
- 119              	.LBE13:
- 120              	.LBE12:
+ 172              		.loc 2 780 0
+ 173              	@ 780 "/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include/cm
+ 174 0038 62B6     		cpsie i
+ 175              	@ 0 "" 2
+ 176              		.thumb
+ 177 003a 0120     		movs	r0, #1
+ 178              	.LVL11:
+ 179              	.LBE24:
+ 180              	.LBE23:
  608:arch/stm32/mcu_periph/i2c_arch.c **** }
- 121              		.loc 1 608 0
- 122 0056 38BD     		pop	{r3, r4, r5, pc}
- 123              		.cfi_endproc
- 124              	.LFE29:
- 126              		.section	.text.i2c_idle,"ax",%progbits
- 127              		.align	1
- 128              		.global	i2c_idle
- 129              		.thumb
- 130              		.thumb_func
- 132              	i2c_idle:
- 133              	.LFB28:
+ 181              		.loc 1 608 0
+ 182 003c 10BD     		pop	{r4, pc}
+ 183              		.cfi_endproc
+ 184              	.LFE44:
+ 186              		.section	.text.i2c_idle,"ax",%progbits
+ 187              		.align	1
+ 188              		.global	i2c_idle
+ 189              		.thumb
+ 190              		.thumb_func
+ 192              	i2c_idle:
+ 193              	.LFB43:
  581:arch/stm32/mcu_periph/i2c_arch.c **** {
- 134              		.loc 1 581 0
- 135              		.cfi_startproc
- 136              		@ args = 0, pretend = 0, frame = 0
- 137              		@ frame_needed = 0, uses_anonymous_args = 0
- 138              	.LVL7:
- 139 0000 08B5     		push	{r3, lr}
- 140              	.LCFI1:
- 141              		.cfi_def_cfa_offset 8
+ 194              		.loc 1 581 0
+ 195              		.cfi_startproc
+ 196              		@ args = 0, pretend = 0, frame = 0
+ 197              		@ frame_needed = 0, uses_anonymous_args = 0
+ 198              	.LVL12:
+ 199 0000 08B5     		push	{r3, lr}
+ 200              	.LCFI3:
+ 201              		.cfi_def_cfa_offset 8
  582:arch/stm32/mcu_periph/i2c_arch.c ****   return !I2C_GetFlagStatus(p->reg_addr, I2C_FLAG_BUSY);
- 142              		.loc 1 582 0
- 143 0002 4FF40031 		mov	r1, #131072
- 144 0006 406A     		ldr	r0, [r0, #36]
- 145              	.LVL8:
- 146              		.cfi_offset 14, -4
- 147              		.cfi_offset 3, -8
- 148 0008 FFF7FEFF 		bl	I2C_GetFlagStatus
+ 202              		.loc 1 582 0
+ 203 0002 4FF40031 		mov	r1, #131072
+ 204 0006 406A     		ldr	r0, [r0, #36]
+ 205              	.LVL13:
+ 206              		.cfi_offset 14, -4
+ 207              		.cfi_offset 3, -8
+ 208 0008 FFF7FEFF 		bl	I2C_GetFlagStatus
  583:arch/stm32/mcu_periph/i2c_arch.c **** }
- 149              		.loc 1 583 0
- 150 000c D0F10100 		rsbs	r0, r0, #1
- 151 0010 38BF     		it	cc
- 152 0012 0020     		movcc	r0, #0
- 153 0014 08BD     		pop	{r3, pc}
- 154              		.cfi_endproc
- 155              	.LFE28:
- 157              		.text
- 158              	.Letext0:
+ 209              		.loc 1 583 0
+ 210 000c D0F10100 		rsbs	r0, r0, #1
+ 211 0010 38BF     		it	cc
+ 212 0012 0020     		movcc	r0, #0
+ 213 0014 08BD     		pop	{r3, pc}
+ 214              		.cfi_endproc
+ 215              	.LFE43:
+ 217              		.section	.text.T.28,"ax",%progbits
+ 218              		.align	1
+ 219              		.thumb
+ 220              		.thumb_func
+ 222              	T.28:
+ 223              	.LFB48:
+  57:arch/stm32/mcu_periph/i2c_arch.c **** static inline void end_of_transaction(struct i2c_periph *p)
+ 224              		.loc 1 57 0
+ 225              		.cfi_startproc
+ 226              		@ args = 0, pretend = 0, frame = 0
+ 227              		@ frame_needed = 0, uses_anonymous_args = 0
+ 228              		@ link register save eliminated.
+  59:arch/stm32/mcu_periph/i2c_arch.c ****     p->trans_extract_idx++;
+ 229              		.loc 1 59 0
+ 230 0000 0C4B     		ldr	r3, .L22
+ 231 0002 93F82120 		ldrb	r2, [r3, #33]	@ zero_extendqisi2
+ 232 0006 0132     		adds	r2, r2, #1
+ 233 0008 D2B2     		uxtb	r2, r2
+  60:arch/stm32/mcu_periph/i2c_arch.c ****     if (p->trans_extract_idx >= I2C_TRANSACTION_QUEUE_LEN)
+ 234              		.loc 1 60 0
+ 235 000a 072A     		cmp	r2, #7
+  59:arch/stm32/mcu_periph/i2c_arch.c ****     p->trans_extract_idx++;
+ 236              		.loc 1 59 0
+ 237 000c 83F82120 		strb	r2, [r3, #33]
+  60:arch/stm32/mcu_periph/i2c_arch.c ****     if (p->trans_extract_idx >= I2C_TRANSACTION_QUEUE_LEN)
+ 238              		.loc 1 60 0
+ 239 0010 02D9     		bls	.L18
+  61:arch/stm32/mcu_periph/i2c_arch.c ****       p->trans_extract_idx = 0;
+ 240              		.loc 1 61 0
+ 241 0012 0022     		movs	r2, #0
+ 242 0014 83F82120 		strb	r2, [r3, #33]
+ 243              	.L18:
+  63:arch/stm32/mcu_periph/i2c_arch.c ****     if (p->trans_extract_idx == p->trans_insert_idx)
+ 244              		.loc 1 63 0
+ 245 0018 0648     		ldr	r0, .L22
+ 246 001a 90F82120 		ldrb	r2, [r0, #33]	@ zero_extendqisi2
+ 247 001e 90F82030 		ldrb	r3, [r0, #32]	@ zero_extendqisi2
+ 248 0022 9A42     		cmp	r2, r3
+ 249 0024 03D1     		bne	.L19
+  64:arch/stm32/mcu_periph/i2c_arch.c ****       p->status = I2CIdle;
+ 250              		.loc 1 64 0
+ 251 0026 0023     		movs	r3, #0
+ 252 0028 80F82230 		strb	r3, [r0, #34]
+  68:arch/stm32/mcu_periph/i2c_arch.c **** }
+ 253              		.loc 1 68 0
+ 254 002c 7047     		bx	lr
+ 255              	.L19:
+  67:arch/stm32/mcu_periph/i2c_arch.c ****       start_transaction(p);
+ 256              		.loc 1 67 0
+ 257 002e FFF7FEBF 		b	start_transaction
+ 258              	.L23:
+ 259 0032 00BF     		.align	2
+ 260              	.L22:
+ 261 0034 00000000 		.word	i2c2
+ 262              		.cfi_endproc
+ 263              	.LFE48:
+ 265              		.section	.text.T.29,"ax",%progbits
+ 266              		.align	1
+ 267              		.thumb
+ 268              		.thumb_func
+ 270              	T.29:
+ 271              	.LFB49:
+ 356:arch/stm32/mcu_periph/i2c_arch.c **** static inline void i2c_hard_reset(struct i2c_periph *p)
+ 272              		.loc 1 356 0
+ 273              		.cfi_startproc
+ 274              		@ args = 0, pretend = 0, frame = 8
+ 275              		@ frame_needed = 0, uses_anonymous_args = 0
+ 276 0000 73B5     		push	{r0, r1, r4, r5, r6, lr}
+ 277              	.LCFI4:
+ 278              		.cfi_def_cfa_offset 24
+ 358:arch/stm32/mcu_periph/i2c_arch.c ****   I2C_TypeDef *regs = (I2C_TypeDef *) p->reg_addr;
+ 279              		.loc 1 358 0
+ 280 0002 3D4C     		ldr	r4, .L32
+ 281              		.cfi_offset 14, -4
+ 282              		.cfi_offset 6, -8
+ 283              		.cfi_offset 5, -12
+ 284              		.cfi_offset 4, -16
+ 285              		.cfi_offset 1, -20
+ 286              		.cfi_offset 0, -24
+ 287 0004 666A     		ldr	r6, [r4, #36]
+ 288              	.LVL14:
+ 360:arch/stm32/mcu_periph/i2c_arch.c ****   I2C_DeInit(p->reg_addr);
+ 289              		.loc 1 360 0
+ 290 0006 3046     		mov	r0, r6
+ 291 0008 FFF7FEFF 		bl	I2C_DeInit
+ 363:arch/stm32/mcu_periph/i2c_arch.c ****   GPIO_InitStructure.GPIO_Pin = p->scl_pin | p->sda_pin;
+ 292              		.loc 1 363 0
+ 293 000c A38D     		ldrh	r3, [r4, #44]
+ 294 000e E18D     		ldrh	r1, [r4, #46]
+ 366:arch/stm32/mcu_periph/i2c_arch.c ****   GPIO_SetBits(GPIOB, p->scl_pin | p->sda_pin);
+ 295              		.loc 1 366 0
+ 296 0010 3A48     		ldr	r0, .L32+4
+ 363:arch/stm32/mcu_periph/i2c_arch.c ****   GPIO_InitStructure.GPIO_Pin = p->scl_pin | p->sda_pin;
+ 297              		.loc 1 363 0
+ 298 0012 1943     		orrs	r1, r1, r3
+ 364:arch/stm32/mcu_periph/i2c_arch.c ****   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+ 299              		.loc 1 364 0
+ 300 0014 0123     		movs	r3, #1
+ 363:arch/stm32/mcu_periph/i2c_arch.c ****   GPIO_InitStructure.GPIO_Pin = p->scl_pin | p->sda_pin;
+ 301              		.loc 1 363 0
+ 302 0016 89B2     		uxth	r1, r1
+ 364:arch/stm32/mcu_periph/i2c_arch.c ****   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+ 303              		.loc 1 364 0
+ 304 0018 8DF80630 		strb	r3, [sp, #6]
+ 365:arch/stm32/mcu_periph/i2c_arch.c ****   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
+ 305              		.loc 1 365 0
+ 306 001c 1333     		adds	r3, r3, #19
+ 363:arch/stm32/mcu_periph/i2c_arch.c ****   GPIO_InitStructure.GPIO_Pin = p->scl_pin | p->sda_pin;
+ 307              		.loc 1 363 0
+ 308 001e ADF80410 		strh	r1, [sp, #4]	@ movhi
+ 365:arch/stm32/mcu_periph/i2c_arch.c ****   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
+ 309              		.loc 1 365 0
+ 310 0022 8DF80730 		strb	r3, [sp, #7]
+ 366:arch/stm32/mcu_periph/i2c_arch.c ****   GPIO_SetBits(GPIOB, p->scl_pin | p->sda_pin);
+ 311              		.loc 1 366 0
+ 312 0026 FFF7FEFF 		bl	GPIO_SetBits
+ 367:arch/stm32/mcu_periph/i2c_arch.c ****   GPIO_Init(GPIOB, &GPIO_InitStructure);
+ 313              		.loc 1 367 0
+ 314 002a 3448     		ldr	r0, .L32+4
+ 315 002c 01A9     		add	r1, sp, #4
+ 316 002e FFF7FEFF 		bl	GPIO_Init
+ 317 0032 17E0     		b	.L25
+ 318              	.L27:
+ 371:arch/stm32/mcu_periph/i2c_arch.c ****     GPIO_SetBits(GPIOB, p->scl_pin);
+ 319              		.loc 1 371 0
+ 320 0034 3148     		ldr	r0, .L32+4
+ 321 0036 FFF7FEFF 		bl	GPIO_SetBits
+ 322              	.L26:
+ 372:arch/stm32/mcu_periph/i2c_arch.c ****     while (GPIO_ReadInputDataBit(GPIOB, p->scl_pin) == Bit_RESET);
+ 323              		.loc 1 372 0
+ 324 003a 2F4C     		ldr	r4, .L32
+ 325 003c 2F48     		ldr	r0, .L32+4
+ 326 003e A18D     		ldrh	r1, [r4, #44]
+ 327 0040 FFF7FEFF 		bl	GPIO_ReadInputDataBit
+ 328 0044 0028     		cmp	r0, #0
+ 329 0046 F8D0     		beq	.L26
+ 373:arch/stm32/mcu_periph/i2c_arch.c ****     i2c_delay();
+ 330              		.loc 1 373 0
+ 331 0048 FFF7FEFF 		bl	i2c_delay
+ 376:arch/stm32/mcu_periph/i2c_arch.c ****     GPIO_ResetBits(GPIOB, p->scl_pin);
+ 332              		.loc 1 376 0
+ 333 004c 2B48     		ldr	r0, .L32+4
+ 334 004e A18D     		ldrh	r1, [r4, #44]
+ 335 0050 FFF7FEFF 		bl	GPIO_ResetBits
+ 377:arch/stm32/mcu_periph/i2c_arch.c ****     i2c_delay();
+ 336              		.loc 1 377 0
+ 337 0054 FFF7FEFF 		bl	i2c_delay
+ 380:arch/stm32/mcu_periph/i2c_arch.c ****     GPIO_SetBits(GPIOB, p->scl_pin);
+ 338              		.loc 1 380 0
+ 339 0058 2848     		ldr	r0, .L32+4
+ 340 005a A18D     		ldrh	r1, [r4, #44]
+ 341 005c FFF7FEFF 		bl	GPIO_SetBits
+ 381:arch/stm32/mcu_periph/i2c_arch.c ****     i2c_delay();
+ 342              		.loc 1 381 0
+ 343 0060 FFF7FEFF 		bl	i2c_delay
+ 344              	.L25:
+ 369:arch/stm32/mcu_periph/i2c_arch.c ****   while(GPIO_ReadInputDataBit(GPIOB, p->sda_pin) == Bit_RESET) {
+ 345              		.loc 1 369 0
+ 346 0064 244C     		ldr	r4, .L32
+ 347 0066 2548     		ldr	r0, .L32+4
+ 348 0068 E18D     		ldrh	r1, [r4, #46]
+ 349 006a FFF7FEFF 		bl	GPIO_ReadInputDataBit
+ 350 006e A18D     		ldrh	r1, [r4, #44]
+ 351 0070 0028     		cmp	r0, #0
+ 352 0072 DFD0     		beq	.L27
+ 385:arch/stm32/mcu_periph/i2c_arch.c ****   GPIO_SetBits(GPIOB, p->scl_pin);
+ 353              		.loc 1 385 0
+ 354 0074 2148     		ldr	r0, .L32+4
+ 355 0076 FFF7FEFF 		bl	GPIO_SetBits
+ 386:arch/stm32/mcu_periph/i2c_arch.c ****   i2c_delay();
+ 356              		.loc 1 386 0
+ 357 007a FFF7FEFF 		bl	i2c_delay
+ 387:arch/stm32/mcu_periph/i2c_arch.c ****   GPIO_ResetBits(GPIOB, p->sda_pin);
+ 358              		.loc 1 387 0
+ 359 007e 1F48     		ldr	r0, .L32+4
+ 360 0080 E18D     		ldrh	r1, [r4, #46]
+ 361 0082 FFF7FEFF 		bl	GPIO_ResetBits
+ 388:arch/stm32/mcu_periph/i2c_arch.c ****   i2c_delay();
+ 362              		.loc 1 388 0
+ 363 0086 FFF7FEFF 		bl	i2c_delay
+ 389:arch/stm32/mcu_periph/i2c_arch.c ****   GPIO_ResetBits(GPIOB, p->sda_pin);
+ 364              		.loc 1 389 0
+ 365 008a 1C48     		ldr	r0, .L32+4
+ 366 008c E18D     		ldrh	r1, [r4, #46]
+ 367 008e FFF7FEFF 		bl	GPIO_ResetBits
+ 390:arch/stm32/mcu_periph/i2c_arch.c ****   i2c_delay();
+ 368              		.loc 1 390 0
+ 369 0092 FFF7FEFF 		bl	i2c_delay
+ 393:arch/stm32/mcu_periph/i2c_arch.c ****   GPIO_SetBits(GPIOB, p->scl_pin | p->sda_pin);
+ 370              		.loc 1 393 0
+ 371 0096 E18D     		ldrh	r1, [r4, #46]
+ 372 0098 A38D     		ldrh	r3, [r4, #44]
+ 373 009a 1848     		ldr	r0, .L32+4
+ 374 009c 1943     		orrs	r1, r1, r3
+ 375 009e 89B2     		uxth	r1, r1
+ 376 00a0 FFF7FEFF 		bl	GPIO_SetBits
+ 377              	.L28:
+ 394:arch/stm32/mcu_periph/i2c_arch.c ****   while (GPIO_ReadInputDataBit(GPIOB, p->scl_pin) == Bit_RESET);
+ 378              		.loc 1 394 0
+ 379 00a4 144B     		ldr	r3, .L32
+ 380 00a6 1548     		ldr	r0, .L32+4
+ 381 00a8 998D     		ldrh	r1, [r3, #44]
+ 382 00aa FFF7FEFF 		bl	GPIO_ReadInputDataBit
+ 383 00ae 0028     		cmp	r0, #0
+ 384 00b0 F8D0     		beq	.L28
+ 385              	.L29:
+ 397:arch/stm32/mcu_periph/i2c_arch.c ****   while (GPIO_ReadInputDataBit(GPIOB, p->sda_pin) != Bit_SET);
+ 386              		.loc 1 397 0
+ 387 00b2 114C     		ldr	r4, .L32
+ 388 00b4 1148     		ldr	r0, .L32+4
+ 389 00b6 E18D     		ldrh	r1, [r4, #46]
+ 390 00b8 FFF7FEFF 		bl	GPIO_ReadInputDataBit
+ 391 00bc 0128     		cmp	r0, #1
+ 392 00be 0546     		mov	r5, r0
+ 393 00c0 F7D1     		bne	.L29
+ 401:arch/stm32/mcu_periph/i2c_arch.c ****   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
+ 394              		.loc 1 401 0
+ 395 00c2 1C23     		movs	r3, #28
+ 402:arch/stm32/mcu_periph/i2c_arch.c ****   GPIO_Init(GPIOB, &GPIO_InitStructure);
+ 396              		.loc 1 402 0
+ 397 00c4 01A9     		add	r1, sp, #4
+ 398 00c6 0D48     		ldr	r0, .L32+4
+ 401:arch/stm32/mcu_periph/i2c_arch.c ****   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
+ 399              		.loc 1 401 0
+ 400 00c8 8DF80730 		strb	r3, [sp, #7]
+ 402:arch/stm32/mcu_periph/i2c_arch.c ****   GPIO_Init(GPIOB, &GPIO_InitStructure);
+ 401              		.loc 1 402 0
+ 402 00cc FFF7FEFF 		bl	GPIO_Init
+ 404:arch/stm32/mcu_periph/i2c_arch.c ****   I2C_DeInit(p->reg_addr);
+ 403              		.loc 1 404 0
+ 404 00d0 606A     		ldr	r0, [r4, #36]
+ 405 00d2 FFF7FEFF 		bl	I2C_DeInit
+ 406              	.LBB27:
+ 407              	.LBB28:
+  54:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_Init(p->reg_addr, p->init_struct);
+ 408              		.loc 1 54 0
+ 409 00d6 606A     		ldr	r0, [r4, #36]
+ 410 00d8 A16A     		ldr	r1, [r4, #40]
+ 411 00da FFF7FEFF 		bl	I2C_Init
+ 412              	.LBE28:
+ 413              	.LBE27:
+ 408:arch/stm32/mcu_periph/i2c_arch.c ****   if (regs->SR2 & I2C_BUSY) {
+ 414              		.loc 1 408 0
+ 415 00de 338B     		ldrh	r3, [r6, #24]
+ 416 00e0 13F0200F 		tst	r3, #32
+ 417 00e4 07D0     		beq	.L31
+ 410:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_SoftwareResetCmd(p->reg_addr, ENABLE);
+ 418              		.loc 1 410 0
+ 419 00e6 606A     		ldr	r0, [r4, #36]
+ 420 00e8 2946     		mov	r1, r5
+ 421 00ea FFF7FEFF 		bl	I2C_SoftwareResetCmd
+ 411:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_SoftwareResetCmd(p->reg_addr, DISABLE);
+ 422              		.loc 1 411 0
+ 423 00ee 606A     		ldr	r0, [r4, #36]
+ 424 00f0 0021     		movs	r1, #0
+ 425 00f2 FFF7FEFF 		bl	I2C_SoftwareResetCmd
+ 426              	.L31:
+ 413:arch/stm32/mcu_periph/i2c_arch.c **** }
+ 427              		.loc 1 413 0
+ 428 00f6 7CBD     		pop	{r2, r3, r4, r5, r6, pc}
+ 429              	.L33:
+ 430              		.align	2
+ 431              	.L32:
+ 432 00f8 00000000 		.word	i2c2
+ 433 00fc 000C0140 		.word	1073810432
+ 434              		.cfi_endproc
+ 435              	.LFE49:
+ 437              		.section	.text.i2c2_hw_init,"ax",%progbits
+ 438              		.align	1
+ 439              		.global	i2c2_hw_init
+ 440              		.thumb
+ 441              		.thumb_func
+ 443              	i2c2_hw_init:
+ 444              	.LFB40:
+ 521:arch/stm32/mcu_periph/i2c_arch.c **** void i2c2_hw_init(void) {
+ 445              		.loc 1 521 0
+ 446              		.cfi_startproc
+ 447              		@ args = 0, pretend = 0, frame = 8
+ 448              		@ frame_needed = 0, uses_anonymous_args = 0
+ 449 0000 F7B5     		push	{r0, r1, r2, r4, r5, r6, r7, lr}
+ 450              	.LCFI5:
+ 451              		.cfi_def_cfa_offset 32
+ 524:arch/stm32/mcu_periph/i2c_arch.c ****   i2c2.init_struct = &I2C2_InitStruct;
+ 452              		.loc 1 524 0
+ 453 0002 274B     		ldr	r3, .L36
+ 523:arch/stm32/mcu_periph/i2c_arch.c ****   i2c2.reg_addr = I2C2;
+ 454              		.loc 1 523 0
+ 455 0004 274D     		ldr	r5, .L36+4
+ 456              		.cfi_offset 14, -4
+ 457              		.cfi_offset 7, -8
+ 458              		.cfi_offset 6, -12
+ 459              		.cfi_offset 5, -16
+ 460              		.cfi_offset 4, -20
+ 461              		.cfi_offset 2, -24
+ 462              		.cfi_offset 1, -28
+ 463              		.cfi_offset 0, -32
+ 530:arch/stm32/mcu_periph/i2c_arch.c ****   ZEROS_ERR_COUNTER(i2c2_errors);
+ 464              		.loc 1 530 0
+ 465 0006 0022     		movs	r2, #0
+ 524:arch/stm32/mcu_periph/i2c_arch.c ****   i2c2.init_struct = &I2C2_InitStruct;
+ 466              		.loc 1 524 0
+ 467 0008 AB62     		str	r3, [r5, #40]
+ 525:arch/stm32/mcu_periph/i2c_arch.c ****   i2c2.scl_pin = GPIO_Pin_10;
+ 468              		.loc 1 525 0
+ 469 000a 4FF48063 		mov	r3, #1024	@ movhi
+ 470 000e AB85     		strh	r3, [r5, #44]	@ movhi
+ 526:arch/stm32/mcu_periph/i2c_arch.c ****   i2c2.sda_pin = GPIO_Pin_11;
+ 471              		.loc 1 526 0
+ 472 0010 4FF40063 		mov	r3, #2048	@ movhi
+ 473 0014 EB85     		strh	r3, [r5, #46]	@ movhi
+ 527:arch/stm32/mcu_periph/i2c_arch.c ****   i2c2.errors = &i2c2_errors;
+ 474              		.loc 1 527 0
+ 475 0016 244B     		ldr	r3, .L36+8
+ 523:arch/stm32/mcu_periph/i2c_arch.c ****   i2c2.reg_addr = I2C2;
+ 476              		.loc 1 523 0
+ 477 0018 2448     		ldr	r0, .L36+12
+ 530:arch/stm32/mcu_periph/i2c_arch.c ****   ZEROS_ERR_COUNTER(i2c2_errors);
+ 478              		.loc 1 530 0
+ 479 001a 1A80     		strh	r2, [r3, #0]	@ movhi
+ 480 001c 5A80     		strh	r2, [r3, #2]	@ movhi
+ 481 001e 9A80     		strh	r2, [r3, #4]	@ movhi
+ 482 0020 DA80     		strh	r2, [r3, #6]	@ movhi
+ 483 0022 1A81     		strh	r2, [r3, #8]	@ movhi
+ 484 0024 5A81     		strh	r2, [r3, #10]	@ movhi
+ 485 0026 9A81     		strh	r2, [r3, #12]	@ movhi
+ 486 0028 DA81     		strh	r2, [r3, #14]	@ movhi
+ 487 002a 1A61     		str	r2, [r3, #16]
+ 488 002c 5A61     		str	r2, [r3, #20]
+ 489 002e 1646     		mov	r6, r2	@ movhi
+ 527:arch/stm32/mcu_periph/i2c_arch.c ****   i2c2.errors = &i2c2_errors;
+ 490              		.loc 1 527 0
+ 491 0030 2B63     		str	r3, [r5, #48]
+ 523:arch/stm32/mcu_periph/i2c_arch.c ****   i2c2.reg_addr = I2C2;
+ 492              		.loc 1 523 0
+ 493 0032 6862     		str	r0, [r5, #36]
+ 543:arch/stm32/mcu_periph/i2c_arch.c ****   NVIC_Init(&NVIC_InitStructure);
+ 494              		.loc 1 543 0
+ 495 0034 01AF     		add	r7, sp, #4
+ 533:arch/stm32/mcu_periph/i2c_arch.c ****   I2C_DeInit(I2C2);
+ 496              		.loc 1 533 0
+ 497 0036 FFF7FEFF 		bl	I2C_DeInit
+ 535:arch/stm32/mcu_periph/i2c_arch.c ****   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
+ 498              		.loc 1 535 0
+ 499 003a 4FF4E060 		mov	r0, #1792
+ 500 003e FFF7FEFF 		bl	NVIC_PriorityGroupConfig
+ 542:arch/stm32/mcu_periph/i2c_arch.c ****   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+ 501              		.loc 1 542 0
+ 502 0042 0124     		movs	r4, #1
+ 539:arch/stm32/mcu_periph/i2c_arch.c ****   NVIC_InitStructure.NVIC_IRQChannel = I2C2_EV_IRQn;
+ 503              		.loc 1 539 0
+ 504 0044 2123     		movs	r3, #33
+ 543:arch/stm32/mcu_periph/i2c_arch.c ****   NVIC_Init(&NVIC_InitStructure);
+ 505              		.loc 1 543 0
+ 506 0046 3846     		mov	r0, r7
+ 539:arch/stm32/mcu_periph/i2c_arch.c ****   NVIC_InitStructure.NVIC_IRQChannel = I2C2_EV_IRQn;
+ 507              		.loc 1 539 0
+ 508 0048 8DF80430 		strb	r3, [sp, #4]
+ 540:arch/stm32/mcu_periph/i2c_arch.c ****   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+ 509              		.loc 1 540 0
+ 510 004c 8DF80560 		strb	r6, [sp, #5]
+ 541:arch/stm32/mcu_periph/i2c_arch.c ****   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+ 511              		.loc 1 541 0
+ 512 0050 8DF80660 		strb	r6, [sp, #6]
+ 542:arch/stm32/mcu_periph/i2c_arch.c ****   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+ 513              		.loc 1 542 0
+ 514 0054 8DF80740 		strb	r4, [sp, #7]
+ 543:arch/stm32/mcu_periph/i2c_arch.c ****   NVIC_Init(&NVIC_InitStructure);
+ 515              		.loc 1 543 0
+ 516 0058 FFF7FEFF 		bl	NVIC_Init
+ 546:arch/stm32/mcu_periph/i2c_arch.c ****   NVIC_InitStructure.NVIC_IRQChannel = I2C2_ER_IRQn;
+ 517              		.loc 1 546 0
+ 518 005c 2223     		movs	r3, #34
+ 550:arch/stm32/mcu_periph/i2c_arch.c ****   NVIC_Init(&NVIC_InitStructure);
+ 519              		.loc 1 550 0
+ 520 005e 3846     		mov	r0, r7
+ 546:arch/stm32/mcu_periph/i2c_arch.c ****   NVIC_InitStructure.NVIC_IRQChannel = I2C2_ER_IRQn;
+ 521              		.loc 1 546 0
+ 522 0060 8DF80430 		strb	r3, [sp, #4]
+ 547:arch/stm32/mcu_periph/i2c_arch.c ****   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+ 523              		.loc 1 547 0
+ 524 0064 8DF80560 		strb	r6, [sp, #5]
+ 548:arch/stm32/mcu_periph/i2c_arch.c ****   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+ 525              		.loc 1 548 0
+ 526 0068 8DF80640 		strb	r4, [sp, #6]
+ 549:arch/stm32/mcu_periph/i2c_arch.c ****   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+ 527              		.loc 1 549 0
+ 528 006c 8DF80740 		strb	r4, [sp, #7]
+ 550:arch/stm32/mcu_periph/i2c_arch.c ****   NVIC_Init(&NVIC_InitStructure);
+ 529              		.loc 1 550 0
+ 530 0070 FFF7FEFF 		bl	NVIC_Init
+ 554:arch/stm32/mcu_periph/i2c_arch.c ****   RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C2, ENABLE);
+ 531              		.loc 1 554 0
+ 532 0074 2146     		mov	r1, r4
+ 533 0076 4FF48000 		mov	r0, #4194304
+ 534 007a FFF7FEFF 		bl	RCC_APB1PeriphClockCmd
+ 556:arch/stm32/mcu_periph/i2c_arch.c ****   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+ 535              		.loc 1 556 0
+ 536 007e 0820     		movs	r0, #8
+ 537 0080 2146     		mov	r1, r4
+ 538 0082 FFF7FEFF 		bl	RCC_APB2PeriphClockCmd
+ 539              	.LBB31:
+ 540              	.LBB32:
+ 418:arch/stm32/mcu_periph/i2c_arch.c ****   i2c_hard_reset(p);
+ 541              		.loc 1 418 0
+ 542 0086 FFF7FEFF 		bl	T.29
+ 421:arch/stm32/mcu_periph/i2c_arch.c ****   I2C_Cmd(p->reg_addr, ENABLE);
+ 543              		.loc 1 421 0
+ 544 008a 686A     		ldr	r0, [r5, #36]
+ 545 008c 2146     		mov	r1, r4
+ 546 008e FFF7FEFF 		bl	I2C_Cmd
+ 424:arch/stm32/mcu_periph/i2c_arch.c ****   I2C_ITConfig(p->reg_addr, I2C_IT_ERR, ENABLE);
+ 547              		.loc 1 424 0
+ 548 0092 686A     		ldr	r0, [r5, #36]
+ 549 0094 4FF48071 		mov	r1, #256
+ 550 0098 2246     		mov	r2, r4
+ 551 009a FFF7FEFF 		bl	I2C_ITConfig
+ 552              	.LBE32:
+ 553              	.LBE31:
+ 561:arch/stm32/mcu_periph/i2c_arch.c **** }
+ 554              		.loc 1 561 0
+ 555 009e FEBD     		pop	{r1, r2, r3, r4, r5, r6, r7, pc}
+ 556              	.L37:
+ 557              		.align	2
+ 558              	.L36:
+ 559 00a0 00000000 		.word	.LANCHOR0
+ 560 00a4 00000000 		.word	i2c2
+ 561 00a8 00000000 		.word	.LANCHOR1
+ 562 00ac 00580040 		.word	1073764352
+ 563              		.cfi_endproc
+ 564              	.LFE40:
+ 566              		.section	.text.T.30,"ax",%progbits
+ 567              		.align	1
+ 568              		.thumb
+ 569              		.thumb_func
+ 571              	T.30:
+ 572              	.LFB50:
+  70:arch/stm32/mcu_periph/i2c_arch.c **** static inline void abort_and_reset(struct i2c_periph *p) {
+ 573              		.loc 1 70 0
+ 574              		.cfi_startproc
+ 575              		@ args = 0, pretend = 0, frame = 0
+ 576              		@ frame_needed = 0, uses_anonymous_args = 0
+ 577 0000 10B5     		push	{r4, lr}
+ 578              	.LCFI6:
+ 579              		.cfi_def_cfa_offset 8
+  71:arch/stm32/mcu_periph/i2c_arch.c ****     struct i2c_transaction* trans = p->trans[p->trans_extract_idx];
+ 580              		.loc 1 71 0
+ 581 0002 0D4C     		ldr	r4, .L40
+ 582              		.cfi_offset 14, -4
+ 583              		.cfi_offset 4, -8
+  72:arch/stm32/mcu_periph/i2c_arch.c ****     trans->status = I2CTransFailed;
+ 584              		.loc 1 72 0
+ 585 0004 0322     		movs	r2, #3
+  71:arch/stm32/mcu_periph/i2c_arch.c ****     struct i2c_transaction* trans = p->trans[p->trans_extract_idx];
+ 586              		.loc 1 71 0
+ 587 0006 94F82130 		ldrb	r3, [r4, #33]	@ zero_extendqisi2
+  73:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ITConfig(p->reg_addr, I2C_IT_EVT | I2C_IT_BUF | I2C_IT_ERR, DISABLE);
+ 588              		.loc 1 73 0
+ 589 000a 606A     		ldr	r0, [r4, #36]
+  71:arch/stm32/mcu_periph/i2c_arch.c ****     struct i2c_transaction* trans = p->trans[p->trans_extract_idx];
+ 590              		.loc 1 71 0
+ 591 000c 54F82330 		ldr	r3, [r4, r3, lsl #2]
+ 592              	.LVL15:
+  73:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ITConfig(p->reg_addr, I2C_IT_EVT | I2C_IT_BUF | I2C_IT_ERR, DISABLE);
+ 593              		.loc 1 73 0
+ 594 0010 4FF4E061 		mov	r1, #1792
+  72:arch/stm32/mcu_periph/i2c_arch.c ****     trans->status = I2CTransFailed;
+ 595              		.loc 1 72 0
+ 596 0014 83F82520 		strb	r2, [r3, #37]
+  73:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ITConfig(p->reg_addr, I2C_IT_EVT | I2C_IT_BUF | I2C_IT_ERR, DISABLE);
+ 597              		.loc 1 73 0
+ 598 0018 033A     		subs	r2, r2, #3
+ 599 001a FFF7FEFF 		bl	I2C_ITConfig
+ 600              	.LVL16:
+  74:arch/stm32/mcu_periph/i2c_arch.c ****     i2c_hard_reset(p);
+ 601              		.loc 1 74 0
+ 602 001e FFF7FEFF 		bl	T.29
+  75:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ITConfig(p->reg_addr, I2C_IT_ERR, ENABLE);
+ 603              		.loc 1 75 0
+ 604 0022 606A     		ldr	r0, [r4, #36]
+ 605 0024 4FF48071 		mov	r1, #256
+ 606 0028 0122     		movs	r2, #1
+ 607 002a FFF7FEFF 		bl	I2C_ITConfig
+  77:arch/stm32/mcu_periph/i2c_arch.c **** }
+ 608              		.loc 1 77 0
+ 609 002e BDE81040 		pop	{r4, lr}
+  76:arch/stm32/mcu_periph/i2c_arch.c ****     end_of_transaction(p);
+ 610              		.loc 1 76 0
+ 611 0032 FFF7FEBF 		b	T.28
+ 612              	.L41:
+ 613 0036 00BF     		.align	2
+ 614              	.L40:
+ 615 0038 00000000 		.word	i2c2
+ 616              		.cfi_endproc
+ 617              	.LFE50:
+ 619              		.section	.text.i2c2_er_irq_handler,"ax",%progbits
+ 620              		.align	1
+ 621              		.global	i2c2_er_irq_handler
+ 622              		.thumb
+ 623              		.thumb_func
+ 625              	i2c2_er_irq_handler:
+ 626              	.LFB42:
+ 571:arch/stm32/mcu_periph/i2c_arch.c **** void i2c2_er_irq_handler(void) {
+ 627              		.loc 1 571 0
+ 628              		.cfi_startproc
+ 629              		@ args = 0, pretend = 0, frame = 0
+ 630              		@ frame_needed = 0, uses_anonymous_args = 0
+ 631 0000 10B5     		push	{r4, lr}
+ 632              	.LCFI7:
+ 633              		.cfi_def_cfa_offset 8
+ 634              	.LBB35:
+ 635              	.LBB36:
+ 319:arch/stm32/mcu_periph/i2c_arch.c ****   p->errors->er_irq_cnt;
+ 636              		.loc 1 319 0
+ 637 0002 374C     		ldr	r4, .L51
+ 638              		.cfi_offset 14, -4
+ 639              		.cfi_offset 4, -8
+ 320:arch/stm32/mcu_periph/i2c_arch.c ****   if (I2C_GetITStatus(p->reg_addr, I2C_IT_AF)) {       /* Acknowledge failure */
+ 640              		.loc 1 320 0
+ 641 0004 3749     		ldr	r1, .L51+4
+ 319:arch/stm32/mcu_periph/i2c_arch.c ****   p->errors->er_irq_cnt;
+ 642              		.loc 1 319 0
+ 643 0006 236B     		ldr	r3, [r4, #48]
+ 320:arch/stm32/mcu_periph/i2c_arch.c ****   if (I2C_GetITStatus(p->reg_addr, I2C_IT_AF)) {       /* Acknowledge failure */
+ 644              		.loc 1 320 0
+ 645 0008 606A     		ldr	r0, [r4, #36]
+ 319:arch/stm32/mcu_periph/i2c_arch.c ****   p->errors->er_irq_cnt;
+ 646              		.loc 1 319 0
+ 647 000a 5B69     		ldr	r3, [r3, #20]
+ 320:arch/stm32/mcu_periph/i2c_arch.c ****   if (I2C_GetITStatus(p->reg_addr, I2C_IT_AF)) {       /* Acknowledge failure */
+ 648              		.loc 1 320 0
+ 649 000c FFF7FEFF 		bl	I2C_GetITStatus
+ 650 0010 40B1     		cbz	r0, .L43
+ 321:arch/stm32/mcu_periph/i2c_arch.c ****     p->errors->ack_fail_cnt++;
+ 651              		.loc 1 321 0
+ 652 0012 236B     		ldr	r3, [r4, #48]
+ 322:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ClearITPendingBit(p->reg_addr, I2C_IT_AF);
+ 653              		.loc 1 322 0
+ 654 0014 606A     		ldr	r0, [r4, #36]
+ 321:arch/stm32/mcu_periph/i2c_arch.c ****     p->errors->ack_fail_cnt++;
+ 655              		.loc 1 321 0
+ 656 0016 1A88     		ldrh	r2, [r3, #0]
+ 322:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ClearITPendingBit(p->reg_addr, I2C_IT_AF);
+ 657              		.loc 1 322 0
+ 658 0018 3249     		ldr	r1, .L51+4
+ 321:arch/stm32/mcu_periph/i2c_arch.c ****     p->errors->ack_fail_cnt++;
+ 659              		.loc 1 321 0
+ 660 001a 0132     		adds	r2, r2, #1
+ 661 001c 92B2     		uxth	r2, r2
+ 662 001e 1A80     		strh	r2, [r3, #0]	@ movhi
+ 322:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ClearITPendingBit(p->reg_addr, I2C_IT_AF);
+ 663              		.loc 1 322 0
+ 664 0020 FFF7FEFF 		bl	I2C_ClearITPendingBit
+ 665              	.L43:
+ 324:arch/stm32/mcu_periph/i2c_arch.c ****   if (I2C_GetITStatus(p->reg_addr, I2C_IT_BERR)) {     /* Misplaced Start or Stop condition */
+ 666              		.loc 1 324 0
+ 667 0024 2E4C     		ldr	r4, .L51
+ 668 0026 3049     		ldr	r1, .L51+8
+ 669 0028 606A     		ldr	r0, [r4, #36]
+ 670 002a FFF7FEFF 		bl	I2C_GetITStatus
+ 671 002e 40B1     		cbz	r0, .L44
+ 325:arch/stm32/mcu_periph/i2c_arch.c ****     p->errors->miss_start_stop_cnt++;
+ 672              		.loc 1 325 0
+ 673 0030 236B     		ldr	r3, [r4, #48]
+ 326:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ClearITPendingBit(p->reg_addr, I2C_IT_BERR);
+ 674              		.loc 1 326 0
+ 675 0032 606A     		ldr	r0, [r4, #36]
+ 325:arch/stm32/mcu_periph/i2c_arch.c ****     p->errors->miss_start_stop_cnt++;
+ 676              		.loc 1 325 0
+ 677 0034 5A88     		ldrh	r2, [r3, #2]
+ 326:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ClearITPendingBit(p->reg_addr, I2C_IT_BERR);
+ 678              		.loc 1 326 0
+ 679 0036 2C49     		ldr	r1, .L51+8
+ 325:arch/stm32/mcu_periph/i2c_arch.c ****     p->errors->miss_start_stop_cnt++;
+ 680              		.loc 1 325 0
+ 681 0038 0132     		adds	r2, r2, #1
+ 682 003a 92B2     		uxth	r2, r2
+ 683 003c 5A80     		strh	r2, [r3, #2]	@ movhi
+ 326:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ClearITPendingBit(p->reg_addr, I2C_IT_BERR);
+ 684              		.loc 1 326 0
+ 685 003e FFF7FEFF 		bl	I2C_ClearITPendingBit
+ 686              	.L44:
+ 328:arch/stm32/mcu_periph/i2c_arch.c ****   if (I2C_GetITStatus(p->reg_addr, I2C_IT_ARLO)) {     /* Arbitration lost */
+ 687              		.loc 1 328 0
+ 688 0042 274C     		ldr	r4, .L51
+ 689 0044 2949     		ldr	r1, .L51+12
+ 690 0046 606A     		ldr	r0, [r4, #36]
+ 691 0048 FFF7FEFF 		bl	I2C_GetITStatus
+ 692 004c 40B1     		cbz	r0, .L45
+ 329:arch/stm32/mcu_periph/i2c_arch.c ****     p->errors->arb_lost_cnt++;
+ 693              		.loc 1 329 0
+ 694 004e 236B     		ldr	r3, [r4, #48]
+ 330:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ClearITPendingBit(p->reg_addr, I2C_IT_ARLO);
+ 695              		.loc 1 330 0
+ 696 0050 606A     		ldr	r0, [r4, #36]
+ 329:arch/stm32/mcu_periph/i2c_arch.c ****     p->errors->arb_lost_cnt++;
+ 697              		.loc 1 329 0
+ 698 0052 9A88     		ldrh	r2, [r3, #4]
+ 330:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ClearITPendingBit(p->reg_addr, I2C_IT_ARLO);
+ 699              		.loc 1 330 0
+ 700 0054 2549     		ldr	r1, .L51+12
+ 329:arch/stm32/mcu_periph/i2c_arch.c ****     p->errors->arb_lost_cnt++;
+ 701              		.loc 1 329 0
+ 702 0056 0132     		adds	r2, r2, #1
+ 703 0058 92B2     		uxth	r2, r2
+ 704 005a 9A80     		strh	r2, [r3, #4]	@ movhi
+ 330:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ClearITPendingBit(p->reg_addr, I2C_IT_ARLO);
+ 705              		.loc 1 330 0
+ 706 005c FFF7FEFF 		bl	I2C_ClearITPendingBit
+ 707              	.L45:
+ 335:arch/stm32/mcu_periph/i2c_arch.c ****   if (I2C_GetITStatus(p->reg_addr, I2C_IT_OVR)) {      /* Overrun/Underrun */
+ 708              		.loc 1 335 0
+ 709 0060 1F4C     		ldr	r4, .L51
+ 710 0062 2349     		ldr	r1, .L51+16
+ 711 0064 606A     		ldr	r0, [r4, #36]
+ 712 0066 FFF7FEFF 		bl	I2C_GetITStatus
+ 713 006a 40B1     		cbz	r0, .L46
+ 336:arch/stm32/mcu_periph/i2c_arch.c ****     p->errors->over_under_cnt++;
+ 714              		.loc 1 336 0
+ 715 006c 236B     		ldr	r3, [r4, #48]
+ 337:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ClearITPendingBit(p->reg_addr, I2C_IT_OVR);
+ 716              		.loc 1 337 0
+ 717 006e 606A     		ldr	r0, [r4, #36]
+ 336:arch/stm32/mcu_periph/i2c_arch.c ****     p->errors->over_under_cnt++;
+ 718              		.loc 1 336 0
+ 719 0070 DA88     		ldrh	r2, [r3, #6]
+ 337:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ClearITPendingBit(p->reg_addr, I2C_IT_OVR);
+ 720              		.loc 1 337 0
+ 721 0072 1F49     		ldr	r1, .L51+16
+ 336:arch/stm32/mcu_periph/i2c_arch.c ****     p->errors->over_under_cnt++;
+ 722              		.loc 1 336 0
+ 723 0074 0132     		adds	r2, r2, #1
+ 724 0076 92B2     		uxth	r2, r2
+ 725 0078 DA80     		strh	r2, [r3, #6]	@ movhi
+ 337:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ClearITPendingBit(p->reg_addr, I2C_IT_OVR);
+ 726              		.loc 1 337 0
+ 727 007a FFF7FEFF 		bl	I2C_ClearITPendingBit
+ 728              	.L46:
+ 339:arch/stm32/mcu_periph/i2c_arch.c ****   if (I2C_GetITStatus(p->reg_addr, I2C_IT_PECERR)) {   /* PEC Error in reception */
+ 729              		.loc 1 339 0
+ 730 007e 184C     		ldr	r4, .L51
+ 731 0080 1C49     		ldr	r1, .L51+20
+ 732 0082 606A     		ldr	r0, [r4, #36]
+ 733 0084 FFF7FEFF 		bl	I2C_GetITStatus
+ 734 0088 40B1     		cbz	r0, .L47
+ 340:arch/stm32/mcu_periph/i2c_arch.c ****     p->errors->pec_recep_cnt++;
+ 735              		.loc 1 340 0
+ 736 008a 236B     		ldr	r3, [r4, #48]
+ 341:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ClearITPendingBit(p->reg_addr, I2C_IT_PECERR);
+ 737              		.loc 1 341 0
+ 738 008c 606A     		ldr	r0, [r4, #36]
+ 340:arch/stm32/mcu_periph/i2c_arch.c ****     p->errors->pec_recep_cnt++;
+ 739              		.loc 1 340 0
+ 740 008e 1A89     		ldrh	r2, [r3, #8]
+ 341:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ClearITPendingBit(p->reg_addr, I2C_IT_PECERR);
+ 741              		.loc 1 341 0
+ 742 0090 1849     		ldr	r1, .L51+20
+ 340:arch/stm32/mcu_periph/i2c_arch.c ****     p->errors->pec_recep_cnt++;
+ 743              		.loc 1 340 0
+ 744 0092 0132     		adds	r2, r2, #1
+ 745 0094 92B2     		uxth	r2, r2
+ 746 0096 1A81     		strh	r2, [r3, #8]	@ movhi
+ 341:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ClearITPendingBit(p->reg_addr, I2C_IT_PECERR);
+ 747              		.loc 1 341 0
+ 748 0098 FFF7FEFF 		bl	I2C_ClearITPendingBit
+ 749              	.L47:
+ 343:arch/stm32/mcu_periph/i2c_arch.c ****   if (I2C_GetITStatus(p->reg_addr, I2C_IT_TIMEOUT)) {  /* Timeout or Tlow error */
+ 750              		.loc 1 343 0
+ 751 009c 104C     		ldr	r4, .L51
+ 752 009e 1649     		ldr	r1, .L51+24
+ 753 00a0 606A     		ldr	r0, [r4, #36]
+ 754 00a2 FFF7FEFF 		bl	I2C_GetITStatus
+ 755 00a6 40B1     		cbz	r0, .L48
+ 344:arch/stm32/mcu_periph/i2c_arch.c ****     p->errors->timeout_tlow_cnt++;
+ 756              		.loc 1 344 0
+ 757 00a8 236B     		ldr	r3, [r4, #48]
+ 345:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ClearITPendingBit(p->reg_addr, I2C_IT_TIMEOUT);
+ 758              		.loc 1 345 0
+ 759 00aa 606A     		ldr	r0, [r4, #36]
+ 344:arch/stm32/mcu_periph/i2c_arch.c ****     p->errors->timeout_tlow_cnt++;
+ 760              		.loc 1 344 0
+ 761 00ac 5A89     		ldrh	r2, [r3, #10]
+ 345:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ClearITPendingBit(p->reg_addr, I2C_IT_TIMEOUT);
+ 762              		.loc 1 345 0
+ 763 00ae 1249     		ldr	r1, .L51+24
+ 344:arch/stm32/mcu_periph/i2c_arch.c ****     p->errors->timeout_tlow_cnt++;
+ 764              		.loc 1 344 0
+ 765 00b0 0132     		adds	r2, r2, #1
+ 766 00b2 92B2     		uxth	r2, r2
+ 767 00b4 5A81     		strh	r2, [r3, #10]	@ movhi
+ 345:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ClearITPendingBit(p->reg_addr, I2C_IT_TIMEOUT);
+ 768              		.loc 1 345 0
+ 769 00b6 FFF7FEFF 		bl	I2C_ClearITPendingBit
+ 770              	.L48:
+ 347:arch/stm32/mcu_periph/i2c_arch.c ****   if (I2C_GetITStatus(p->reg_addr, I2C_IT_SMBALERT)) { /* SMBus alert */
+ 771              		.loc 1 347 0
+ 772 00ba 094C     		ldr	r4, .L51
+ 773 00bc 0F49     		ldr	r1, .L51+28
+ 774 00be 606A     		ldr	r0, [r4, #36]
+ 775 00c0 FFF7FEFF 		bl	I2C_GetITStatus
+ 776 00c4 40B1     		cbz	r0, .L49
+ 348:arch/stm32/mcu_periph/i2c_arch.c ****     p->errors->smbus_alert_cnt++;
+ 777              		.loc 1 348 0
+ 778 00c6 236B     		ldr	r3, [r4, #48]
+ 349:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ClearITPendingBit(p->reg_addr, I2C_IT_SMBALERT);
+ 779              		.loc 1 349 0
+ 780 00c8 606A     		ldr	r0, [r4, #36]
+ 348:arch/stm32/mcu_periph/i2c_arch.c ****     p->errors->smbus_alert_cnt++;
+ 781              		.loc 1 348 0
+ 782 00ca 9A89     		ldrh	r2, [r3, #12]
+ 349:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ClearITPendingBit(p->reg_addr, I2C_IT_SMBALERT);
+ 783              		.loc 1 349 0
+ 784 00cc 0B49     		ldr	r1, .L51+28
+ 348:arch/stm32/mcu_periph/i2c_arch.c ****     p->errors->smbus_alert_cnt++;
+ 785              		.loc 1 348 0
+ 786 00ce 0132     		adds	r2, r2, #1
+ 787 00d0 92B2     		uxth	r2, r2
+ 788 00d2 9A81     		strh	r2, [r3, #12]	@ movhi
+ 349:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_ClearITPendingBit(p->reg_addr, I2C_IT_SMBALERT);
+ 789              		.loc 1 349 0
+ 790 00d4 FFF7FEFF 		bl	I2C_ClearITPendingBit
+ 791              	.L49:
+ 792              	.LBE36:
+ 793              	.LBE35:
+ 574:arch/stm32/mcu_periph/i2c_arch.c **** }
+ 794              		.loc 1 574 0
+ 795 00d8 BDE81040 		pop	{r4, lr}
+ 796              	.LBB38:
+ 797              	.LBB37:
+ 352:arch/stm32/mcu_periph/i2c_arch.c ****   abort_and_reset(p);
+ 798              		.loc 1 352 0
+ 799 00dc FFF7FEBF 		b	T.30
+ 800              	.L52:
+ 801              		.align	2
+ 802              	.L51:
+ 803 00e0 00000000 		.word	i2c2
+ 804 00e4 00040001 		.word	16778240
+ 805 00e8 00010001 		.word	16777472
+ 806 00ec 00020001 		.word	16777728
+ 807 00f0 00080001 		.word	16779264
+ 808 00f4 00100001 		.word	16781312
+ 809 00f8 00400001 		.word	16793600
+ 810 00fc 00800001 		.word	16809984
+ 811              	.LBE37:
+ 812              	.LBE38:
+ 813              		.cfi_endproc
+ 814              	.LFE42:
+ 816              		.section	.text.i2c2_ev_irq_handler,"ax",%progbits
+ 817              		.align	1
+ 818              		.global	i2c2_ev_irq_handler
+ 819              		.thumb
+ 820              		.thumb_func
+ 822              	i2c2_ev_irq_handler:
+ 823              	.LFB41:
+ 566:arch/stm32/mcu_periph/i2c_arch.c **** void i2c2_ev_irq_handler(void) {
+ 824              		.loc 1 566 0
+ 825              		.cfi_startproc
+ 826              		@ args = 0, pretend = 0, frame = 0
+ 827              		@ frame_needed = 0, uses_anonymous_args = 0
+ 828 0000 70B5     		push	{r4, r5, r6, lr}
+ 829              	.LCFI8:
+ 830              		.cfi_def_cfa_offset 16
+ 567:arch/stm32/mcu_periph/i2c_arch.c ****   uint32_t event = I2C_GetLastEvent(I2C2);
+ 831              		.loc 1 567 0
+ 832 0002 9648     		ldr	r0, .L90
+ 833              		.cfi_offset 14, -4
+ 834              		.cfi_offset 6, -8
+ 835              		.cfi_offset 5, -12
+ 836              		.cfi_offset 4, -16
+ 837 0004 FFF7FEFF 		bl	I2C_GetLastEvent
+ 838              	.LBB64:
+ 839              	.LBB66:
+ 285:arch/stm32/mcu_periph/i2c_arch.c ****   struct i2c_transaction* trans = p->trans[p->trans_extract_idx];
+ 840              		.loc 1 285 0
+ 841 0008 954B     		ldr	r3, .L90+4
+ 842 000a 93F82120 		ldrb	r2, [r3, #33]	@ zero_extendqisi2
+ 843 000e 53F82240 		ldr	r4, [r3, r2, lsl #2]
+ 844              	.LVL17:
+ 286:arch/stm32/mcu_periph/i2c_arch.c ****   switch (p->status) {
+ 845              		.loc 1 286 0
+ 846 0012 93F82230 		ldrb	r3, [r3, #34]	@ zero_extendqisi2
+ 847 0016 013B     		subs	r3, r3, #1
+ 848 0018 072B     		cmp	r3, #7
+ 849 001a 00F24F81 		bhi	.L54
+ 850 001e DFE813F0 		tbh	[pc, r3, lsl #1]
+ 851              	.L63:
+ 852 0022 0800     		.2byte	(.L55-.L63)/2
+ 853 0024 1B00     		.2byte	(.L56-.L63)/2
+ 854 0026 A000     		.2byte	(.L57-.L63)/2
+ 855 0028 4500     		.2byte	(.L58-.L63)/2
+ 856 002a D300     		.2byte	(.L59-.L63)/2
+ 857 002c 0C01     		.2byte	(.L60-.L63)/2
+ 858 002e 8100     		.2byte	(.L61-.L63)/2
+ 859 0030 3F01     		.2byte	(.L62-.L63)/2
+ 860              	.L55:
+ 861              	.LBB81:
+ 862              	.LBB82:
+  94:arch/stm32/mcu_periph/i2c_arch.c ****   if (event & I2C_FLAG_SB) {
+ 863              		.loc 1 94 0
+ 864 0032 8C4B     		ldr	r3, .L90+8
+ 865 0034 00EA0303 		and	r3, r0, r3
+ 866              	.LVL18:
+ 867 0038 002B     		cmp	r3, #0
+ 868 003a 00F04381 		beq	.L83
+  95:arch/stm32/mcu_periph/i2c_arch.c ****     if(trans->type == I2CTransRx) {
+ 869              		.loc 1 95 0
+ 870 003e 2278     		ldrb	r2, [r4, #0]	@ zero_extendqisi2
+ 871 0040 874D     		ldr	r5, .L90+4
+ 872 0042 012A     		cmp	r2, #1
+ 873 0044 6178     		ldrb	r1, [r4, #1]	@ zero_extendqisi2
+ 874 0046 01D1     		bne	.L65
+  96:arch/stm32/mcu_periph/i2c_arch.c ****       I2C_Send7bitAddress(periph->reg_addr, trans->slave_addr, I2C_Direction_Receiver);
+ 875              		.loc 1 96 0
+ 876 0048 686A     		ldr	r0, [r5, #36]
+ 877              	.LVL19:
+ 878 004a 31E1     		b	.L87
+ 879              	.LVL20:
+ 880              	.L65:
+ 100:arch/stm32/mcu_periph/i2c_arch.c ****       I2C_Send7bitAddress(periph->reg_addr, trans->slave_addr, I2C_Direction_Transmitter);
+ 881              		.loc 1 100 0
+ 882 004c 686A     		ldr	r0, [r5, #36]
+ 883              	.LVL21:
+ 884 004e 0022     		movs	r2, #0
+ 885 0050 FFF7FEFF 		bl	I2C_Send7bitAddress
+ 101:arch/stm32/mcu_periph/i2c_arch.c ****       periph->status = I2CAddrWrSent;
+ 886              		.loc 1 101 0
+ 887 0054 0223     		movs	r3, #2
+ 888 0056 2EE1     		b	.L84
+ 889              	.L56:
+ 890              	.LBE82:
+ 891              	.LBE81:
+ 892              	.LBB83:
+ 893              	.LBB84:
+ 114:arch/stm32/mcu_periph/i2c_arch.c ****   if ((event & I2C_FLAG_ADDR) && (event & I2C_FLAG_TRA)) {
+ 894              		.loc 1 114 0
+ 895 0058 834B     		ldr	r3, .L90+12
+ 896 005a 00EA0303 		and	r3, r0, r3
+ 897              	.LVL22:
+ 898 005e 002B     		cmp	r3, #0
+ 899 0060 00F02C81 		beq	.L54
+ 900 0064 10F4802F 		tst	r0, #262144
+ 901 0068 00F02881 		beq	.L54
+ 115:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_SendData(periph->reg_addr, trans->buf[0]);
+ 902              		.loc 1 115 0
+ 903 006c 7C4D     		ldr	r5, .L90+4
+ 904 006e 6179     		ldrb	r1, [r4, #5]	@ zero_extendqisi2
+ 905 0070 686A     		ldr	r0, [r5, #36]
+ 906              	.LVL23:
+ 907 0072 FFF7FEFF 		bl	I2C_SendData
+ 116:arch/stm32/mcu_periph/i2c_arch.c ****     if (trans->len_w > 1) {
+ 908              		.loc 1 116 0
+ 909 0076 2379     		ldrb	r3, [r4, #4]	@ zero_extendqisi2
+ 910 0078 012B     		cmp	r3, #1
+ 911 007a 0ED9     		bls	.L67
+ 117:arch/stm32/mcu_periph/i2c_arch.c ****       I2C_SendData(periph->reg_addr, trans->buf[1]);
+ 912              		.loc 1 117 0
+ 913 007c A179     		ldrb	r1, [r4, #6]	@ zero_extendqisi2
+ 914 007e 686A     		ldr	r0, [r5, #36]
+ 915 0080 FFF7FEFF 		bl	I2C_SendData
+ 118:arch/stm32/mcu_periph/i2c_arch.c ****       periph->idx_buf = 2;
+ 916              		.loc 1 118 0
+ 917 0084 0223     		movs	r3, #2
+ 119:arch/stm32/mcu_periph/i2c_arch.c ****       I2C_ITConfig(periph->reg_addr, I2C_IT_BUF, ENABLE);
+ 918              		.loc 1 119 0
+ 919 0086 686A     		ldr	r0, [r5, #36]
+ 920 0088 4FF48061 		mov	r1, #1024
+ 921 008c 0122     		movs	r2, #1
+ 118:arch/stm32/mcu_periph/i2c_arch.c ****       periph->idx_buf = 2;
+ 922              		.loc 1 118 0
+ 923 008e 85F82330 		strb	r3, [r5, #35]
+ 119:arch/stm32/mcu_periph/i2c_arch.c ****       I2C_ITConfig(periph->reg_addr, I2C_IT_BUF, ENABLE);
+ 924              		.loc 1 119 0
+ 925 0092 FFF7FEFF 		bl	I2C_ITConfig
+ 120:arch/stm32/mcu_periph/i2c_arch.c ****       periph->status = I2CSendingByte;
+ 926              		.loc 1 120 0
+ 927 0096 0423     		movs	r3, #4
+ 928 0098 0DE1     		b	.L84
+ 929              	.L67:
+ 123:arch/stm32/mcu_periph/i2c_arch.c ****       periph->idx_buf = 1;
+ 930              		.loc 1 123 0
+ 931 009a 0121     		movs	r1, #1
+ 932 009c 85F82310 		strb	r1, [r5, #35]
+ 124:arch/stm32/mcu_periph/i2c_arch.c ****       if (trans->type == I2CTransTx) {
+ 933              		.loc 1 124 0
+ 934 00a0 2378     		ldrb	r3, [r4, #0]	@ zero_extendqisi2
+ 935 00a2 0BB9     		cbnz	r3, .L68
+ 125:arch/stm32/mcu_periph/i2c_arch.c ****         I2C_GenerateSTOP(periph->reg_addr, ENABLE);
+ 936              		.loc 1 125 0
+ 937 00a4 686A     		ldr	r0, [r5, #36]
+ 938 00a6 D6E0     		b	.L89
+ 939              	.L68:
+ 129:arch/stm32/mcu_periph/i2c_arch.c ****         I2C_GenerateSTART(periph->reg_addr, ENABLE);
+ 940              		.loc 1 129 0
+ 941 00a8 686A     		ldr	r0, [r5, #36]
+ 942 00aa 37E0     		b	.L86
+ 943              	.L58:
+ 944              	.LBE84:
+ 945              	.LBE83:
+ 946              	.LBB85:
+ 947              	.LBB86:
+ 147:arch/stm32/mcu_periph/i2c_arch.c ****   if (event & I2C_FLAG_TXE) {
+ 948              		.loc 1 147 0
+ 949 00ac 6F4B     		ldr	r3, .L90+16
+ 146:arch/stm32/mcu_periph/i2c_arch.c ****   I2C_TypeDef *regs = (I2C_TypeDef *) periph->reg_addr;
+ 950              		.loc 1 146 0
+ 951 00ae 6C4D     		ldr	r5, .L90+4
+ 147:arch/stm32/mcu_periph/i2c_arch.c ****   if (event & I2C_FLAG_TXE) {
+ 952              		.loc 1 147 0
+ 953 00b0 00EA0303 		and	r3, r0, r3
+ 954              	.LVL24:
+ 146:arch/stm32/mcu_periph/i2c_arch.c ****   I2C_TypeDef *regs = (I2C_TypeDef *) periph->reg_addr;
+ 955              		.loc 1 146 0
+ 956 00b4 6E6A     		ldr	r6, [r5, #36]
+ 147:arch/stm32/mcu_periph/i2c_arch.c ****   if (event & I2C_FLAG_TXE) {
+ 957              		.loc 1 147 0
+ 958 00b6 002B     		cmp	r3, #0
+ 959 00b8 00F00481 		beq	.L83
+ 148:arch/stm32/mcu_periph/i2c_arch.c ****     if (periph->idx_buf < trans->len_w) {
+ 960              		.loc 1 148 0
+ 961 00bc 95F82330 		ldrb	r3, [r5, #35]	@ zero_extendqisi2
+ 962 00c0 2279     		ldrb	r2, [r4, #4]	@ zero_extendqisi2
+ 963 00c2 9A42     		cmp	r2, r3
+ 964 00c4 0DD9     		bls	.L69
+ 149:arch/stm32/mcu_periph/i2c_arch.c ****       I2C_SendData(periph->reg_addr, trans->buf[periph->idx_buf]);
+ 965              		.loc 1 149 0
+ 966 00c6 95F82330 		ldrb	r3, [r5, #35]	@ zero_extendqisi2
+ 967 00ca 3046     		mov	r0, r6
+ 968              	.LVL25:
+ 969 00cc E418     		adds	r4, r4, r3
+ 970              	.LVL26:
+ 971 00ce 6179     		ldrb	r1, [r4, #5]	@ zero_extendqisi2
+ 972 00d0 FFF7FEFF 		bl	I2C_SendData
+ 150:arch/stm32/mcu_periph/i2c_arch.c ****       periph->idx_buf++;
+ 973              		.loc 1 150 0
+ 974 00d4 95F82330 		ldrb	r3, [r5, #35]	@ zero_extendqisi2
+ 975 00d8 0133     		adds	r3, r3, #1
+ 976 00da DBB2     		uxtb	r3, r3
+ 977 00dc 85F82330 		strb	r3, [r5, #35]
+ 978 00e0 70BD     		pop	{r4, r5, r6, pc}
+ 979              	.LVL27:
+ 980              	.L69:
+ 153:arch/stm32/mcu_periph/i2c_arch.c ****       I2C_ITConfig(periph->reg_addr, I2C_IT_BUF, DISABLE);
+ 981              		.loc 1 153 0
+ 982 00e2 3046     		mov	r0, r6
+ 983              	.LVL28:
+ 984 00e4 4FF48061 		mov	r1, #1024
+ 985 00e8 0022     		movs	r2, #0
+ 986 00ea FFF7FEFF 		bl	I2C_ITConfig
+ 154:arch/stm32/mcu_periph/i2c_arch.c ****       if (trans->type == I2CTransTx) {
+ 987              		.loc 1 154 0
+ 988 00ee 2378     		ldrb	r3, [r4, #0]	@ zero_extendqisi2
+ 989 00f0 93B9     		cbnz	r3, .L70
+ 990              	.LBB87:
+ 155:arch/stm32/mcu_periph/i2c_arch.c ****         I2C_GenerateSTOP(periph->reg_addr, ENABLE);
+ 991              		.loc 1 155 0
+ 992 00f2 686A     		ldr	r0, [r5, #36]
+ 993 00f4 0121     		movs	r1, #1
+ 994 00f6 FFF7FEFF 		bl	I2C_GenerateSTOP
+ 995 00fa 08E0     		b	.L71
+ 996              	.L73:
+ 159:arch/stm32/mcu_periph/i2c_arch.c ****           counter++;
+ 997              		.loc 1 159 0
+ 998 00fc 5C4B     		ldr	r3, .L90+20
+ 999 00fe 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
+ 1000 0100 0132     		adds	r2, r2, #1
+ 1001 0102 D2B2     		uxtb	r2, r2
+ 1002 0104 1A70     		strb	r2, [r3, #0]
+ 160:arch/stm32/mcu_periph/i2c_arch.c ****           if (counter > 100) break;
+ 1003              		.loc 1 160 0
+ 1004 0106 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 1005 0108 642B     		cmp	r3, #100
+ 1006 010a 00F29180 		bhi	.L80
+ 1007              	.L71:
+ 158:arch/stm32/mcu_periph/i2c_arch.c ****         while ((regs->CR1 & 0x200) == 0x200) {
+ 1008              		.loc 1 158 0
+ 1009 010e 3388     		ldrh	r3, [r6, #0]
+ 1010 0110 13F4007F 		tst	r3, #512
+ 1011 0114 F2D1     		bne	.L73
+ 1012 0116 8BE0     		b	.L80
+ 1013              	.L70:
+ 1014              	.LBE87:
+ 165:arch/stm32/mcu_periph/i2c_arch.c ****         I2C_GenerateSTART(periph->reg_addr, ENABLE);
+ 1015              		.loc 1 165 0
+ 1016 0118 686A     		ldr	r0, [r5, #36]
+ 1017 011a 0121     		movs	r1, #1
+ 1018              	.L86:
+ 1019 011c FFF7FEFF 		bl	I2C_GenerateSTART
+ 166:arch/stm32/mcu_periph/i2c_arch.c ****         periph->status = I2CRestartRequested;
+ 1020              		.loc 1 166 0
+ 1021 0120 0823     		movs	r3, #8
+ 1022 0122 C8E0     		b	.L84
+ 1023              	.L61:
+ 1024              	.LBE86:
+ 1025              	.LBE85:
+ 1026              	.LBB88:
+ 1027              	.LBB89:
+ 180:arch/stm32/mcu_periph/i2c_arch.c ****   if (event & I2C_FLAG_RXNE) {
+ 1028              		.loc 1 180 0
+ 1029 0124 534B     		ldr	r3, .L90+24
+ 1030 0126 00EA0303 		and	r3, r0, r3
+ 1031              	.LVL29:
+ 1032 012a 63B1     		cbz	r3, .L74
+ 1033              	.LBB90:
+ 181:arch/stm32/mcu_periph/i2c_arch.c ****     uint8_t read_byte =  I2C_ReceiveData(periph->reg_addr);
+ 1034              		.loc 1 181 0
+ 1035 012c 4C4D     		ldr	r5, .L90+4
+ 1036 012e 686A     		ldr	r0, [r5, #36]
+ 1037              	.LVL30:
+ 1038 0130 FFF7FEFF 		bl	I2C_ReceiveData
+ 182:arch/stm32/mcu_periph/i2c_arch.c ****     if (periph->idx_buf < trans->len_r) {
+ 1039              		.loc 1 182 0
+ 1040 0134 95F82330 		ldrb	r3, [r5, #35]	@ zero_extendqisi2
+ 1041 0138 6288     		ldrh	r2, [r4, #2]
+ 1042 013a 9A42     		cmp	r2, r3
+ 1043 013c 03D9     		bls	.L74
+ 183:arch/stm32/mcu_periph/i2c_arch.c ****       trans->buf[periph->idx_buf] = read_byte;
+ 1044              		.loc 1 183 0
+ 1045 013e 95F82330 		ldrb	r3, [r5, #35]	@ zero_extendqisi2
+ 1046 0142 E318     		adds	r3, r4, r3
+ 1047 0144 5871     		strb	r0, [r3, #5]
+ 1048              	.LVL31:
+ 1049              	.L74:
+ 1050              	.LBE90:
+ 186:arch/stm32/mcu_periph/i2c_arch.c ****   I2C_ITConfig(periph->reg_addr, I2C_IT_EVT|I2C_IT_BUF, DISABLE);  // should only need to disable e
+ 1051              		.loc 1 186 0
+ 1052 0146 464B     		ldr	r3, .L90+4
+ 1053 0148 4FF4C061 		mov	r1, #1536
+ 1054 014c 586A     		ldr	r0, [r3, #36]
+ 1055              	.LVL32:
+ 1056 014e 0022     		movs	r2, #0
+ 1057 0150 FFF7FEFF 		bl	I2C_ITConfig
+ 187:arch/stm32/mcu_periph/i2c_arch.c ****   trans->status = I2CTransSuccess;
+ 1058              		.loc 1 187 0
+ 1059 0154 0223     		movs	r3, #2
+ 1060 0156 84F82530 		strb	r3, [r4, #37]
+ 1061              	.LBE89:
+ 1062              	.LBE88:
+ 1063              	.LBE66:
+ 1064              	.LBE64:
+ 569:arch/stm32/mcu_periph/i2c_arch.c **** }
+ 1065              		.loc 1 569 0
+ 1066 015a BDE87040 		pop	{r4, r5, r6, lr}
+ 1067              	.LBB93:
+ 1068              	.LBB65:
+ 1069              	.LBB80:
+ 1070              	.LBB91:
+ 188:arch/stm32/mcu_periph/i2c_arch.c ****   end_of_transaction(periph);
+ 1071              		.loc 1 188 0
+ 1072 015e FFF7FEBF 		b	T.28
+ 1073              	.L57:
+ 1074              	.LBE91:
+ 1075              	.LBE80:
+ 1076              	.LBB77:
+ 1077              	.LBB78:
+ 198:arch/stm32/mcu_periph/i2c_arch.c ****   if ((event & I2C_FLAG_ADDR) && !(event & I2C_FLAG_TRA)) {
+ 1078              		.loc 1 198 0
+ 1079 0162 414B     		ldr	r3, .L90+12
+ 196:arch/stm32/mcu_periph/i2c_arch.c ****   I2C_TypeDef *regs = (I2C_TypeDef *) periph->reg_addr;
+ 1080              		.loc 1 196 0
+ 1081 0164 3E4D     		ldr	r5, .L90+4
+ 198:arch/stm32/mcu_periph/i2c_arch.c ****   if ((event & I2C_FLAG_ADDR) && !(event & I2C_FLAG_TRA)) {
+ 1082              		.loc 1 198 0
+ 1083 0166 00EA0303 		and	r3, r0, r3
+ 1084              	.LVL33:
+ 196:arch/stm32/mcu_periph/i2c_arch.c ****   I2C_TypeDef *regs = (I2C_TypeDef *) periph->reg_addr;
+ 1085              		.loc 1 196 0
+ 1086 016a 6E6A     		ldr	r6, [r5, #36]
+ 1087              	.LVL34:
+ 198:arch/stm32/mcu_periph/i2c_arch.c ****   if ((event & I2C_FLAG_ADDR) && !(event & I2C_FLAG_TRA)) {
+ 1088              		.loc 1 198 0
+ 1089 016c 002B     		cmp	r3, #0
+ 1090 016e 00F0A980 		beq	.L83
+ 1091 0172 10F48021 		ands	r1, r0, #262144
+ 1092 0176 40F0A580 		bne	.L83
+ 199:arch/stm32/mcu_periph/i2c_arch.c ****     periph->idx_buf = 0;
+ 1093              		.loc 1 199 0
+ 1094 017a 85F82310 		strb	r1, [r5, #35]
+ 200:arch/stm32/mcu_periph/i2c_arch.c ****     if(trans->len_r == 1) {                                         // If we're going to read only 
+ 1095              		.loc 1 200 0
+ 1096 017e 6488     		ldrh	r4, [r4, #2]
+ 1097              	.LVL35:
+ 1098 0180 012C     		cmp	r4, #1
+ 1099 0182 15D1     		bne	.L75
+ 1100              	.LBB79:
+ 201:arch/stm32/mcu_periph/i2c_arch.c ****       I2C_AcknowledgeConfig(periph->reg_addr, DISABLE);             // make sure it's gonna be nack
+ 1101              		.loc 1 201 0
+ 1102 0184 3046     		mov	r0, r6
+ 1103              	.LVL36:
+ 1104 0186 FFF7FEFF 		bl	I2C_AcknowledgeConfig
+ 202:arch/stm32/mcu_periph/i2c_arch.c ****       I2C_GenerateSTOP(periph->reg_addr, ENABLE);               // and followed by a stop
+ 1105              		.loc 1 202 0
+ 1106 018a 686A     		ldr	r0, [r5, #36]
+ 1107 018c 2146     		mov	r1, r4
+ 1108 018e FFF7FEFF 		bl	I2C_GenerateSTOP
+ 1109 0192 07E0     		b	.L76
+ 1110              	.L78:
+ 206:arch/stm32/mcu_periph/i2c_arch.c ****         counter++;
+ 1111              		.loc 1 206 0
+ 1112 0194 384B     		ldr	r3, .L90+28
+ 1113 0196 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
+ 1114 0198 0132     		adds	r2, r2, #1
+ 1115 019a D2B2     		uxtb	r2, r2
+ 1116 019c 1A70     		strb	r2, [r3, #0]
+ 207:arch/stm32/mcu_periph/i2c_arch.c ****         if (counter > 100) break;
+ 1117              		.loc 1 207 0
+ 1118 019e 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 1119 01a0 642B     		cmp	r3, #100
+ 1120 01a2 03D8     		bhi	.L77
+ 1121              	.L76:
+ 205:arch/stm32/mcu_periph/i2c_arch.c ****       while ((regs->CR1 & 0x200) == 0x200) {
+ 1122              		.loc 1 205 0
+ 1123 01a4 3388     		ldrh	r3, [r6, #0]
+ 1124 01a6 13F4007F 		tst	r3, #512
+ 1125 01aa F3D1     		bne	.L78
+ 1126              	.L77:
+ 209:arch/stm32/mcu_periph/i2c_arch.c ****       periph->status = I2CReadingLastByte;                           // and remember we did
+ 1127              		.loc 1 209 0
+ 1128 01ac 0622     		movs	r2, #6
+ 1129 01ae 40E0     		b	.L85
+ 1130              	.LVL37:
+ 1131              	.L75:
+ 1132              	.LBE79:
+ 212:arch/stm32/mcu_periph/i2c_arch.c ****       I2C_AcknowledgeConfig(periph->reg_addr, ENABLE);               // if it's more than one byte,
+ 1133              		.loc 1 212 0
+ 1134 01b0 3046     		mov	r0, r6
+ 1135              	.LVL38:
+ 1136 01b2 0121     		movs	r1, #1
+ 1137 01b4 FFF7FEFF 		bl	I2C_AcknowledgeConfig
+ 213:arch/stm32/mcu_periph/i2c_arch.c ****       I2C_ITConfig(periph->reg_addr, I2C_IT_BUF, ENABLE);
+ 1138              		.loc 1 213 0
+ 1139 01b8 686A     		ldr	r0, [r5, #36]
+ 1140 01ba 4FF48061 		mov	r1, #1024
+ 1141 01be 0122     		movs	r2, #1
+ 1142 01c0 FFF7FEFF 		bl	I2C_ITConfig
+ 214:arch/stm32/mcu_periph/i2c_arch.c ****       periph->status = I2CReadingByte;                               // and remember we did
+ 1143              		.loc 1 214 0
+ 1144 01c4 0523     		movs	r3, #5
+ 1145 01c6 76E0     		b	.L84
+ 1146              	.LVL39:
+ 1147              	.L59:
+ 1148              	.LBE78:
+ 1149              	.LBE77:
+ 1150              	.LBB73:
+ 1151              	.LBB74:
+ 228:arch/stm32/mcu_periph/i2c_arch.c ****   if (event & I2C_FLAG_RXNE) {
+ 1152              		.loc 1 228 0
+ 1153 01c8 2A4B     		ldr	r3, .L90+24
+ 227:arch/stm32/mcu_periph/i2c_arch.c ****   I2C_TypeDef *regs = (I2C_TypeDef *) periph->reg_addr;
+ 1154              		.loc 1 227 0
+ 1155 01ca 254D     		ldr	r5, .L90+4
+ 228:arch/stm32/mcu_periph/i2c_arch.c ****   if (event & I2C_FLAG_RXNE) {
+ 1156              		.loc 1 228 0
+ 1157 01cc 00EA0303 		and	r3, r0, r3
+ 1158              	.LVL40:
+ 227:arch/stm32/mcu_periph/i2c_arch.c ****   I2C_TypeDef *regs = (I2C_TypeDef *) periph->reg_addr;
+ 1159              		.loc 1 227 0
+ 1160 01d0 6E6A     		ldr	r6, [r5, #36]
+ 228:arch/stm32/mcu_periph/i2c_arch.c ****   if (event & I2C_FLAG_RXNE) {
+ 1161              		.loc 1 228 0
+ 1162 01d2 002B     		cmp	r3, #0
+ 1163 01d4 76D0     		beq	.L83
+ 1164              	.LBB75:
+ 229:arch/stm32/mcu_periph/i2c_arch.c ****     uint8_t read_byte =  I2C_ReceiveData(periph->reg_addr);
+ 1165              		.loc 1 229 0
+ 1166 01d6 3046     		mov	r0, r6
+ 1167              	.LVL41:
+ 1168 01d8 FFF7FEFF 		bl	I2C_ReceiveData
+ 230:arch/stm32/mcu_periph/i2c_arch.c ****     if (periph->idx_buf < trans->len_r) {
+ 1169              		.loc 1 230 0
+ 1170 01dc 95F82330 		ldrb	r3, [r5, #35]	@ zero_extendqisi2
+ 1171 01e0 6288     		ldrh	r2, [r4, #2]
+ 1172 01e2 9A42     		cmp	r2, r3
+ 1173 01e4 6ED9     		bls	.L83
+ 231:arch/stm32/mcu_periph/i2c_arch.c ****       trans->buf[periph->idx_buf] = read_byte;
+ 1174              		.loc 1 231 0
+ 1175 01e6 95F82330 		ldrb	r3, [r5, #35]	@ zero_extendqisi2
+ 1176 01ea E318     		adds	r3, r4, r3
+ 1177 01ec 5871     		strb	r0, [r3, #5]
+ 232:arch/stm32/mcu_periph/i2c_arch.c ****       periph->idx_buf++;
+ 1178              		.loc 1 232 0
+ 1179 01ee 95F82330 		ldrb	r3, [r5, #35]	@ zero_extendqisi2
+ 1180 01f2 0133     		adds	r3, r3, #1
+ 1181 01f4 DBB2     		uxtb	r3, r3
+ 1182 01f6 85F82330 		strb	r3, [r5, #35]
+ 233:arch/stm32/mcu_periph/i2c_arch.c ****       if (periph->idx_buf >= trans->len_r-1) {                    // We're reading our last byte
+ 1183              		.loc 1 233 0
+ 1184 01fa 6388     		ldrh	r3, [r4, #2]
+ 1185 01fc 95F82320 		ldrb	r2, [r5, #35]	@ zero_extendqisi2
+ 1186 0200 013B     		subs	r3, r3, #1
+ 1187 0202 9A42     		cmp	r2, r3
+ 1188 0204 5EDB     		blt	.L83
+ 1189              	.LBB76:
+ 234:arch/stm32/mcu_periph/i2c_arch.c ****         I2C_AcknowledgeConfig(periph->reg_addr, DISABLE);         // give them a nack once it's don
+ 1190              		.loc 1 234 0
+ 1191 0206 686A     		ldr	r0, [r5, #36]
+ 1192 0208 0021     		movs	r1, #0
+ 1193 020a FFF7FEFF 		bl	I2C_AcknowledgeConfig
+ 235:arch/stm32/mcu_periph/i2c_arch.c ****         I2C_GenerateSTOP(periph->reg_addr, ENABLE);               // and follow with a stop
+ 1194              		.loc 1 235 0
+ 1195 020e 686A     		ldr	r0, [r5, #36]
+ 1196 0210 0121     		movs	r1, #1
+ 1197 0212 FFF7FEFF 		bl	I2C_GenerateSTOP
+ 1198 0216 07E0     		b	.L79
+ 1199              	.L81:
+ 239:arch/stm32/mcu_periph/i2c_arch.c ****           counter++;
+ 1200              		.loc 1 239 0
+ 1201 0218 184B     		ldr	r3, .L90+32
+ 1202 021a 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
+ 1203 021c 0132     		adds	r2, r2, #1
+ 1204 021e D2B2     		uxtb	r2, r2
+ 1205 0220 1A70     		strb	r2, [r3, #0]
+ 240:arch/stm32/mcu_periph/i2c_arch.c ****           if (counter > 100) break;
+ 1206              		.loc 1 240 0
+ 1207 0222 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 1208 0224 642B     		cmp	r3, #100
+ 1209 0226 03D8     		bhi	.L80
+ 1210              	.L79:
+ 238:arch/stm32/mcu_periph/i2c_arch.c ****         while ((regs->CR1 & 0x200) == 0x200) {
+ 1211              		.loc 1 238 0
+ 1212 0228 3388     		ldrh	r3, [r6, #0]
+ 1213 022a 13F4007F 		tst	r3, #512
+ 1214 022e F3D1     		bne	.L81
+ 1215              	.L80:
+ 242:arch/stm32/mcu_periph/i2c_arch.c ****         periph->status = I2CStopRequested;                        // remember we already trigered t
+ 1216              		.loc 1 242 0
+ 1217 0230 0722     		movs	r2, #7
+ 1218              	.LVL42:
+ 1219              	.L85:
+ 1220 0232 0B4B     		ldr	r3, .L90+4
+ 1221 0234 83F82220 		strb	r2, [r3, #34]
+ 1222 0238 70BD     		pop	{r4, r5, r6, pc}
+ 1223              	.LVL43:
+ 1224              	.L60:
+ 1225              	.LBE76:
+ 1226              	.LBE75:
+ 1227              	.LBE74:
+ 1228              	.LBE73:
+ 1229              	.LBB69:
+ 1230              	.LBB70:
+ 255:arch/stm32/mcu_periph/i2c_arch.c ****   if (event & I2C_FLAG_BTF) {
+ 1231              		.loc 1 255 0
+ 1232 023a 114B     		ldr	r3, .L90+36
+ 1233 023c 00EA0303 		and	r3, r0, r3
+ 1234              	.LVL44:
+ 1235 0240 03B3     		cbz	r3, .L82
+ 1236              	.LBB71:
+ 256:arch/stm32/mcu_periph/i2c_arch.c ****     uint8_t read_byte =  I2C_ReceiveData(periph->reg_addr);
+ 1237              		.loc 1 256 0
+ 1238 0242 074D     		ldr	r5, .L90+4
+ 1239 0244 686A     		ldr	r0, [r5, #36]
+ 1240              	.LVL45:
+ 1241 0246 FFF7FEFF 		bl	I2C_ReceiveData
+ 257:arch/stm32/mcu_periph/i2c_arch.c ****     trans->buf[periph->idx_buf] = read_byte;
+ 1242              		.loc 1 257 0
+ 1243 024a 95F82330 		ldrb	r3, [r5, #35]	@ zero_extendqisi2
+ 258:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_GenerateSTOP(periph->reg_addr, ENABLE);
+ 1244              		.loc 1 258 0
+ 1245 024e 0121     		movs	r1, #1
+ 257:arch/stm32/mcu_periph/i2c_arch.c ****     trans->buf[periph->idx_buf] = read_byte;
+ 1246              		.loc 1 257 0
+ 1247 0250 E418     		adds	r4, r4, r3
+ 1248              	.LVL46:
+ 1249 0252 6071     		strb	r0, [r4, #5]
+ 258:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_GenerateSTOP(periph->reg_addr, ENABLE);
+ 1250              		.loc 1 258 0
+ 1251 0254 686A     		ldr	r0, [r5, #36]
+ 1252              	.LVL47:
+ 1253              	.L89:
+ 1254 0256 FFF7FEFF 		bl	I2C_GenerateSTOP
+ 1255 025a 1FE0     		b	.L88
+ 1256              	.L91:
+ 1257              		.align	2
+ 1258              	.L90:
+ 1259 025c 00580040 		.word	1073764352
+ 1260 0260 00000000 		.word	i2c2
+ 1261 0264 01000010 		.word	268435457
+ 1262 0268 02000010 		.word	268435458
+ 1263 026c 80000010 		.word	268435584
+ 1264 0270 00000000 		.word	.LANCHOR2
+ 1265 0274 40000010 		.word	268435520
+ 1266 0278 00000000 		.word	.LANCHOR3
+ 1267 027c 00000000 		.word	.LANCHOR4
+ 1268 0280 04000010 		.word	268435460
+ 1269              	.LVL48:
+ 1270              	.L82:
+ 1271              	.LBE71:
+ 261:arch/stm32/mcu_periph/i2c_arch.c ****   else if (event & I2C_FLAG_RXNE) {       // should really be BTF ?
+ 1272              		.loc 1 261 0
+ 1273 0284 104B     		ldr	r3, .L92
+ 1274 0286 00EA0303 		and	r3, r0, r3
+ 1275 028a DBB1     		cbz	r3, .L83
+ 1276              	.LBB72:
+ 262:arch/stm32/mcu_periph/i2c_arch.c ****     uint8_t read_byte =  I2C_ReceiveData(periph->reg_addr);
+ 1277              		.loc 1 262 0
+ 1278 028c 0F4D     		ldr	r5, .L92+4
+ 1279 028e 686A     		ldr	r0, [r5, #36]
+ 1280              	.LVL49:
+ 1281 0290 FFF7FEFF 		bl	I2C_ReceiveData
+ 263:arch/stm32/mcu_periph/i2c_arch.c ****     trans->buf[periph->idx_buf] = read_byte;
+ 1282              		.loc 1 263 0
+ 1283 0294 95F82330 		ldrb	r3, [r5, #35]	@ zero_extendqisi2
+ 1284 0298 E418     		adds	r4, r4, r3
+ 1285              	.LVL50:
+ 1286 029a 6071     		strb	r0, [r4, #5]
+ 1287              	.LVL51:
+ 1288              	.L88:
+ 264:arch/stm32/mcu_periph/i2c_arch.c ****     periph->status = I2CStopRequested;
+ 1289              		.loc 1 264 0
+ 1290 029c 0723     		movs	r3, #7
+ 1291 029e 0AE0     		b	.L84
+ 1292              	.L62:
+ 1293              	.LBE72:
+ 1294              	.LBE70:
+ 1295              	.LBE69:
+ 1296              	.LBB67:
+ 1297              	.LBB68:
+ 275:arch/stm32/mcu_periph/i2c_arch.c ****   if (event & I2C_FLAG_SB) {
+ 1298              		.loc 1 275 0
+ 1299 02a0 0B4B     		ldr	r3, .L92+8
+ 1300 02a2 00EA0303 		and	r3, r0, r3
+ 1301              	.LVL52:
+ 1302 02a6 6BB1     		cbz	r3, .L83
+ 276:arch/stm32/mcu_periph/i2c_arch.c ****     I2C_Send7bitAddress(periph->reg_addr, trans->slave_addr, I2C_Direction_Receiver);
+ 1303              		.loc 1 276 0
+ 1304 02a8 084D     		ldr	r5, .L92+4
+ 1305 02aa 6178     		ldrb	r1, [r4, #1]	@ zero_extendqisi2
+ 1306 02ac 686A     		ldr	r0, [r5, #36]
+ 1307              	.LVL53:
+ 1308 02ae 0122     		movs	r2, #1
+ 1309              	.L87:
+ 1310 02b0 FFF7FEFF 		bl	I2C_Send7bitAddress
+ 277:arch/stm32/mcu_periph/i2c_arch.c ****     periph->status = I2CAddrRdSent;
+ 1311              		.loc 1 277 0
+ 1312 02b4 0323     		movs	r3, #3
+ 1313              	.LVL54:
+ 1314              	.L84:
+ 1315 02b6 85F82230 		strb	r3, [r5, #34]
+ 1316 02ba 70BD     		pop	{r4, r5, r6, pc}
+ 1317              	.LVL55:
+ 1318              	.L54:
+ 1319              	.LBE68:
+ 1320              	.LBE67:
+ 1321              	.LBE65:
+ 1322              	.LBE93:
+ 569:arch/stm32/mcu_periph/i2c_arch.c **** }
+ 1323              		.loc 1 569 0
+ 1324 02bc BDE87040 		pop	{r4, r5, r6, lr}
+ 1325              	.LBB94:
+ 1326              	.LBB92:
+ 312:arch/stm32/mcu_periph/i2c_arch.c ****     OUT_OF_SYNC_STATE_MACHINE(p, p->status, event);
+ 1327              		.loc 1 312 0
+ 1328 02c0 FFF7FEBF 		b	T.30
+ 1329              	.LVL56:
+ 1330              	.L83:
+ 1331 02c4 70BD     		pop	{r4, r5, r6, pc}
+ 1332              	.L93:
+ 1333 02c6 00BF     		.align	2
+ 1334              	.L92:
+ 1335 02c8 40000010 		.word	268435520
+ 1336 02cc 00000000 		.word	i2c2
+ 1337 02d0 01000010 		.word	268435457
+ 1338              	.LBE92:
+ 1339              	.LBE94:
+ 1340              		.cfi_endproc
+ 1341              	.LFE41:
+ 1343              		.global	i2c2_errors
+ 1344              		.section	.bss.i2c2_errors,"aw",%nobits
+ 1345              		.align	2
+ 1346              		.set	.LANCHOR1,. + 0
+ 1349              	i2c2_errors:
+ 1350 0000 00000000 		.space	108
+ 1350      00000000 
+ 1350      00000000 
+ 1350      00000000 
+ 1350      00000000 
+ 1351              		.section	.bss.counter.3511,"aw",%nobits
+ 1352              		.set	.LANCHOR2,. + 0
+ 1355              	counter.3511:
+ 1356 0000 00       		.space	1
+ 1357              		.section	.data.I2C2_InitStruct,"aw",%progbits
+ 1358              		.align	2
+ 1359              		.set	.LANCHOR0,. + 0
+ 1362              	I2C2_InitStruct:
+ 1363 0000 0000     		.short	0
+ 1364 0002 FFBF     		.short	-16385
+ 1365 0004 0000     		.short	0
+ 1366 0006 0004     		.short	1024
+ 1367 0008 0040     		.short	16384
+ 1368 000a 0000     		.space	2
+ 1369 000c E0930400 		.word	300000
+ 1370              		.section	.bss.counter.3569,"aw",%nobits
+ 1371              		.set	.LANCHOR3,. + 0
+ 1374              	counter.3569:
+ 1375 0000 00       		.space	1
+ 1376              		.section	.bss.counter.3601,"aw",%nobits
+ 1377              		.set	.LANCHOR4,. + 0
+ 1380              	counter.3601:
+ 1381 0000 00       		.space	1
+ 1382              		.text
+ 1383              	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 i2c_arch.c
-     /tmp/ccWzBybn.s:24     .text.i2c_submit:00000000 $t
-     /tmp/ccWzBybn.s:29     .text.i2c_submit:00000000 i2c_submit
-     /tmp/ccWzBybn.s:127    .text.i2c_idle:00000000 $t
-     /tmp/ccWzBybn.s:132    .text.i2c_idle:00000000 i2c_idle
+     /tmp/ccGTWGEO.s:24     .text.i2c_delay:00000000 $t
+     /tmp/ccGTWGEO.s:28     .text.i2c_delay:00000000 i2c_delay
+     /tmp/ccGTWGEO.s:62     .text.start_transaction:00000000 $t
+     /tmp/ccGTWGEO.s:66     .text.start_transaction:00000000 start_transaction
+     /tmp/ccGTWGEO.s:107    .text.i2c_submit:00000000 $t
+     /tmp/ccGTWGEO.s:112    .text.i2c_submit:00000000 i2c_submit
+     /tmp/ccGTWGEO.s:187    .text.i2c_idle:00000000 $t
+     /tmp/ccGTWGEO.s:192    .text.i2c_idle:00000000 i2c_idle
+     /tmp/ccGTWGEO.s:218    .text.T.28:00000000 $t
+     /tmp/ccGTWGEO.s:222    .text.T.28:00000000 T.28
+     /tmp/ccGTWGEO.s:261    .text.T.28:00000034 $d
+     /tmp/ccGTWGEO.s:266    .text.T.29:00000000 $t
+     /tmp/ccGTWGEO.s:270    .text.T.29:00000000 T.29
+     /tmp/ccGTWGEO.s:432    .text.T.29:000000f8 $d
+     /tmp/ccGTWGEO.s:438    .text.i2c2_hw_init:00000000 $t
+     /tmp/ccGTWGEO.s:443    .text.i2c2_hw_init:00000000 i2c2_hw_init
+     /tmp/ccGTWGEO.s:559    .text.i2c2_hw_init:000000a0 $d
+     /tmp/ccGTWGEO.s:567    .text.T.30:00000000 $t
+     /tmp/ccGTWGEO.s:571    .text.T.30:00000000 T.30
+     /tmp/ccGTWGEO.s:615    .text.T.30:00000038 $d
+     /tmp/ccGTWGEO.s:620    .text.i2c2_er_irq_handler:00000000 $t
+     /tmp/ccGTWGEO.s:625    .text.i2c2_er_irq_handler:00000000 i2c2_er_irq_handler
+     /tmp/ccGTWGEO.s:803    .text.i2c2_er_irq_handler:000000e0 $d
+     /tmp/ccGTWGEO.s:817    .text.i2c2_ev_irq_handler:00000000 $t
+     /tmp/ccGTWGEO.s:822    .text.i2c2_ev_irq_handler:00000000 i2c2_ev_irq_handler
+     /tmp/ccGTWGEO.s:852    .text.i2c2_ev_irq_handler:00000022 $d
+     /tmp/ccGTWGEO.s:864    .text.i2c2_ev_irq_handler:00000032 $t
+     /tmp/ccGTWGEO.s:1259   .text.i2c2_ev_irq_handler:0000025c $d
+     /tmp/ccGTWGEO.s:1273   .text.i2c2_ev_irq_handler:00000284 $t
+     /tmp/ccGTWGEO.s:1335   .text.i2c2_ev_irq_handler:000002c8 $d
+     /tmp/ccGTWGEO.s:1349   .bss.i2c2_errors:00000000 i2c2_errors
+     /tmp/ccGTWGEO.s:1345   .bss.i2c2_errors:00000000 $d
+     /tmp/ccGTWGEO.s:1355   .bss.counter.3511:00000000 counter.3511
+     /tmp/ccGTWGEO.s:1356   .bss.counter.3511:00000000 $d
+     /tmp/ccGTWGEO.s:1358   .data.I2C2_InitStruct:00000000 $d
+     /tmp/ccGTWGEO.s:1362   .data.I2C2_InitStruct:00000000 I2C2_InitStruct
+     /tmp/ccGTWGEO.s:1374   .bss.counter.3569:00000000 counter.3569
+     /tmp/ccGTWGEO.s:1375   .bss.counter.3569:00000000 $d
+     /tmp/ccGTWGEO.s:1380   .bss.counter.3601:00000000 counter.3601
+     /tmp/ccGTWGEO.s:1381   .bss.counter.3601:00000000 $d
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS
 I2C_ITConfig
 I2C_GenerateSTART
 I2C_GetFlagStatus
+i2c2
+I2C_DeInit
+GPIO_SetBits
+GPIO_Init
+GPIO_ReadInputDataBit
+GPIO_ResetBits
+I2C_Init
+I2C_SoftwareResetCmd
+NVIC_PriorityGroupConfig
+NVIC_Init
+RCC_APB1PeriphClockCmd
+RCC_APB2PeriphClockCmd
+I2C_Cmd
+I2C_GetITStatus
+I2C_ClearITPendingBit
+I2C_GetLastEvent
+I2C_Send7bitAddress
+I2C_SendData
+I2C_GenerateSTOP
+I2C_ReceiveData
+I2C_AcknowledgeConfig

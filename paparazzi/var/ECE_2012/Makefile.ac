@@ -1,4 +1,4 @@
-# This file has been generated from /home/mav/lisa-m-team4938/paparazzi/conf/airframes/lisa_m.xml by /home/mav/lisa-m-team4938/paparazzi/sw/tools/gen_aircraft.ml
+# This file has been generated from /home/woz/lisa-m-team4938/paparazzi/conf/airframes/lisa_m.xml by /home/woz/lisa-m-team4938/paparazzi/sw/tools/gen_aircraft.ml
 # Please DO NOT EDIT
 
 ####################################################
@@ -30,16 +30,10 @@ else
 	include $(CFG_SHARED)/control.makefile
 endif
 # -subsystem: 'imu'
-GYRO_P = ADC_0
-GYRO_Q = ADC_1
-GYRO_R = ADC_2
-ACCEL_X = ADC_5
-ACCEL_Y = ADC_6
-ACCEL_Z = ADC_7
-ifneq ($(strip $(wildcard $(CFG_FIXEDWING)/imu_analog.makefile)),)
-	include $(CFG_FIXEDWING)/imu_analog.makefile
+ifneq ($(strip $(wildcard $(CFG_FIXEDWING)/imu_aspirin_v1.0.makefile)),)
+	include $(CFG_FIXEDWING)/imu_aspirin_v1.0.makefile
 else
-	include $(CFG_SHARED)/imu_analog.makefile
+	include $(CFG_SHARED)/imu_aspirin_v1.0.makefile
 endif
 # -subsystem: 'ahrs'
 ifneq ($(strip $(wildcard $(CFG_FIXEDWING)/ahrs_float_dcm.makefile)),)
@@ -90,16 +84,10 @@ else
 	include $(CFG_SHARED)/control.makefile
 endif
 # -subsystem: 'imu'
-GYRO_P = ADC_0
-GYRO_Q = ADC_1
-GYRO_R = ADC_2
-ACCEL_X = ADC_5
-ACCEL_Y = ADC_6
-ACCEL_Z = ADC_7
-ifneq ($(strip $(wildcard $(CFG_FIXEDWING)/imu_analog.makefile)),)
-	include $(CFG_FIXEDWING)/imu_analog.makefile
+ifneq ($(strip $(wildcard $(CFG_FIXEDWING)/imu_aspirin_v1.0.makefile)),)
+	include $(CFG_FIXEDWING)/imu_aspirin_v1.0.makefile
 else
-	include $(CFG_SHARED)/imu_analog.makefile
+	include $(CFG_SHARED)/imu_aspirin_v1.0.makefile
 endif
 # -subsystem: 'ahrs'
 ifneq ($(strip $(wildcard $(CFG_FIXEDWING)/ahrs_float_dcm.makefile)),)

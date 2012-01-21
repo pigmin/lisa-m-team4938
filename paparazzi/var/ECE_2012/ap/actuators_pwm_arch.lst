@@ -502,12 +502,12 @@
  273              	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 actuators_pwm_arch.c
-     /tmp/cchzKxW8.s:24     .text.actuators_pwm_commit:00000000 $t
-     /tmp/cchzKxW8.s:29     .text.actuators_pwm_commit:00000000 actuators_pwm_commit
-     /tmp/cchzKxW8.s:72     .text.actuators_pwm_commit:00000038 $d
-     /tmp/cchzKxW8.s:79     .text.actuators_pwm_arch_init:00000000 $t
-     /tmp/cchzKxW8.s:84     .text.actuators_pwm_arch_init:00000000 actuators_pwm_arch_init
-     /tmp/cchzKxW8.s:264    .text.actuators_pwm_arch_init:00000128 $d
+     /tmp/ccyfaiqA.s:24     .text.actuators_pwm_commit:00000000 $t
+     /tmp/ccyfaiqA.s:29     .text.actuators_pwm_commit:00000000 actuators_pwm_commit
+     /tmp/ccyfaiqA.s:72     .text.actuators_pwm_commit:00000038 $d
+     /tmp/ccyfaiqA.s:79     .text.actuators_pwm_arch_init:00000000 $t
+     /tmp/ccyfaiqA.s:84     .text.actuators_pwm_arch_init:00000000 actuators_pwm_arch_init
+     /tmp/ccyfaiqA.s:264    .text.actuators_pwm_arch_init:00000128 $d
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS

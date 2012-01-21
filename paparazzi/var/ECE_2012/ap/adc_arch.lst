@@ -1013,23 +1013,23 @@
  454              	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 adc_arch.c
-     /tmp/ccXxXESR.s:24     .text.adc_buf_channel:00000000 $t
-     /tmp/ccXxXESR.s:29     .text.adc_buf_channel:00000000 adc_buf_channel
-     /tmp/ccXxXESR.s:48     .text.adc_buf_channel:0000000c $d
-     /tmp/ccXxXESR.s:53     .text.adc1_2_irq_handler:00000000 $t
-     /tmp/ccXxXESR.s:58     .text.adc1_2_irq_handler:00000000 adc1_2_irq_handler
-     /tmp/ccXxXESR.s:136    .text.adc1_2_irq_handler:00000054 $d
-     /tmp/ccXxXESR.s:144    .text.adc_init:00000000 $t
-     /tmp/ccXxXESR.s:149    .text.adc_init:00000000 adc_init
-     /tmp/ccXxXESR.s:415    .text.adc_init:00000188 $d
-     /tmp/ccXxXESR.s:430    .bss.adc_new_data_trigger:00000000 adc_new_data_trigger
-     /tmp/ccXxXESR.s:431    .bss.adc_new_data_trigger:00000000 $d
-     /tmp/ccXxXESR.s:433    .bss.adc1_buffers:00000000 $d
-     /tmp/ccXxXESR.s:437    .bss.adc1_buffers:00000000 adc1_buffers
-     /tmp/ccXxXESR.s:440    .bss.adc_channel_map:00000000 $d
-     /tmp/ccXxXESR.s:444    .bss.adc_channel_map:00000000 adc_channel_map
-     /tmp/ccXxXESR.s:447    .bss.adc_injected_channels:00000000 $d
-     /tmp/ccXxXESR.s:451    .bss.adc_injected_channels:00000000 adc_injected_channels
+     /tmp/cciL7a3Y.s:24     .text.adc_buf_channel:00000000 $t
+     /tmp/cciL7a3Y.s:29     .text.adc_buf_channel:00000000 adc_buf_channel
+     /tmp/cciL7a3Y.s:48     .text.adc_buf_channel:0000000c $d
+     /tmp/cciL7a3Y.s:53     .text.adc1_2_irq_handler:00000000 $t
+     /tmp/cciL7a3Y.s:58     .text.adc1_2_irq_handler:00000000 adc1_2_irq_handler
+     /tmp/cciL7a3Y.s:136    .text.adc1_2_irq_handler:00000054 $d
+     /tmp/cciL7a3Y.s:144    .text.adc_init:00000000 $t
+     /tmp/cciL7a3Y.s:149    .text.adc_init:00000000 adc_init
+     /tmp/cciL7a3Y.s:415    .text.adc_init:00000188 $d
+     /tmp/cciL7a3Y.s:430    .bss.adc_new_data_trigger:00000000 adc_new_data_trigger
+     /tmp/cciL7a3Y.s:431    .bss.adc_new_data_trigger:00000000 $d
+     /tmp/cciL7a3Y.s:433    .bss.adc1_buffers:00000000 $d
+     /tmp/cciL7a3Y.s:437    .bss.adc1_buffers:00000000 adc1_buffers
+     /tmp/cciL7a3Y.s:440    .bss.adc_channel_map:00000000 $d
+     /tmp/cciL7a3Y.s:444    .bss.adc_channel_map:00000000 adc_channel_map
+     /tmp/cciL7a3Y.s:447    .bss.adc_injected_channels:00000000 $d
+     /tmp/cciL7a3Y.s:451    .bss.adc_injected_channels:00000000 adc_injected_channels
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS

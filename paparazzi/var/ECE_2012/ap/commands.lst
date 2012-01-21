@@ -42,13 +42,13 @@
   55              		.file 3 "commands.c"
 DEFINED SYMBOLS
                             *ABS*:00000000 commands.c
-     /tmp/cc4bTEgf.s:37     .bss.command_roll_trim:00000000 command_roll_trim
-     /tmp/cc4bTEgf.s:49     .bss.command_pitch_trim:00000000 command_pitch_trim
-     /tmp/cc4bTEgf.s:43     .rodata.commands_failsafe:00000000 commands_failsafe
-     /tmp/cc4bTEgf.s:31     .bss.commands:00000000 commands
-     /tmp/cc4bTEgf.s:28     .bss.commands:00000000 $d
-     /tmp/cc4bTEgf.s:34     .bss.command_roll_trim:00000000 $d
-     /tmp/cc4bTEgf.s:40     .rodata.commands_failsafe:00000000 $d
-     /tmp/cc4bTEgf.s:46     .bss.command_pitch_trim:00000000 $d
+     /tmp/ccSWGkgI.s:37     .bss.command_roll_trim:00000000 command_roll_trim
+     /tmp/ccSWGkgI.s:49     .bss.command_pitch_trim:00000000 command_pitch_trim
+     /tmp/ccSWGkgI.s:43     .rodata.commands_failsafe:00000000 commands_failsafe
+     /tmp/ccSWGkgI.s:31     .bss.commands:00000000 commands
+     /tmp/ccSWGkgI.s:28     .bss.commands:00000000 $d
+     /tmp/ccSWGkgI.s:34     .bss.command_roll_trim:00000000 $d
+     /tmp/ccSWGkgI.s:40     .rodata.commands_failsafe:00000000 $d
+     /tmp/ccSWGkgI.s:46     .bss.command_pitch_trim:00000000 $d
 
 NO UNDEFINED SYMBOLS

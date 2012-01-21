@@ -157,18 +157,18 @@
  119              	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 traffic_info.c
-     /tmp/ccFp47bo.s:24     .text.traffic_info_init:00000000 $t
-     /tmp/ccFp47bo.s:29     .text.traffic_info_init:00000000 traffic_info_init
-     /tmp/ccFp47bo.s:56     .text.traffic_info_init:00000018 $d
-     /tmp/ccFp47bo.s:63     .text.get_ac_info:00000000 $t
-     /tmp/ccFp47bo.s:68     .text.get_ac_info:00000000 get_ac_info
-     /tmp/ccFp47bo.s:90     .text.get_ac_info:0000000c $d
-     /tmp/ccFp47bo.s:109    .bss.acs_idx:00000000 acs_idx
-     /tmp/ccFp47bo.s:116    .bss.the_acs_id:00000000 the_acs_id
-     /tmp/ccFp47bo.s:103    .bss.the_acs:00000000 the_acs
-     /tmp/ccFp47bo.s:99     .bss.the_acs:00000000 $d
-     /tmp/ccFp47bo.s:110    .bss.acs_idx:00000000 $d
-     /tmp/ccFp47bo.s:112    .bss.the_acs_id:00000000 $d
+     /tmp/ccJaY77T.s:24     .text.traffic_info_init:00000000 $t
+     /tmp/ccJaY77T.s:29     .text.traffic_info_init:00000000 traffic_info_init
+     /tmp/ccJaY77T.s:56     .text.traffic_info_init:00000018 $d
+     /tmp/ccJaY77T.s:63     .text.get_ac_info:00000000 $t
+     /tmp/ccJaY77T.s:68     .text.get_ac_info:00000000 get_ac_info
+     /tmp/ccJaY77T.s:90     .text.get_ac_info:0000000c $d
+     /tmp/ccJaY77T.s:109    .bss.acs_idx:00000000 acs_idx
+     /tmp/ccJaY77T.s:116    .bss.the_acs_id:00000000 the_acs_id
+     /tmp/ccJaY77T.s:103    .bss.the_acs:00000000 the_acs
+     /tmp/ccJaY77T.s:99     .bss.the_acs:00000000 $d
+     /tmp/ccJaY77T.s:110    .bss.acs_idx:00000000 $d
+     /tmp/ccJaY77T.s:112    .bss.the_acs_id:00000000 $d
                      .debug_frame:00000010 $d
 
 NO UNDEFINED SYMBOLS

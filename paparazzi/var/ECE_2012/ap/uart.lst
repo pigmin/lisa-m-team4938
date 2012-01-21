@@ -164,14 +164,14 @@
  111              	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 uart.c
-     /tmp/ccv4zvei.s:24     .text.uart_periph_init:00000000 $t
-     /tmp/ccv4zvei.s:29     .text.uart_periph_init:00000000 uart_periph_init
-     /tmp/ccv4zvei.s:55     .text.uart_check_free_space:00000000 $t
-     /tmp/ccv4zvei.s:60     .text.uart_check_free_space:00000000 uart_check_free_space
-     /tmp/ccv4zvei.s:102    .bss.uart1:00000000 uart1
-     /tmp/ccv4zvei.s:108    .bss.uart2:00000000 uart2
-     /tmp/ccv4zvei.s:99     .bss.uart1:00000000 $d
-     /tmp/ccv4zvei.s:105    .bss.uart2:00000000 $d
+     /tmp/ccGdCTNR.s:24     .text.uart_periph_init:00000000 $t
+     /tmp/ccGdCTNR.s:29     .text.uart_periph_init:00000000 uart_periph_init
+     /tmp/ccGdCTNR.s:55     .text.uart_check_free_space:00000000 $t
+     /tmp/ccGdCTNR.s:60     .text.uart_check_free_space:00000000 uart_check_free_space
+     /tmp/ccGdCTNR.s:102    .bss.uart1:00000000 uart1
+     /tmp/ccGdCTNR.s:108    .bss.uart2:00000000 uart2
+     /tmp/ccGdCTNR.s:99     .bss.uart1:00000000 $d
+     /tmp/ccGdCTNR.s:105    .bss.uart2:00000000 $d
                      .debug_frame:00000010 $d
 
 NO UNDEFINED SYMBOLS

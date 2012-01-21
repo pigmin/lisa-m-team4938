@@ -21,12 +21,12 @@
   30              		.text
   31              	.Letext0:
   32              		.file 1 "/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include
-  33              		.file 2 "/home/mav/lisa-m-team4938/paparazzi/sw/include/std.h"
+  33              		.file 2 "/home/woz/lisa-m-team4938/paparazzi/sw/include/std.h"
   34              		.file 3 "sys_time.c"
-  35              		.file 4 "/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h"
+  35              		.file 4 "/home/woz/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h"
 DEFINED SYMBOLS
                             *ABS*:00000000 sys_time.c
-     /tmp/ccdGqRCC.s:28     .bss.cpu_time_sec:00000000 cpu_time_sec
-     /tmp/ccdGqRCC.s:25     .bss.cpu_time_sec:00000000 $d
+     /tmp/ccrdV6qP.s:28     .bss.cpu_time_sec:00000000 cpu_time_sec
+     /tmp/ccrdV6qP.s:25     .bss.cpu_time_sec:00000000 $d
 
 NO UNDEFINED SYMBOLS

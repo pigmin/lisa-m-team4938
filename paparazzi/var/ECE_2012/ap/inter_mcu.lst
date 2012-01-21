@@ -55,7 +55,7 @@
   73              		.text
   74              	.Letext0:
   75              		.file 1 "/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include
-  76              		.file 2 "/home/mav/lisa-m-team4938/paparazzi/sw/include/std.h"
+  76              		.file 2 "/home/woz/lisa-m-team4938/paparazzi/sw/include/std.h"
   77              		.file 3 "paparazzi.h"
   78              		.file 4 "subsystems/radio_control.h"
   79              		.file 5 "subsystems/electrical.h"
@@ -64,21 +64,21 @@
   82              		.file 8 "firmwares/fixedwing/main_fbw.h"
 DEFINED SYMBOLS
                             *ABS*:00000000 inter_mcu.c
-     /tmp/ccpoyLM7.s:49     .data.fbw_state:00000000 fbw_state
-     /tmp/ccpoyLM7.s:65     .data.ap_state:00000000 ap_state
-     /tmp/ccpoyLM7.s:59     .bss.inter_mcu_received_fbw:00000000 inter_mcu_received_fbw
-     /tmp/ccpoyLM7.s:32     .bss.inter_mcu_received_ap:00000000 inter_mcu_received_ap
-     /tmp/ccpoyLM7.s:54     .bss.time_since_last_ap:00000000 time_since_last_ap
-     /tmp/ccpoyLM7.s:43     .bss.ap_ok:00000000 ap_ok
-     /tmp/ccpoyLM7.s:33     .bss.inter_mcu_received_ap:00000000 $d
-     /tmp/ccpoyLM7.s:35     .bss._ap_state:00000000 $d
-     /tmp/ccpoyLM7.s:38     .bss._ap_state:00000000 _ap_state
-     /tmp/ccpoyLM7.s:44     .bss.ap_ok:00000000 $d
-     /tmp/ccpoyLM7.s:46     .data.fbw_state:00000000 $d
-     /tmp/ccpoyLM7.s:71     .bss._fbw_state:00000000 _fbw_state
-     /tmp/ccpoyLM7.s:55     .bss.time_since_last_ap:00000000 $d
-     /tmp/ccpoyLM7.s:60     .bss.inter_mcu_received_fbw:00000000 $d
-     /tmp/ccpoyLM7.s:62     .data.ap_state:00000000 $d
-     /tmp/ccpoyLM7.s:68     .bss._fbw_state:00000000 $d
+     /tmp/cc0Eggcq.s:49     .data.fbw_state:00000000 fbw_state
+     /tmp/cc0Eggcq.s:65     .data.ap_state:00000000 ap_state
+     /tmp/cc0Eggcq.s:59     .bss.inter_mcu_received_fbw:00000000 inter_mcu_received_fbw
+     /tmp/cc0Eggcq.s:32     .bss.inter_mcu_received_ap:00000000 inter_mcu_received_ap
+     /tmp/cc0Eggcq.s:54     .bss.time_since_last_ap:00000000 time_since_last_ap
+     /tmp/cc0Eggcq.s:43     .bss.ap_ok:00000000 ap_ok
+     /tmp/cc0Eggcq.s:33     .bss.inter_mcu_received_ap:00000000 $d
+     /tmp/cc0Eggcq.s:35     .bss._ap_state:00000000 $d
+     /tmp/cc0Eggcq.s:38     .bss._ap_state:00000000 _ap_state
+     /tmp/cc0Eggcq.s:44     .bss.ap_ok:00000000 $d
+     /tmp/cc0Eggcq.s:46     .data.fbw_state:00000000 $d
+     /tmp/cc0Eggcq.s:71     .bss._fbw_state:00000000 _fbw_state
+     /tmp/cc0Eggcq.s:55     .bss.time_since_last_ap:00000000 $d
+     /tmp/cc0Eggcq.s:60     .bss.inter_mcu_received_fbw:00000000 $d
+     /tmp/cc0Eggcq.s:62     .data.ap_state:00000000 $d
+     /tmp/cc0Eggcq.s:68     .bss._fbw_state:00000000 $d
 
 NO UNDEFINED SYMBOLS

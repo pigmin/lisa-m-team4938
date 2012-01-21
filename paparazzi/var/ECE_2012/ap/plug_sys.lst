@@ -190,22 +190,22 @@
  189              	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 plug_sys.c
-     /tmp/ccFEFUbY.s:24     .text._lseek:00000000 $t
-     /tmp/ccFEFUbY.s:29     .text._lseek:00000000 _lseek
-     /tmp/ccFEFUbY.s:46     .text.abort:00000000 $t
-     /tmp/ccFEFUbY.s:51     .text.abort:00000000 abort
-     /tmp/ccFEFUbY.s:65     .text.getpid:00000000 $t
-     /tmp/ccFEFUbY.s:70     .text.getpid:00000000 getpid
-     /tmp/ccFEFUbY.s:84     .text.kill:00000000 $t
-     /tmp/ccFEFUbY.s:89     .text.kill:00000000 kill
-     /tmp/ccFEFUbY.s:105    .text._sbrk:00000000 $t
-     /tmp/ccFEFUbY.s:110    .text._sbrk:00000000 _sbrk
-     /tmp/ccFEFUbY.s:126    .text._write:00000000 $t
-     /tmp/ccFEFUbY.s:131    .text._write:00000000 _write
-     /tmp/ccFEFUbY.s:147    .text._close:00000000 $t
-     /tmp/ccFEFUbY.s:152    .text._close:00000000 _close
-     /tmp/ccFEFUbY.s:168    .text._read:00000000 $t
-     /tmp/ccFEFUbY.s:173    .text._read:00000000 _read
+     /tmp/ccMzKuhf.s:24     .text._lseek:00000000 $t
+     /tmp/ccMzKuhf.s:29     .text._lseek:00000000 _lseek
+     /tmp/ccMzKuhf.s:46     .text.abort:00000000 $t
+     /tmp/ccMzKuhf.s:51     .text.abort:00000000 abort
+     /tmp/ccMzKuhf.s:65     .text.getpid:00000000 $t
+     /tmp/ccMzKuhf.s:70     .text.getpid:00000000 getpid
+     /tmp/ccMzKuhf.s:84     .text.kill:00000000 $t
+     /tmp/ccMzKuhf.s:89     .text.kill:00000000 kill
+     /tmp/ccMzKuhf.s:105    .text._sbrk:00000000 $t
+     /tmp/ccMzKuhf.s:110    .text._sbrk:00000000 _sbrk
+     /tmp/ccMzKuhf.s:126    .text._write:00000000 $t
+     /tmp/ccMzKuhf.s:131    .text._write:00000000 _write
+     /tmp/ccMzKuhf.s:147    .text._close:00000000 $t
+     /tmp/ccMzKuhf.s:152    .text._close:00000000 _close
+     /tmp/ccMzKuhf.s:168    .text._read:00000000 $t
+     /tmp/ccMzKuhf.s:173    .text._read:00000000 _read
                      .debug_frame:00000010 $d
 
 NO UNDEFINED SYMBOLS

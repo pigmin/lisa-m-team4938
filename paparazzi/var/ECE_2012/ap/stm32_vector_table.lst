@@ -512,13 +512,13 @@
  190 0054 00000000 		.word	null_handler
  191 0058 00000000 		.word	null_handler
  192 005c 00000000 		.word	null_handler
- 193 0060 00000000 		.word	null_handler
+ 193 0060 00000000 		.word	exti2_irq_handler
  194 0064 00000000 		.word	null_handler
  195 0068 00000000 		.word	null_handler
  196 006c 00000000 		.word	null_handler
  197 0070 00000000 		.word	null_handler
  198 0074 00000000 		.word	null_handler
- 199 0078 00000000 		.word	null_handler
+ 199 0078 00000000 		.word	dma1_c4_irq_handler
  200 007c 00000000 		.word	null_handler
  201 0080 00000000 		.word	null_handler
  202 0084 00000000 		.word	null_handler
@@ -527,7 +527,7 @@
  205 0090 00000000 		.word	null_handler
  206 0094 00000000 		.word	null_handler
  207 0098 00000000 		.word	null_handler
- 208 009c 00000000 		.word	null_handler
+ 208 009c 00000000 		.word	exti9_5_irq_handler
  209 00a0 00000000 		.word	null_handler
  210 00a4 00000000 		.word	null_handler
  211 00a8 00000000 		.word	null_handler
@@ -537,14 +537,14 @@
  215 00b8 00000000 		.word	null_handler
  216 00bc 00000000 		.word	null_handler
  217 00c0 00000000 		.word	null_handler
- 218 00c4 00000000 		.word	null_handler
- 219 00c8 00000000 		.word	null_handler
+ 218 00c4 00000000 		.word	i2c2_ev_irq_handler
+ 219 00c8 00000000 		.word	i2c2_er_irq_handler
  220 00cc 00000000 		.word	null_handler
  221 00d0 00000000 		.word	null_handler
  222 00d4 00000000 		.word	usart1_irq_handler
  223 00d8 00000000 		.word	usart2_irq_handler
  224 00dc 00000000 		.word	null_handler
- 225 00e0 00000000 		.word	null_handler
+ 225 00e0 00000000 		.word	exti15_10_irq_handler
  226 00e4 00000000 		.word	null_handler
  227 00e8 00000000 		.word	null_handler
  228 00ec 00000000 		.word	null_handler
@@ -568,18 +568,18 @@
  246              	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 stm32_vector_table.c
-     /tmp/ccGlV9aS.s:24     .text.null_handler:00000000 $t
-     /tmp/ccGlV9aS.s:29     .text.null_handler:00000000 null_handler
-     /tmp/ccGlV9aS.s:43     .text.assert_param:00000000 $t
-     /tmp/ccGlV9aS.s:48     .text.assert_param:00000000 assert_param
-     /tmp/ccGlV9aS.s:61     .text.reset_handler_stage2:00000000 $t
-     /tmp/ccGlV9aS.s:66     .text.reset_handler_stage2:00000000 reset_handler_stage2
-     /tmp/ccGlV9aS.s:109    .text.reset_handler_stage2:0000002c $d
-     /tmp/ccGlV9aS.s:118    .text.reset_handler_stage1:00000000 $t
-     /tmp/ccGlV9aS.s:123    .text.reset_handler_stage1:00000000 reset_handler_stage1
-     /tmp/ccGlV9aS.s:159    .text.reset_handler_stage1:00000020 $d
-     /tmp/ccGlV9aS.s:168    .isr_vector:00000000 vector_table
-     /tmp/ccGlV9aS.s:165    .isr_vector:00000000 $d
+     /tmp/cc7spCJZ.s:24     .text.null_handler:00000000 $t
+     /tmp/cc7spCJZ.s:29     .text.null_handler:00000000 null_handler
+     /tmp/cc7spCJZ.s:43     .text.assert_param:00000000 $t
+     /tmp/cc7spCJZ.s:48     .text.assert_param:00000000 assert_param
+     /tmp/cc7spCJZ.s:61     .text.reset_handler_stage2:00000000 $t
+     /tmp/cc7spCJZ.s:66     .text.reset_handler_stage2:00000000 reset_handler_stage2
+     /tmp/cc7spCJZ.s:109    .text.reset_handler_stage2:0000002c $d
+     /tmp/cc7spCJZ.s:118    .text.reset_handler_stage1:00000000 $t
+     /tmp/cc7spCJZ.s:123    .text.reset_handler_stage1:00000000 reset_handler_stage1
+     /tmp/cc7spCJZ.s:159    .text.reset_handler_stage1:00000020 $d
+     /tmp/cc7spCJZ.s:168    .isr_vector:00000000 vector_table
+     /tmp/cc7spCJZ.s:165    .isr_vector:00000000 $d
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS
@@ -596,7 +596,13 @@ mem_manage_exception
 bus_fault_exception
 usage_fault_exception
 sys_tick_irq_handler
+exti2_irq_handler
+dma1_c4_irq_handler
 adc1_2_irq_handler
+exti9_5_irq_handler
 tim2_irq_handler
+i2c2_ev_irq_handler
+i2c2_er_irq_handler
 usart1_irq_handler
 usart2_irq_handler
+exti15_10_irq_handler

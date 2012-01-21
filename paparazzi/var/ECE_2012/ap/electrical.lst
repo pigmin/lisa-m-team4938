@@ -298,16 +298,16 @@
  215              	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 electrical.c
-     /tmp/ccKoCFy6.s:35     .text.electrical_periodic:00000000 $t
-     /tmp/ccKoCFy6.s:40     .text.electrical_periodic:00000000 electrical_periodic
-     /tmp/ccKoCFy6.s:138    .text.electrical_periodic:000000c8 $d
-     /tmp/ccKoCFy6.s:154    .text.electrical_init:00000000 $t
-     /tmp/ccKoCFy6.s:159    .text.electrical_init:00000000 electrical_init
-     /tmp/ccKoCFy6.s:193    .text.electrical_init:0000001c $d
-     /tmp/ccKoCFy6.s:212    .bss.electrical:00000000 electrical
-     /tmp/ccKoCFy6.s:201    .bss.electrical_priv:00000000 $d
-     /tmp/ccKoCFy6.s:205    .bss.electrical_priv:00000000 electrical_priv
-     /tmp/ccKoCFy6.s:208    .bss.electrical:00000000 $d
+     /tmp/ccFcuu3w.s:35     .text.electrical_periodic:00000000 $t
+     /tmp/ccFcuu3w.s:40     .text.electrical_periodic:00000000 electrical_periodic
+     /tmp/ccFcuu3w.s:138    .text.electrical_periodic:000000c8 $d
+     /tmp/ccFcuu3w.s:154    .text.electrical_init:00000000 $t
+     /tmp/ccFcuu3w.s:159    .text.electrical_init:00000000 electrical_init
+     /tmp/ccFcuu3w.s:193    .text.electrical_init:0000001c $d
+     /tmp/ccFcuu3w.s:212    .bss.electrical:00000000 electrical
+     /tmp/ccFcuu3w.s:201    .bss.electrical_priv:00000000 $d
+     /tmp/ccFcuu3w.s:205    .bss.electrical_priv:00000000 electrical_priv
+     /tmp/ccFcuu3w.s:208    .bss.electrical:00000000 $d
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS

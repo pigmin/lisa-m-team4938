@@ -1,4 +1,4 @@
-/* Generated from /home/mav/lisa-m-team4938/paparazzi/conf/xsens_MTi-G.xml */
+/* Generated from /home/woz/lisa-m-team4938/paparazzi/conf/xsens_MTi-G.xml */
 /* Please DO NOT EDIT */
 
 #define XSENS_START 0xFA
