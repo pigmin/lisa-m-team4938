@@ -1,0 +1,108 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"settings.c"
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.section	.text.settings_init,"ax",%progbits
+  24              		.align	1
+  25              		.global	settings_init
+  26              		.thumb
+  27              		.thumb_func
+  29              	settings_init:
+  30              	.LFB37:
+  31              		.file 1 "subsystems/settings.c"
+   1:subsystems/settings.c **** #include "subsystems/settings.h"
+   2:subsystems/settings.c **** 
+   3:subsystems/settings.c **** 
+   4:subsystems/settings.c **** struct PersistentSettings pers_settings;
+   5:subsystems/settings.c **** bool_t settings_store_now;
+   6:subsystems/settings.c **** 
+   7:subsystems/settings.c **** 
+   8:subsystems/settings.c **** void settings_init(void) {
+  32              		.loc 1 8 0
+  33              		.cfi_startproc
+  34              		@ args = 0, pretend = 0, frame = 0
+  35              		@ frame_needed = 0, uses_anonymous_args = 0
+  36              		@ link register save eliminated.
+   9:subsystems/settings.c **** #ifdef USE_PERSISTENT_SETTINGS
+  10:subsystems/settings.c ****   if (persistent_read((uint32_t)&pers_settings, sizeof(struct PersistentSettings)))
+  11:subsystems/settings.c ****     return; // return -1 ?
+  12:subsystems/settings.c ****   persistent_settings_load();
+  13:subsystems/settings.c **** #endif
+  14:subsystems/settings.c **** }
+  37              		.loc 1 14 0
+  38 0000 7047     		bx	lr
+  39              		.cfi_endproc
+  40              	.LFE37:
+  42              		.section	.text.settings_store,"ax",%progbits
+  43              		.align	1
+  44              		.global	settings_store
+  45              		.thumb
+  46              		.thumb_func
+  48              	settings_store:
+  49              	.LFB38:
+  15:subsystems/settings.c **** 
+  16:subsystems/settings.c **** 
+  17:subsystems/settings.c **** void settings_store(void) {
+  50              		.loc 1 17 0
+  51              		.cfi_startproc
+  52              		@ args = 0, pretend = 0, frame = 0
+  53              		@ frame_needed = 0, uses_anonymous_args = 0
+  54              		@ link register save eliminated.
+  18:subsystems/settings.c **** #ifdef USE_PERSISTENT_SETTINGS
+  19:subsystems/settings.c ****   persistent_settings_store();
+  20:subsystems/settings.c ****   persistent_write((uint32_t)&pers_settings, sizeof(struct PersistentSettings));
+  21:subsystems/settings.c **** #endif
+  22:subsystems/settings.c **** }
+  55              		.loc 1 22 0
+  56 0000 7047     		bx	lr
+  57              		.cfi_endproc
+  58              	.LFE38:
+  60              		.global	settings_store_now
+  61              		.global	pers_settings
+  62              		.section	.bss.settings_store_now,"aw",%nobits
+  65              	settings_store_now:
+  66 0000 00       		.space	1
+  67              		.section	.bss.pers_settings,"aw",%nobits
+  68              		.align	2
+  71              	pers_settings:
+  72              		.text
+  73              	.Letext0:
+  74              		.file 2 "/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include
+  75              		.file 3 "/home/mav/lisa-m-team4938/paparazzi/sw/include/std.h"
+  76              		.file 4 "./paparazzi.h"
+  77              		.file 5 "./subsystems/radio_control.h"
+  78              		.file 6 "./math/pprz_geodetic_int.h"
+  79              		.file 7 "./subsystems/gps.h"
+  80              		.file 8 "./sys_time.h"
+  81              		.file 9 "/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h"
+  82              		.file 10 "./estimator.h"
+  83              		.file 11 "firmwares/fixedwing/autopilot.h"
+  84              		.file 12 "./datalink.h"
+  85              		.file 13 "./pprz_transport.h"
+  86              		.file 14 "./xbee.h"
+  87              		.file 15 "./downlink.h"
+  88              		.file 16 "./subsystems/nav.h"
+  89              		.file 17 "/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 settings.c
+     /tmp/ccQssj3r.s:24     .text.settings_init:00000000 $t
+     /tmp/ccQssj3r.s:29     .text.settings_init:00000000 settings_init
+     /tmp/ccQssj3r.s:43     .text.settings_store:00000000 $t
+     /tmp/ccQssj3r.s:48     .text.settings_store:00000000 settings_store
+     /tmp/ccQssj3r.s:65     .bss.settings_store_now:00000000 settings_store_now
+     /tmp/ccQssj3r.s:71     .bss.pers_settings:00000000 pers_settings
+     /tmp/ccQssj3r.s:66     .bss.settings_store_now:00000000 $d
+                     .debug_frame:00000010 $d
+
+NO UNDEFINED SYMBOLS

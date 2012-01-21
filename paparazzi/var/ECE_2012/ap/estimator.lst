@@ -1,0 +1,973 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"estimator.c"
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.section	.text.estimator_propagate_state,"ax",%progbits
+  24              		.align	1
+  25              		.global	estimator_propagate_state
+  26              		.thumb
+  27              		.thumb_func
+  29              	estimator_propagate_state:
+  30              	.LFB5:
+  31              		.file 1 "estimator.c"
+   1:estimator.c   **** /*
+   2:estimator.c   ****  * Paparazzi autopilot $Id$
+   3:estimator.c   ****  *
+   4:estimator.c   ****  * Copyright (C) 2004-2010 The Paparazzi Team
+   5:estimator.c   ****  *
+   6:estimator.c   ****  * This file is part of paparazzi.
+   7:estimator.c   ****  *
+   8:estimator.c   ****  * paparazzi is free software; you can redistribute it and/or modify
+   9:estimator.c   ****  * it under the terms of the GNU General Public License as published by
+  10:estimator.c   ****  * the Free Software Foundation; either version 2, or (at your option)
+  11:estimator.c   ****  * any later version.
+  12:estimator.c   ****  *
+  13:estimator.c   ****  * paparazzi is distributed in the hope that it will be useful,
+  14:estimator.c   ****  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  15:estimator.c   ****  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  16:estimator.c   ****  * GNU General Public License for more details.
+  17:estimator.c   ****  *
+  18:estimator.c   ****  * You should have received a copy of the GNU General Public License
+  19:estimator.c   ****  * along with paparazzi; see the file COPYING.  If not, write to
+  20:estimator.c   ****  * the Free Software Foundation, 59 Temple Place - Suite 330,
+  21:estimator.c   ****  * Boston, MA 02111-1307, USA.
+  22:estimator.c   ****  *
+  23:estimator.c   ****  */
+  24:estimator.c   **** 
+  25:estimator.c   **** /** \file estimator.c
+  26:estimator.c   ****  * \brief State estimate, fusioning sensors
+  27:estimator.c   ****  */
+  28:estimator.c   **** 
+  29:estimator.c   **** #include <inttypes.h>
+  30:estimator.c   **** #include <math.h>
+  31:estimator.c   **** 
+  32:estimator.c   **** #include "estimator.h"
+  33:estimator.c   **** #include "mcu_periph/uart.h"
+  34:estimator.c   **** #include "ap_downlink.h"
+  35:estimator.c   **** #include "subsystems/gps.h"
+  36:estimator.c   **** #include "subsystems/nav.h"
+  37:estimator.c   **** #ifdef EXTRA_DOWNLINK_DEVICE
+  38:estimator.c   **** #include "core/extra_pprz_dl.h"
+  39:estimator.c   **** #endif
+  40:estimator.c   **** 
+  41:estimator.c   **** /* position in meters */
+  42:estimator.c   **** float estimator_x;
+  43:estimator.c   **** float estimator_y;
+  44:estimator.c   **** float estimator_z;
+  45:estimator.c   **** 
+  46:estimator.c   **** float estimator_z_dot;
+  47:estimator.c   **** 
+  48:estimator.c   **** /* attitude in radian */
+  49:estimator.c   **** float estimator_phi;
+  50:estimator.c   **** float estimator_psi;
+  51:estimator.c   **** float estimator_theta;
+  52:estimator.c   **** 
+  53:estimator.c   **** /* rates in radians per second */
+  54:estimator.c   **** float estimator_p;
+  55:estimator.c   **** float estimator_q;
+  56:estimator.c   **** 
+  57:estimator.c   **** /* flight time in seconds */
+  58:estimator.c   **** uint16_t estimator_flight_time;
+  59:estimator.c   **** /* flight time in seconds */
+  60:estimator.c   **** float estimator_t;
+  61:estimator.c   **** 
+  62:estimator.c   **** /* horizontal speed in module and dir */
+  63:estimator.c   **** float estimator_hspeed_mod;
+  64:estimator.c   **** float estimator_hspeed_dir;
+  65:estimator.c   **** 
+  66:estimator.c   **** /* wind */
+  67:estimator.c   **** float wind_east, wind_north;
+  68:estimator.c   **** float estimator_airspeed;
+  69:estimator.c   **** float estimator_AOA;
+  70:estimator.c   **** 
+  71:estimator.c   **** #define NORM_RAD_ANGLE2(x) { \
+  72:estimator.c   ****     while (x > 2 * M_PI) x -= 2 * M_PI; \
+  73:estimator.c   ****     while (x < 0 ) x += 2 * M_PI; \
+  74:estimator.c   ****   }
+  75:estimator.c   **** 
+  76:estimator.c   **** 
+  77:estimator.c   **** // FIXME maybe vz = -climb for NED??
+  78:estimator.c   **** #define EstimatorSetSpeedCart(vx, vy, vz) { \
+  79:estimator.c   ****   estimator_vx = vx; \
+  80:estimator.c   ****   estimator_vy = vy; \
+  81:estimator.c   ****   estimator_vz = vz; \
+  82:estimator.c   **** }
+  83:estimator.c   **** //  estimator_hspeed_mod = sqrt( estimator_vx * estimator_vx + estimator_vy * estimator_vy);
+  84:estimator.c   **** //  estimator_hspeed_dir = atan2(estimator_vy, estimator_vx);
+  85:estimator.c   **** 
+  86:estimator.c   **** 
+  87:estimator.c   **** //FIXME is this true ?? estimator_vx = estimator_hspeed_mod * cos(estimator_hspeed_dir);
+  88:estimator.c   **** //FIXME is this true ?? estimator_vy = estimator_hspeed_mod * sin(estimator_hspeed_dir);
+  89:estimator.c   **** 
+  90:estimator.c   **** void estimator_init( void ) {
+  91:estimator.c   **** 
+  92:estimator.c   ****   EstimatorSetPosXY(0., 0.);
+  93:estimator.c   ****   EstimatorSetAlt(0.);
+  94:estimator.c   **** 
+  95:estimator.c   ****   EstimatorSetAtt (0., 0., 0);
+  96:estimator.c   **** 
+  97:estimator.c   ****   EstimatorSetSpeedPol ( 0., 0., 0.);
+  98:estimator.c   **** 
+  99:estimator.c   ****   EstimatorSetRate(0., 0.);
+ 100:estimator.c   **** 
+ 101:estimator.c   **** #ifdef USE_AIRSPEED
+ 102:estimator.c   ****   EstimatorSetAirspeed( 0. );
+ 103:estimator.c   **** #endif
+ 104:estimator.c   **** 
+ 105:estimator.c   **** #ifdef USE_AOA
+ 106:estimator.c   ****   EstimatorSetAOA( 0. );
+ 107:estimator.c   **** #endif
+ 108:estimator.c   **** 
+ 109:estimator.c   ****   estimator_flight_time = 0;
+ 110:estimator.c   **** 
+ 111:estimator.c   ****   estimator_airspeed = NOMINAL_AIRSPEED;
+ 112:estimator.c   **** }
+ 113:estimator.c   **** 
+ 114:estimator.c   **** 
+ 115:estimator.c   **** 
+ 116:estimator.c   **** void estimator_propagate_state( void ) {
+  32              		.loc 1 116 0
+  33              		.cfi_startproc
+  34              		@ args = 0, pretend = 0, frame = 0
+  35              		@ frame_needed = 0, uses_anonymous_args = 0
+  36              		@ link register save eliminated.
+ 117:estimator.c   **** 
+ 118:estimator.c   **** }
+  37              		.loc 1 118 0
+  38 0000 7047     		bx	lr
+  39              		.cfi_endproc
+  40              	.LFE5:
+  42              		.section	.text.alt_kalman_reset,"ax",%progbits
+  43              		.align	1
+  44              		.global	alt_kalman_reset
+  45              		.thumb
+  46              		.thumb_func
+  48              	alt_kalman_reset:
+  49              	.LFB6:
+ 119:estimator.c   **** 
+ 120:estimator.c   **** bool_t alt_kalman_enabled;
+ 121:estimator.c   **** 
+ 122:estimator.c   **** #ifdef ALT_KALMAN
+ 123:estimator.c   **** 
+ 124:estimator.c   **** #ifndef ALT_KALMAN_ENABLED
+ 125:estimator.c   **** #define ALT_KALMAN_ENABLED FALSE
+ 126:estimator.c   **** #endif
+ 127:estimator.c   **** 
+ 128:estimator.c   **** #define GPS_SIGMA2 1.
+ 129:estimator.c   **** 
+ 130:estimator.c   **** #define GPS_DT 0.25
+ 131:estimator.c   **** #define GPS_R 2.
+ 132:estimator.c   **** 
+ 133:estimator.c   **** #define BARO_DT 0.1
+ 134:estimator.c   **** 
+ 135:estimator.c   **** static float p[2][2];
+ 136:estimator.c   **** 
+ 137:estimator.c   **** void alt_kalman_reset( void ) {
+  50              		.loc 1 137 0
+  51              		.cfi_startproc
+  52              		@ args = 0, pretend = 0, frame = 0
+  53              		@ frame_needed = 0, uses_anonymous_args = 0
+  54              		@ link register save eliminated.
+ 138:estimator.c   ****   p[0][0] = 1.;
+  55              		.loc 1 138 0
+  56 0000 044B     		ldr	r3, .L5
+  57 0002 4FF07E52 		mov	r2, #1065353216
+ 139:estimator.c   ****   p[0][1] = 0.;
+  58              		.loc 1 139 0
+  59 0006 0021     		movs	r1, #0
+ 138:estimator.c   ****   p[0][0] = 1.;
+  60              		.loc 1 138 0
+  61 0008 1A60     		str	r2, [r3, #0]	@ float
+  62              		.loc 1 139 0
+  63 000a 5960     		str	r1, [r3, #4]	@ float
+ 140:estimator.c   ****   p[1][0] = 0.;
+  64              		.loc 1 140 0
+  65 000c 9960     		str	r1, [r3, #8]	@ float
+ 141:estimator.c   ****   p[1][1] = 1.;
+  66              		.loc 1 141 0
+  67 000e DA60     		str	r2, [r3, #12]	@ float
+ 142:estimator.c   **** }
+  68              		.loc 1 142 0
+  69 0010 7047     		bx	lr
+  70              	.L6:
+  71 0012 00BF     		.align	2
+  72              	.L5:
+  73 0014 00000000 		.word	.LANCHOR0
+  74              		.cfi_endproc
+  75              	.LFE6:
+  77              		.section	.text.alt_kalman_init,"ax",%progbits
+  78              		.align	1
+  79              		.global	alt_kalman_init
+  80              		.thumb
+  81              		.thumb_func
+  83              	alt_kalman_init:
+  84              	.LFB7:
+ 143:estimator.c   **** 
+ 144:estimator.c   **** void alt_kalman_init( void ) {
+  85              		.loc 1 144 0
+  86              		.cfi_startproc
+  87              		@ args = 0, pretend = 0, frame = 0
+  88              		@ frame_needed = 0, uses_anonymous_args = 0
+  89              		@ link register save eliminated.
+ 145:estimator.c   ****   alt_kalman_enabled = ALT_KALMAN_ENABLED;
+  90              		.loc 1 145 0
+  91 0000 024B     		ldr	r3, .L9
+  92 0002 0122     		movs	r2, #1
+  93 0004 1A70     		strb	r2, [r3, #0]
+ 146:estimator.c   ****   alt_kalman_reset();
+ 147:estimator.c   **** }
+  94              		.loc 1 147 0
+ 146:estimator.c   ****   alt_kalman_reset();
+  95              		.loc 1 146 0
+  96 0006 FFF7FEBF 		b	alt_kalman_reset
+  97              	.L10:
+  98 000a 00BF     		.align	2
+  99              	.L9:
+ 100 000c 00000000 		.word	.LANCHOR1
+ 101              		.cfi_endproc
+ 102              	.LFE7:
+ 104              		.global	__aeabi_fmul
+ 105              		.global	__aeabi_fadd
+ 106              		.global	__aeabi_f2d
+ 107              		.global	__aeabi_dcmpgt
+ 108              		.global	__aeabi_fdiv
+ 109              		.global	__aeabi_fsub
+ 110              		.section	.text.alt_kalman,"ax",%progbits
+ 111              		.align	1
+ 112              		.global	alt_kalman
+ 113              		.thumb
+ 114              		.thumb_func
+ 116              	alt_kalman:
+ 117              	.LFB8:
+ 148:estimator.c   **** 
+ 149:estimator.c   **** void alt_kalman(float gps_z) {
+ 118              		.loc 1 149 0
+ 119              		.cfi_startproc
+ 120              		@ args = 0, pretend = 0, frame = 16
+ 121              		@ frame_needed = 0, uses_anonymous_args = 0
+ 122              	.LVL0:
+ 123 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, sl, fp, lr}
+ 124              	.LCFI0:
+ 125              		.cfi_def_cfa_offset 36
+ 150:estimator.c   ****   float DT;
+ 151:estimator.c   ****   float R;
+ 152:estimator.c   ****   float SIGMA2;
+ 153:estimator.c   **** 
+ 154:estimator.c   **** #ifdef USE_BARO_MS5534A
+ 155:estimator.c   ****   if (alt_baro_enabled) {
+ 156:estimator.c   ****     DT = BARO_DT;
+ 157:estimator.c   ****     R = baro_MS5534A_r;
+ 158:estimator.c   ****     SIGMA2 = baro_MS5534A_sigma2;
+ 159:estimator.c   ****   } else
+ 160:estimator.c   **** #elif defined(USE_BARO_ETS)
+ 161:estimator.c   ****   if (baro_ets_enabled) {
+ 162:estimator.c   ****     DT = BARO_ETS_DT;
+ 163:estimator.c   ****     R = baro_ets_r;
+ 164:estimator.c   ****     SIGMA2 = baro_ets_sigma2;
+ 165:estimator.c   ****   } else
+ 166:estimator.c   **** #endif
+ 167:estimator.c   ****   {
+ 168:estimator.c   ****     DT = GPS_DT;
+ 169:estimator.c   ****     R = GPS_R;
+ 170:estimator.c   ****     SIGMA2 = GPS_SIGMA2;
+ 171:estimator.c   ****   }
+ 172:estimator.c   **** 
+ 173:estimator.c   ****   float q[2][2];
+ 174:estimator.c   ****   q[0][0] = DT*DT*DT*DT/4.;
+ 175:estimator.c   ****   q[0][1] = DT*DT*DT/2.;
+ 176:estimator.c   ****   q[1][0] = DT*DT*DT/2.;
+ 177:estimator.c   ****   q[1][1] = DT*DT;
+ 178:estimator.c   **** 
+ 179:estimator.c   **** 
+ 180:estimator.c   ****   /* predict */
+ 181:estimator.c   ****   estimator_z += estimator_z_dot * DT;
+ 126              		.loc 1 181 0
+ 127 0004 544B     		ldr	r3, .L17+8
+ 128 0006 DFF85881 		ldr	r8, .L17+16
+ 129              		.cfi_offset 14, -4
+ 130              		.cfi_offset 11, -8
+ 131              		.cfi_offset 10, -12
+ 132              		.cfi_offset 9, -16
+ 133              		.cfi_offset 8, -20
+ 134              		.cfi_offset 7, -24
+ 135              		.cfi_offset 6, -28
+ 136              		.cfi_offset 5, -32
+ 137              		.cfi_offset 4, -36
+ 138 000a 1B68     		ldr	r3, [r3, #0]	@ float
+ 149:estimator.c   **** void alt_kalman(float gps_z) {
+ 139              		.loc 1 149 0
+ 140 000c 85B0     		sub	sp, sp, #20
+ 141              	.LCFI1:
+ 142              		.cfi_def_cfa_offset 56
+ 143              		.loc 1 181 0
+ 144 000e 4FF07A51 		mov	r1, #1048576000
+ 149:estimator.c   **** void alt_kalman(float gps_z) {
+ 145              		.loc 1 149 0
+ 146 0012 8346     		mov	fp, r0
+ 147              		.loc 1 181 0
+ 148 0014 1846     		mov	r0, r3
+ 149              	.LVL1:
+ 150 0016 0193     		str	r3, [sp, #4]	@ float
+ 151 0018 FFF7FEFF 		bl	__aeabi_fmul
+ 152 001c D8F80010 		ldr	r1, [r8, #0]	@ float
+ 153 0020 FFF7FEFF 		bl	__aeabi_fadd
+ 182:estimator.c   ****   p[0][0] = p[0][0]+p[1][0]*DT+DT*(p[0][1]+p[1][1]*DT) + SIGMA2*q[0][0];
+ 154              		.loc 1 182 0
+ 155 0024 4D4C     		ldr	r4, .L17+12
+ 181:estimator.c   ****   estimator_z += estimator_z_dot * DT;
+ 156              		.loc 1 181 0
+ 157 0026 C8F80000 		str	r0, [r8, #0]	@ float
+ 158              		.loc 1 182 0
+ 159 002a 4FF07A51 		mov	r1, #1048576000
+ 181:estimator.c   ****   estimator_z += estimator_z_dot * DT;
+ 160              		.loc 1 181 0
+ 161 002e 0646     		mov	r6, r0
+ 162              		.loc 1 182 0
+ 163 0030 A068     		ldr	r0, [r4, #8]	@ float
+ 164 0032 FFF7FEFF 		bl	__aeabi_fmul
+ 165 0036 2168     		ldr	r1, [r4, #0]	@ float
+ 166 0038 FFF7FEFF 		bl	__aeabi_fadd
+ 167 003c 4FF07A51 		mov	r1, #1048576000
+ 168 0040 0546     		mov	r5, r0
+ 169 0042 E068     		ldr	r0, [r4, #12]	@ float
+ 170 0044 FFF7FEFF 		bl	__aeabi_fmul
+ 171 0048 6168     		ldr	r1, [r4, #4]	@ float
+ 172 004a 0746     		mov	r7, r0
+ 173 004c FFF7FEFF 		bl	__aeabi_fadd
+ 174 0050 4FF07A51 		mov	r1, #1048576000
+ 175 0054 8246     		mov	sl, r0
+ 176 0056 FFF7FEFF 		bl	__aeabi_fmul
+ 177 005a 0146     		mov	r1, r0
+ 178 005c 2846     		mov	r0, r5
+ 179 005e FFF7FEFF 		bl	__aeabi_fadd
+ 180 0062 4FF06A51 		mov	r1, #981467136
+ 181 0066 FFF7FEFF 		bl	__aeabi_fadd
+ 183:estimator.c   ****   p[0][1] = p[0][1]+p[1][1]*DT + SIGMA2*q[0][1];
+ 182              		.loc 1 183 0
+ 183 006a 4FF07051 		mov	r1, #1006632960
+ 182:estimator.c   ****   p[0][0] = p[0][0]+p[1][0]*DT+DT*(p[0][1]+p[1][1]*DT) + SIGMA2*q[0][0];
+ 184              		.loc 1 182 0
+ 185 006e 0546     		mov	r5, r0
+ 186 0070 2060     		str	r0, [r4, #0]	@ float
+ 187              		.loc 1 183 0
+ 188 0072 5046     		mov	r0, sl
+ 189 0074 FFF7FEFF 		bl	__aeabi_fadd
+ 184:estimator.c   ****   p[1][0] = p[1][0]+p[1][1]*DT + SIGMA2*q[1][0];
+ 190              		.loc 1 184 0
+ 191 0078 A168     		ldr	r1, [r4, #8]	@ float
+ 183:estimator.c   ****   p[0][1] = p[0][1]+p[1][1]*DT + SIGMA2*q[0][1];
+ 192              		.loc 1 183 0
+ 193 007a 6060     		str	r0, [r4, #4]	@ float
+ 194 007c 8146     		mov	r9, r0
+ 195              		.loc 1 184 0
+ 196 007e 3846     		mov	r0, r7
+ 197 0080 FFF7FEFF 		bl	__aeabi_fadd
+ 198 0084 4FF07051 		mov	r1, #1006632960
+ 199 0088 FFF7FEFF 		bl	__aeabi_fadd
+ 185:estimator.c   ****   p[1][1] = p[1][1] + SIGMA2*q[1][1];
+ 200              		.loc 1 185 0
+ 201 008c 4FF07651 		mov	r1, #1031798784
+ 184:estimator.c   ****   p[1][0] = p[1][0]+p[1][1]*DT + SIGMA2*q[1][0];
+ 202              		.loc 1 184 0
+ 203 0090 A060     		str	r0, [r4, #8]	@ float
+ 204 0092 8246     		mov	sl, r0
+ 205              		.loc 1 185 0
+ 206 0094 E068     		ldr	r0, [r4, #12]	@ float
+ 207 0096 FFF7FEFF 		bl	__aeabi_fadd
+ 186:estimator.c   **** 
+ 187:estimator.c   ****   /* error estimate */
+ 188:estimator.c   ****   float e = p[0][0] + R;
+ 208              		.loc 1 188 0
+ 209 009a 4FF08041 		mov	r1, #1073741824
+ 185:estimator.c   ****   p[1][1] = p[1][1] + SIGMA2*q[1][1];
+ 210              		.loc 1 185 0
+ 211 009e 0290     		str	r0, [sp, #8]	@ float
+ 212 00a0 E060     		str	r0, [r4, #12]	@ float
+ 213              		.loc 1 188 0
+ 214 00a2 2846     		mov	r0, r5
+ 215 00a4 FFF7FEFF 		bl	__aeabi_fadd
+ 216 00a8 0746     		mov	r7, r0
+ 189:estimator.c   **** 
+ 190:estimator.c   ****   if (fabs(e) > 1e-5) {
+ 217              		.loc 1 190 0
+ 218 00aa 20F00040 		bic	r0, r0, #-2147483648
+ 219 00ae FFF7FEFF 		bl	__aeabi_f2d
+ 220 00b2 27A3     		adr	r3, .L17
+ 221 00b4 D3E90023 		ldrd	r2, [r3]
+ 222 00b8 FFF7FEFF 		bl	__aeabi_dcmpgt
+ 223 00bc 0028     		cmp	r0, #0
+ 224 00be 44D0     		beq	.L14
+ 225              	.LBB2:
+ 191:estimator.c   ****     float k_0 = p[0][0] / e;
+ 226              		.loc 1 191 0
+ 227 00c0 3946     		mov	r1, r7
+ 228 00c2 2846     		mov	r0, r5
+ 229 00c4 FFF7FEFF 		bl	__aeabi_fdiv
+ 192:estimator.c   ****     float k_1 =  p[1][0] / e;
+ 230              		.loc 1 192 0
+ 231 00c8 3946     		mov	r1, r7
+ 191:estimator.c   ****     float k_0 = p[0][0] / e;
+ 232              		.loc 1 191 0
+ 233 00ca 0390     		str	r0, [sp, #12]	@ float
+ 234              		.loc 1 192 0
+ 235 00cc 5046     		mov	r0, sl
+ 236 00ce FFF7FEFF 		bl	__aeabi_fdiv
+ 193:estimator.c   ****     e = gps_z - estimator_z;
+ 237              		.loc 1 193 0
+ 238 00d2 3146     		mov	r1, r6
+ 192:estimator.c   ****     float k_1 =  p[1][0] / e;
+ 239              		.loc 1 192 0
+ 240 00d4 0746     		mov	r7, r0
+ 241              		.loc 1 193 0
+ 242 00d6 5846     		mov	r0, fp
+ 243 00d8 FFF7FEFF 		bl	__aeabi_fsub
+ 244 00dc 8346     		mov	fp, r0
+ 245              	.LVL2:
+ 194:estimator.c   **** 
+ 195:estimator.c   ****     /* correction */
+ 196:estimator.c   ****     estimator_z += k_0 * e;
+ 246              		.loc 1 196 0
+ 247 00de 5946     		mov	r1, fp
+ 248 00e0 0398     		ldr	r0, [sp, #12]	@ float
+ 249 00e2 FFF7FEFF 		bl	__aeabi_fmul
+ 250 00e6 0146     		mov	r1, r0
+ 251 00e8 3046     		mov	r0, r6
+ 252 00ea FFF7FEFF 		bl	__aeabi_fadd
+ 197:estimator.c   ****     estimator_z_dot += k_1 * e;
+ 253              		.loc 1 197 0
+ 254 00ee 5946     		mov	r1, fp
+ 196:estimator.c   ****     estimator_z += k_0 * e;
+ 255              		.loc 1 196 0
+ 256 00f0 C8F80000 		str	r0, [r8, #0]	@ float
+ 257              		.loc 1 197 0
+ 258 00f4 3846     		mov	r0, r7
+ 259 00f6 FFF7FEFF 		bl	__aeabi_fmul
+ 260 00fa 0146     		mov	r1, r0
+ 261 00fc 0198     		ldr	r0, [sp, #4]	@ float
+ 262 00fe FFF7FEFF 		bl	__aeabi_fadd
+ 263 0102 154B     		ldr	r3, .L17+8
+ 198:estimator.c   **** 
+ 199:estimator.c   ****     p[1][0] = -p[0][0]*k_1+p[1][0];
+ 264              		.loc 1 199 0
+ 265 0104 3946     		mov	r1, r7
+ 197:estimator.c   ****     estimator_z_dot += k_1 * e;
+ 266              		.loc 1 197 0
+ 267 0106 1860     		str	r0, [r3, #0]	@ float
+ 268              		.loc 1 199 0
+ 269 0108 05F10040 		add	r0, r5, #-2147483648
+ 270 010c FFF7FEFF 		bl	__aeabi_fmul
+ 271 0110 5146     		mov	r1, sl
+ 272 0112 FFF7FEFF 		bl	__aeabi_fadd
+ 200:estimator.c   ****     p[1][1] = -p[0][1]*k_1+p[1][1];
+ 273              		.loc 1 200 0
+ 274 0116 3946     		mov	r1, r7
+ 199:estimator.c   ****     p[1][0] = -p[0][0]*k_1+p[1][0];
+ 275              		.loc 1 199 0
+ 276 0118 A060     		str	r0, [r4, #8]	@ float
+ 277              		.loc 1 200 0
+ 278 011a 09F10040 		add	r0, r9, #-2147483648
+ 279 011e FFF7FEFF 		bl	__aeabi_fmul
+ 280 0122 0299     		ldr	r1, [sp, #8]	@ float
+ 281 0124 FFF7FEFF 		bl	__aeabi_fadd
+ 201:estimator.c   ****     p[0][0] = p[0][0] * (1-k_0);
+ 282              		.loc 1 201 0
+ 283 0128 0399     		ldr	r1, [sp, #12]	@ float
+ 200:estimator.c   ****     p[1][1] = -p[0][1]*k_1+p[1][1];
+ 284              		.loc 1 200 0
+ 285 012a E060     		str	r0, [r4, #12]	@ float
+ 286              		.loc 1 201 0
+ 287 012c 4FF07E50 		mov	r0, #1065353216
+ 288 0130 FFF7FEFF 		bl	__aeabi_fsub
+ 289 0134 0646     		mov	r6, r0
+ 290 0136 3146     		mov	r1, r6
+ 291 0138 2846     		mov	r0, r5
+ 292 013a FFF7FEFF 		bl	__aeabi_fmul
+ 202:estimator.c   ****     p[0][1] = p[0][1] * (1-k_0);
+ 293              		.loc 1 202 0
+ 294 013e 3146     		mov	r1, r6
+ 201:estimator.c   ****     p[0][0] = p[0][0] * (1-k_0);
+ 295              		.loc 1 201 0
+ 296 0140 2060     		str	r0, [r4, #0]	@ float
+ 297              		.loc 1 202 0
+ 298 0142 4846     		mov	r0, r9
+ 299 0144 FFF7FEFF 		bl	__aeabi_fmul
+ 300 0148 6060     		str	r0, [r4, #4]	@ float
+ 301              	.LVL3:
+ 302              	.L14:
+ 303              	.LBE2:
+ 203:estimator.c   ****   }
+ 204:estimator.c   **** 
+ 205:estimator.c   **** #ifdef DEBUG_ALT_KALMAN
+ 206:estimator.c   ****   DOWNLINK_SEND_ALT_KALMAN(&(p[0][0]),&(p[0][1]),&(p[1][0]), &(p[1][1]));
+ 207:estimator.c   **** #endif
+ 208:estimator.c   **** }
+ 304              		.loc 1 208 0
+ 305 014a 05B0     		add	sp, sp, #20
+ 306 014c BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, sl, fp, pc}
+ 307              	.L18:
+ 308              		.align	3
+ 309              	.L17:
+ 310 0150 F168E388 		.word	-1998362383
+ 311 0154 B5F8E43E 		.word	1055193269
+ 312 0158 00000000 		.word	.LANCHOR2
+ 313 015c 00000000 		.word	.LANCHOR0
+ 314 0160 00000000 		.word	.LANCHOR3
+ 315              		.cfi_endproc
+ 316              	.LFE8:
+ 318 0164 AFF30080 		.section	.text.estimator_init,"ax",%progbits
+ 319              		.align	1
+ 320              		.global	estimator_init
+ 321              		.thumb
+ 322              		.thumb_func
+ 324              	estimator_init:
+ 325              	.LFB4:
+  90:estimator.c   **** void estimator_init( void ) {
+ 326              		.loc 1 90 0
+ 327              		.cfi_startproc
+ 328              		@ args = 0, pretend = 0, frame = 0
+ 329              		@ frame_needed = 0, uses_anonymous_args = 0
+ 330 0000 08B5     		push	{r3, lr}
+ 331              	.LCFI2:
+ 332              		.cfi_def_cfa_offset 8
+  92:estimator.c   ****   EstimatorSetPosXY(0., 0.);
+ 333              		.loc 1 92 0
+ 334 0002 154B     		ldr	r3, .L24
+ 335              		.cfi_offset 14, -4
+ 336              		.cfi_offset 3, -8
+ 337 0004 0020     		movs	r0, #0
+ 338 0006 1860     		str	r0, [r3, #0]	@ float
+ 339 0008 144B     		ldr	r3, .L24+4
+ 340 000a 1860     		str	r0, [r3, #0]	@ float
+  93:estimator.c   ****   EstimatorSetAlt(0.);
+ 341              		.loc 1 93 0
+ 342 000c 144B     		ldr	r3, .L24+8
+ 343 000e 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 344 0010 13B9     		cbnz	r3, .L20
+ 345 0012 144B     		ldr	r3, .L24+12
+ 346 0014 1860     		str	r0, [r3, #0]	@ float
+ 347 0016 01E0     		b	.L21
+ 348              	.L20:
+ 349 0018 FFF7FEFF 		bl	alt_kalman
+ 350              	.L21:
+  95:estimator.c   ****   EstimatorSetAtt (0., 0., 0);
+ 351              		.loc 1 95 0
+ 352 001c 124A     		ldr	r2, .L24+16
+ 353 001e 0023     		movs	r3, #0
+ 354 0020 1360     		str	r3, [r2, #0]	@ float
+ 355 0022 124A     		ldr	r2, .L24+20
+ 356 0024 1360     		str	r3, [r2, #0]	@ float
+ 357 0026 124A     		ldr	r2, .L24+24
+ 358 0028 1360     		str	r3, [r2, #0]	@ float
+  97:estimator.c   ****   EstimatorSetSpeedPol ( 0., 0., 0.);
+ 359              		.loc 1 97 0
+ 360 002a 124A     		ldr	r2, .L24+28
+ 361 002c 1360     		str	r3, [r2, #0]	@ float
+ 362 002e 124A     		ldr	r2, .L24+32
+ 363 0030 1360     		str	r3, [r2, #0]	@ float
+ 364 0032 0B4A     		ldr	r2, .L24+8
+ 365 0034 1278     		ldrb	r2, [r2, #0]	@ zero_extendqisi2
+ 366 0036 0AB9     		cbnz	r2, .L22
+ 367 0038 104A     		ldr	r2, .L24+36
+ 368 003a 1360     		str	r3, [r2, #0]	@ float
+ 369              	.L22:
+  99:estimator.c   ****   EstimatorSetRate(0., 0.);
+ 370              		.loc 1 99 0
+ 371 003c 104A     		ldr	r2, .L24+40
+ 372 003e 0023     		movs	r3, #0
+ 373 0040 1360     		str	r3, [r2, #0]	@ float
+ 374 0042 104A     		ldr	r2, .L24+44
+ 375 0044 1360     		str	r3, [r2, #0]	@ float
+ 109:estimator.c   ****   estimator_flight_time = 0;
+ 376              		.loc 1 109 0
+ 377 0046 104B     		ldr	r3, .L24+48
+ 378 0048 4FF00002 		mov	r2, #0	@ movhi
+ 379 004c 1A80     		strh	r2, [r3, #0]	@ movhi
+ 111:estimator.c   ****   estimator_airspeed = NOMINAL_AIRSPEED;
+ 380              		.loc 1 111 0
+ 381 004e 0F4A     		ldr	r2, .L24+52
+ 382 0050 0F4B     		ldr	r3, .L24+56
+ 383 0052 1A60     		str	r2, [r3, #0]	@ float
+ 112:estimator.c   **** }
+ 384              		.loc 1 112 0
+ 385 0054 08BD     		pop	{r3, pc}
+ 386              	.L25:
+ 387 0056 00BF     		.align	2
+ 388              	.L24:
+ 389 0058 00000000 		.word	.LANCHOR4
+ 390 005c 00000000 		.word	.LANCHOR5
+ 391 0060 00000000 		.word	.LANCHOR1
+ 392 0064 00000000 		.word	.LANCHOR3
+ 393 0068 00000000 		.word	.LANCHOR6
+ 394 006c 00000000 		.word	.LANCHOR7
+ 395 0070 00000000 		.word	.LANCHOR8
+ 396 0074 00000000 		.word	.LANCHOR9
+ 397 0078 00000000 		.word	.LANCHOR10
+ 398 007c 00000000 		.word	.LANCHOR2
+ 399 0080 00000000 		.word	.LANCHOR11
+ 400 0084 00000000 		.word	.LANCHOR12
+ 401 0088 00000000 		.word	.LANCHOR13
+ 402 008c 00004841 		.word	1095237632
+ 403 0090 00000000 		.word	.LANCHOR14
+ 404              		.cfi_endproc
+ 405              	.LFE4:
+ 407              		.global	__aeabi_i2d
+ 408              		.global	__aeabi_ddiv
+ 409              		.global	__aeabi_d2f
+ 410              		.global	__aeabi_i2f
+ 411              		.section	.text.estimator_update_state_gps,"ax",%progbits
+ 412              		.align	1
+ 413              		.global	estimator_update_state_gps
+ 414              		.thumb
+ 415              		.thumb_func
+ 417              	estimator_update_state_gps:
+ 418              	.LFB9:
+ 209:estimator.c   **** 
+ 210:estimator.c   **** #endif // ALT_KALMAN
+ 211:estimator.c   **** 
+ 212:estimator.c   **** void estimator_update_state_gps( void ) {
+ 419              		.loc 1 212 0
+ 420              		.cfi_startproc
+ 421              		@ args = 0, pretend = 0, frame = 0
+ 422              		@ frame_needed = 0, uses_anonymous_args = 0
+ 423 0000 70B5     		push	{r4, r5, r6, lr}
+ 424              	.LCFI3:
+ 425              		.cfi_def_cfa_offset 16
+ 213:estimator.c   ****   float gps_east = gps.utm_pos.east / 100.;
+ 426              		.loc 1 213 0
+ 427 0002 374C     		ldr	r4, .L31+16
+ 428              		.cfi_offset 14, -4
+ 429              		.cfi_offset 6, -8
+ 430              		.cfi_offset 5, -12
+ 431              		.cfi_offset 4, -16
+ 432 0004 E069     		ldr	r0, [r4, #28]
+ 433 0006 FFF7FEFF 		bl	__aeabi_i2d
+ 434 000a 0022     		movs	r2, #0
+ 435 000c 354B     		ldr	r3, .L31+20
+ 436 000e FFF7FEFF 		bl	__aeabi_ddiv
+ 437 0012 FFF7FEFF 		bl	__aeabi_d2f
+ 438 0016 0546     		mov	r5, r0
+ 214:estimator.c   ****   float gps_north = gps.utm_pos.north / 100.;
+ 439              		.loc 1 214 0
+ 440 0018 A069     		ldr	r0, [r4, #24]
+ 441 001a FFF7FEFF 		bl	__aeabi_i2d
+ 442 001e 0022     		movs	r2, #0
+ 443 0020 304B     		ldr	r3, .L31+20
+ 444 0022 FFF7FEFF 		bl	__aeabi_ddiv
+ 445 0026 FFF7FEFF 		bl	__aeabi_d2f
+ 215:estimator.c   **** 
+ 216:estimator.c   ****   /* Relative position to reference */
+ 217:estimator.c   ****   gps_east -= nav_utm_east0;
+ 218:estimator.c   ****   gps_north -= nav_utm_north0;
+ 446              		.loc 1 218 0
+ 447 002a 2F4B     		ldr	r3, .L31+24
+ 214:estimator.c   ****   float gps_north = gps.utm_pos.north / 100.;
+ 448              		.loc 1 214 0
+ 449 002c 0646     		mov	r6, r0
+ 450              		.loc 1 218 0
+ 451 002e 1868     		ldr	r0, [r3, #0]
+ 452 0030 FFF7FEFF 		bl	__aeabi_i2f
+ 453 0034 0146     		mov	r1, r0
+ 454 0036 3046     		mov	r0, r6
+ 455 0038 FFF7FEFF 		bl	__aeabi_fsub
+ 219:estimator.c   **** 
+ 220:estimator.c   ****   EstimatorSetPosXY(gps_east, gps_north);
+ 456              		.loc 1 220 0
+ 457 003c 2B4B     		ldr	r3, .L31+28
+ 218:estimator.c   ****   gps_north -= nav_utm_north0;
+ 458              		.loc 1 218 0
+ 459 003e 0646     		mov	r6, r0
+ 460              		.loc 1 220 0
+ 461 0040 1868     		ldr	r0, [r3, #0]
+ 462 0042 FFF7FEFF 		bl	__aeabi_i2f
+ 463 0046 0146     		mov	r1, r0
+ 464 0048 2846     		mov	r0, r5
+ 465 004a FFF7FEFF 		bl	__aeabi_fsub
+ 466 004e 284B     		ldr	r3, .L31+32
+ 467 0050 1860     		str	r0, [r3, #0]	@ float
+ 468 0052 284B     		ldr	r3, .L31+36
+ 221:estimator.c   **** #ifndef USE_BARO_ETS
+ 222:estimator.c   ****   float falt = gps.hmsl / 1000.;
+ 469              		.loc 1 222 0
+ 470 0054 A06A     		ldr	r0, [r4, #40]
+ 220:estimator.c   ****   EstimatorSetPosXY(gps_east, gps_north);
+ 471              		.loc 1 220 0
+ 472 0056 1E60     		str	r6, [r3, #0]	@ float
+ 473              		.loc 1 222 0
+ 474 0058 FFF7FEFF 		bl	__aeabi_i2d
+ 475 005c 1CA3     		adr	r3, .L31
+ 476 005e D3E90023 		ldrd	r2, [r3]
+ 477 0062 FFF7FEFF 		bl	__aeabi_ddiv
+ 478 0066 FFF7FEFF 		bl	__aeabi_d2f
+ 223:estimator.c   ****   EstimatorSetAlt(falt);
+ 479              		.loc 1 223 0
+ 480 006a 234A     		ldr	r2, .L31+40
+ 481 006c 1278     		ldrb	r2, [r2, #0]	@ zero_extendqisi2
+ 482 006e 12B9     		cbnz	r2, .L27
+ 483 0070 224A     		ldr	r2, .L31+44
+ 484 0072 1060     		str	r0, [r2, #0]	@ float
+ 485 0074 01E0     		b	.L28
+ 486              	.L27:
+ 487 0076 FFF7FEFF 		bl	alt_kalman
+ 488              	.L28:
+ 224:estimator.c   **** #endif
+ 225:estimator.c   ****   float fspeed = gps.gspeed / 100.;
+ 226:estimator.c   ****   float fclimb = -gps.ned_vel.z / 100.;
+ 489              		.loc 1 226 0
+ 490 007a 194C     		ldr	r4, .L31+16
+ 227:estimator.c   ****   float fcourse = gps.course / 1e7;
+ 491              		.loc 1 227 0
+ 492 007c A06C     		ldr	r0, [r4, #72]
+ 493 007e FFF7FEFF 		bl	__aeabi_i2d
+ 494 0082 15A3     		adr	r3, .L31+8
+ 495 0084 D3E90023 		ldrd	r2, [r3]
+ 496 0088 FFF7FEFF 		bl	__aeabi_ddiv
+ 497 008c FFF7FEFF 		bl	__aeabi_d2f
+ 498 0090 0646     		mov	r6, r0
+ 228:estimator.c   ****   EstimatorSetSpeedPol(fspeed, fcourse, fclimb);
+ 499              		.loc 1 228 0
+ 500 0092 B4F94400 		ldrsh	r0, [r4, #68]
+ 501 0096 FFF7FEFF 		bl	__aeabi_i2d
+ 502 009a 124B     		ldr	r3, .L31+20
+ 503 009c 0022     		movs	r2, #0
+ 504 009e FFF7FEFF 		bl	__aeabi_ddiv
+ 505 00a2 FFF7FEFF 		bl	__aeabi_d2f
+ 506 00a6 164B     		ldr	r3, .L31+48
+ 226:estimator.c   ****   float fclimb = -gps.ned_vel.z / 100.;
+ 507              		.loc 1 226 0
+ 508 00a8 256C     		ldr	r5, [r4, #64]
+ 509              		.loc 1 228 0
+ 510 00aa 1860     		str	r0, [r3, #0]	@ float
+ 511 00ac 154B     		ldr	r3, .L31+52
+ 512 00ae 1E60     		str	r6, [r3, #0]	@ float
+ 513 00b0 114B     		ldr	r3, .L31+40
+ 514 00b2 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 515 00b4 53B9     		cbnz	r3, .L30
+ 516 00b6 6842     		negs	r0, r5
+ 517 00b8 FFF7FEFF 		bl	__aeabi_i2d
+ 518 00bc 094B     		ldr	r3, .L31+20
+ 519 00be 0022     		movs	r2, #0
+ 520 00c0 FFF7FEFF 		bl	__aeabi_ddiv
+ 521 00c4 FFF7FEFF 		bl	__aeabi_d2f
+ 522 00c8 0F4B     		ldr	r3, .L31+56
+ 523 00ca 1860     		str	r0, [r3, #0]	@ float
+ 524              	.L30:
+ 525 00cc 70BD     		pop	{r4, r5, r6, pc}
+ 526              	.L32:
+ 527 00ce 00BF     		.align	3
+ 528              	.L31:
+ 529 00d0 00000000 		.word	0
+ 530 00d4 00408F40 		.word	1083129856
+ 531 00d8 00000000 		.word	0
+ 532 00dc D0126341 		.word	1097011920
+ 533 00e0 00000000 		.word	gps
+ 534 00e4 00005940 		.word	1079574528
+ 535 00e8 00000000 		.word	nav_utm_north0
+ 536 00ec 00000000 		.word	nav_utm_east0
+ 537 00f0 00000000 		.word	.LANCHOR4
+ 538 00f4 00000000 		.word	.LANCHOR5
+ 539 00f8 00000000 		.word	.LANCHOR1
+ 540 00fc 00000000 		.word	.LANCHOR3
+ 541 0100 00000000 		.word	.LANCHOR9
+ 542 0104 00000000 		.word	.LANCHOR10
+ 543 0108 00000000 		.word	.LANCHOR2
+ 544              		.cfi_endproc
+ 545              	.LFE9:
+ 547              		.global	estimator_x
+ 548              		.global	estimator_y
+ 549              		.global	estimator_z
+ 550              		.global	estimator_phi
+ 551              		.global	estimator_psi
+ 552              		.global	estimator_theta
+ 553              		.global	estimator_z_dot
+ 554              		.global	estimator_p
+ 555              		.global	estimator_q
+ 556              		.global	estimator_flight_time
+ 557              		.global	estimator_t
+ 558              		.global	estimator_hspeed_mod
+ 559              		.global	estimator_hspeed_dir
+ 560              		.global	wind_east
+ 561              		.global	wind_north
+ 562              		.global	estimator_airspeed
+ 563              		.global	estimator_AOA
+ 564              		.global	alt_kalman_enabled
+ 565 010c AFF30080 		.section	.bss.estimator_hspeed_dir,"aw",%nobits
+ 566              		.align	2
+ 567              		.set	.LANCHOR10,. + 0
+ 570              	estimator_hspeed_dir:
+ 571 0000 00000000 		.space	4
+ 572              		.section	.bss.estimator_t,"aw",%nobits
+ 573              		.align	2
+ 576              	estimator_t:
+ 577 0000 00000000 		.space	4
+ 578              		.section	.bss.estimator_airspeed,"aw",%nobits
+ 579              		.align	2
+ 580              		.set	.LANCHOR14,. + 0
+ 583              	estimator_airspeed:
+ 584 0000 00000000 		.space	4
+ 585              		.section	.bss.estimator_AOA,"aw",%nobits
+ 586              		.align	2
+ 589              	estimator_AOA:
+ 590 0000 00000000 		.space	4
+ 591              		.section	.bss.p,"aw",%nobits
+ 592              		.align	2
+ 593              		.set	.LANCHOR0,. + 0
+ 596              	p:
+ 597 0000 00000000 		.space	16
+ 597      00000000 
+ 597      00000000 
+ 597      00000000 
+ 598              		.section	.bss.estimator_z_dot,"aw",%nobits
+ 599              		.align	2
+ 600              		.set	.LANCHOR2,. + 0
+ 603              	estimator_z_dot:
+ 604 0000 00000000 		.space	4
+ 605              		.section	.bss.estimator_flight_time,"aw",%nobits
+ 606              		.align	1
+ 607              		.set	.LANCHOR13,. + 0
+ 610              	estimator_flight_time:
+ 611 0000 0000     		.space	2
+ 612              		.section	.bss.wind_east,"aw",%nobits
+ 613              		.align	2
+ 616              	wind_east:
+ 617 0000 00000000 		.space	4
+ 618              		.section	.bss.alt_kalman_enabled,"aw",%nobits
+ 619              		.set	.LANCHOR1,. + 0
+ 622              	alt_kalman_enabled:
+ 623 0000 00       		.space	1
+ 624              		.section	.bss.estimator_psi,"aw",%nobits
+ 625              		.align	2
+ 626              		.set	.LANCHOR7,. + 0
+ 629              	estimator_psi:
+ 630 0000 00000000 		.space	4
+ 631              		.section	.bss.wind_north,"aw",%nobits
+ 632              		.align	2
+ 635              	wind_north:
+ 636 0000 00000000 		.space	4
+ 637              		.section	.bss.estimator_p,"aw",%nobits
+ 638              		.align	2
+ 639              		.set	.LANCHOR11,. + 0
+ 642              	estimator_p:
+ 643 0000 00000000 		.space	4
+ 644              		.section	.bss.estimator_theta,"aw",%nobits
+ 645              		.align	2
+ 646              		.set	.LANCHOR8,. + 0
+ 649              	estimator_theta:
+ 650 0000 00000000 		.space	4
+ 651              		.section	.bss.estimator_q,"aw",%nobits
+ 652              		.align	2
+ 653              		.set	.LANCHOR12,. + 0
+ 656              	estimator_q:
+ 657 0000 00000000 		.space	4
+ 658              		.section	.bss.estimator_x,"aw",%nobits
+ 659              		.align	2
+ 660              		.set	.LANCHOR4,. + 0
+ 663              	estimator_x:
+ 664 0000 00000000 		.space	4
+ 665              		.section	.bss.estimator_y,"aw",%nobits
+ 666              		.align	2
+ 667              		.set	.LANCHOR5,. + 0
+ 670              	estimator_y:
+ 671 0000 00000000 		.space	4
+ 672              		.section	.bss.estimator_z,"aw",%nobits
+ 673              		.align	2
+ 674              		.set	.LANCHOR3,. + 0
+ 677              	estimator_z:
+ 678 0000 00000000 		.space	4
+ 679              		.section	.bss.estimator_hspeed_mod,"aw",%nobits
+ 680              		.align	2
+ 681              		.set	.LANCHOR9,. + 0
+ 684              	estimator_hspeed_mod:
+ 685 0000 00000000 		.space	4
+ 686              		.section	.bss.estimator_phi,"aw",%nobits
+ 687              		.align	2
+ 688              		.set	.LANCHOR6,. + 0
+ 691              	estimator_phi:
+ 692 0000 00000000 		.space	4
+ 693              		.text
+ 694              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 estimator.c
+     /tmp/cc7f2IPy.s:24     .text.estimator_propagate_state:00000000 $t
+     /tmp/cc7f2IPy.s:29     .text.estimator_propagate_state:00000000 estimator_propagate_state
+     /tmp/cc7f2IPy.s:43     .text.alt_kalman_reset:00000000 $t
+     /tmp/cc7f2IPy.s:48     .text.alt_kalman_reset:00000000 alt_kalman_reset
+     /tmp/cc7f2IPy.s:73     .text.alt_kalman_reset:00000014 $d
+     /tmp/cc7f2IPy.s:78     .text.alt_kalman_init:00000000 $t
+     /tmp/cc7f2IPy.s:83     .text.alt_kalman_init:00000000 alt_kalman_init
+     /tmp/cc7f2IPy.s:100    .text.alt_kalman_init:0000000c $d
+     /tmp/cc7f2IPy.s:111    .text.alt_kalman:00000000 $t
+     /tmp/cc7f2IPy.s:116    .text.alt_kalman:00000000 alt_kalman
+     /tmp/cc7f2IPy.s:310    .text.alt_kalman:00000150 $d
+     /tmp/cc7f2IPy.s:319    .text.estimator_init:00000000 $t
+     /tmp/cc7f2IPy.s:324    .text.estimator_init:00000000 estimator_init
+     /tmp/cc7f2IPy.s:389    .text.estimator_init:00000058 $d
+     /tmp/cc7f2IPy.s:412    .text.estimator_update_state_gps:00000000 $t
+     /tmp/cc7f2IPy.s:417    .text.estimator_update_state_gps:00000000 estimator_update_state_gps
+     /tmp/cc7f2IPy.s:529    .text.estimator_update_state_gps:000000d0 $d
+     /tmp/cc7f2IPy.s:663    .bss.estimator_x:00000000 estimator_x
+     /tmp/cc7f2IPy.s:670    .bss.estimator_y:00000000 estimator_y
+     /tmp/cc7f2IPy.s:677    .bss.estimator_z:00000000 estimator_z
+     /tmp/cc7f2IPy.s:691    .bss.estimator_phi:00000000 estimator_phi
+     /tmp/cc7f2IPy.s:629    .bss.estimator_psi:00000000 estimator_psi
+     /tmp/cc7f2IPy.s:649    .bss.estimator_theta:00000000 estimator_theta
+     /tmp/cc7f2IPy.s:603    .bss.estimator_z_dot:00000000 estimator_z_dot
+     /tmp/cc7f2IPy.s:642    .bss.estimator_p:00000000 estimator_p
+     /tmp/cc7f2IPy.s:656    .bss.estimator_q:00000000 estimator_q
+     /tmp/cc7f2IPy.s:610    .bss.estimator_flight_time:00000000 estimator_flight_time
+     /tmp/cc7f2IPy.s:576    .bss.estimator_t:00000000 estimator_t
+     /tmp/cc7f2IPy.s:684    .bss.estimator_hspeed_mod:00000000 estimator_hspeed_mod
+     /tmp/cc7f2IPy.s:570    .bss.estimator_hspeed_dir:00000000 estimator_hspeed_dir
+     /tmp/cc7f2IPy.s:616    .bss.wind_east:00000000 wind_east
+     /tmp/cc7f2IPy.s:635    .bss.wind_north:00000000 wind_north
+     /tmp/cc7f2IPy.s:583    .bss.estimator_airspeed:00000000 estimator_airspeed
+     /tmp/cc7f2IPy.s:589    .bss.estimator_AOA:00000000 estimator_AOA
+     /tmp/cc7f2IPy.s:622    .bss.alt_kalman_enabled:00000000 alt_kalman_enabled
+     /tmp/cc7f2IPy.s:566    .bss.estimator_hspeed_dir:00000000 $d
+     /tmp/cc7f2IPy.s:573    .bss.estimator_t:00000000 $d
+     /tmp/cc7f2IPy.s:579    .bss.estimator_airspeed:00000000 $d
+     /tmp/cc7f2IPy.s:586    .bss.estimator_AOA:00000000 $d
+     /tmp/cc7f2IPy.s:592    .bss.p:00000000 $d
+     /tmp/cc7f2IPy.s:596    .bss.p:00000000 p
+     /tmp/cc7f2IPy.s:599    .bss.estimator_z_dot:00000000 $d
+     /tmp/cc7f2IPy.s:606    .bss.estimator_flight_time:00000000 $d
+     /tmp/cc7f2IPy.s:613    .bss.wind_east:00000000 $d
+     /tmp/cc7f2IPy.s:623    .bss.alt_kalman_enabled:00000000 $d
+     /tmp/cc7f2IPy.s:625    .bss.estimator_psi:00000000 $d
+     /tmp/cc7f2IPy.s:632    .bss.wind_north:00000000 $d
+     /tmp/cc7f2IPy.s:638    .bss.estimator_p:00000000 $d
+     /tmp/cc7f2IPy.s:645    .bss.estimator_theta:00000000 $d
+     /tmp/cc7f2IPy.s:652    .bss.estimator_q:00000000 $d
+     /tmp/cc7f2IPy.s:659    .bss.estimator_x:00000000 $d
+     /tmp/cc7f2IPy.s:666    .bss.estimator_y:00000000 $d
+     /tmp/cc7f2IPy.s:673    .bss.estimator_z:00000000 $d
+     /tmp/cc7f2IPy.s:680    .bss.estimator_hspeed_mod:00000000 $d
+     /tmp/cc7f2IPy.s:687    .bss.estimator_phi:00000000 $d
+                     .debug_frame:00000010 $d
+     /tmp/cc7f2IPy.s:318    .text.alt_kalman:00000164 $t
+     /tmp/cc7f2IPy.s:565    .text.estimator_update_state_gps:0000010c $t
+
+UNDEFINED SYMBOLS
+__aeabi_fmul
+__aeabi_fadd
+__aeabi_f2d
+__aeabi_dcmpgt
+__aeabi_fdiv
+__aeabi_fsub
+__aeabi_i2d
+__aeabi_ddiv
+__aeabi_d2f
+__aeabi_i2f
+gps
+nav_utm_north0
+nav_utm_east0

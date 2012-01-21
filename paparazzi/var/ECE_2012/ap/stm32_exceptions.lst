@@ -1,0 +1,154 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"stm32_exceptions.c"
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.section	.text.nmi_exception,"ax",%progbits
+  24              		.align	1
+  25              		.global	nmi_exception
+  26              		.thumb
+  27              		.thumb_func
+  29              	nmi_exception:
+  30              	.LFB0:
+  31              		.file 1 "arch/stm32/stm32_exceptions.c"
+   1:arch/stm32/stm32_exceptions.c **** /*
+   2:arch/stm32/stm32_exceptions.c ****  * $Id$
+   3:arch/stm32/stm32_exceptions.c ****  *
+   4:arch/stm32/stm32_exceptions.c ****  * Copyright (C) 2010 Antoine Drouin <poinix@gmail.com>
+   5:arch/stm32/stm32_exceptions.c ****  *
+   6:arch/stm32/stm32_exceptions.c ****  * This file is part of Paparazzi.
+   7:arch/stm32/stm32_exceptions.c ****  *
+   8:arch/stm32/stm32_exceptions.c ****  * Paparazzi is free software; you can redistribute it and/or modify
+   9:arch/stm32/stm32_exceptions.c ****  * it under the terms of the GNU General Public License as published by
+  10:arch/stm32/stm32_exceptions.c ****  * the Free Software Foundation; either version 2, or (at your option)
+  11:arch/stm32/stm32_exceptions.c ****  * any later version.
+  12:arch/stm32/stm32_exceptions.c ****  *
+  13:arch/stm32/stm32_exceptions.c ****  * Paparazzi is distributed in the hope that it will be useful,
+  14:arch/stm32/stm32_exceptions.c ****  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  15:arch/stm32/stm32_exceptions.c ****  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  16:arch/stm32/stm32_exceptions.c ****  * GNU General Public License for more details.
+  17:arch/stm32/stm32_exceptions.c ****  *
+  18:arch/stm32/stm32_exceptions.c ****  * You should have received a copy of the GNU General Public License
+  19:arch/stm32/stm32_exceptions.c ****  * along with Paparazzi; see the file COPYING.  If not, write to
+  20:arch/stm32/stm32_exceptions.c ****  * the Free Software Foundation, 59 Temple Place - Suite 330,
+  21:arch/stm32/stm32_exceptions.c ****  * Boston, MA 02111-1307, USA.
+  22:arch/stm32/stm32_exceptions.c ****  */
+  23:arch/stm32/stm32_exceptions.c **** 
+  24:arch/stm32/stm32_exceptions.c **** #include "stm32_exceptions.h"
+  25:arch/stm32/stm32_exceptions.c **** 
+  26:arch/stm32/stm32_exceptions.c **** void nmi_exception(void){
+  32              		.loc 1 26 0
+  33              		.cfi_startproc
+  34              		@ args = 0, pretend = 0, frame = 0
+  35              		@ frame_needed = 0, uses_anonymous_args = 0
+  36              		@ link register save eliminated.
+  27:arch/stm32/stm32_exceptions.c **** }
+  37              		.loc 1 27 0
+  38 0000 7047     		bx	lr
+  39              		.cfi_endproc
+  40              	.LFE0:
+  42              		.section	.text.hard_fault_exception,"ax",%progbits
+  43              		.align	1
+  44              		.global	hard_fault_exception
+  45              		.thumb
+  46              		.thumb_func
+  48              	hard_fault_exception:
+  49              	.LFB1:
+  28:arch/stm32/stm32_exceptions.c **** 
+  29:arch/stm32/stm32_exceptions.c **** void hard_fault_exception(void){
+  50              		.loc 1 29 0
+  51              		.cfi_startproc
+  52              		@ args = 0, pretend = 0, frame = 0
+  53              		@ frame_needed = 0, uses_anonymous_args = 0
+  54              		@ link register save eliminated.
+  55              	.L4:
+  56 0000 FEE7     		b	.L4
+  57              		.cfi_endproc
+  58              	.LFE1:
+  60              		.section	.text.mem_manage_exception,"ax",%progbits
+  61              		.align	1
+  62              		.global	mem_manage_exception
+  63              		.thumb
+  64              		.thumb_func
+  66              	mem_manage_exception:
+  67              	.LFB2:
+  30:arch/stm32/stm32_exceptions.c ****     while(1);
+  31:arch/stm32/stm32_exceptions.c **** }
+  32:arch/stm32/stm32_exceptions.c **** 
+  33:arch/stm32/stm32_exceptions.c **** void mem_manage_exception(void){
+  68              		.loc 1 33 0
+  69              		.cfi_startproc
+  70              		@ args = 0, pretend = 0, frame = 0
+  71              		@ frame_needed = 0, uses_anonymous_args = 0
+  72              		@ link register save eliminated.
+  73              	.L7:
+  74 0000 FEE7     		b	.L7
+  75              		.cfi_endproc
+  76              	.LFE2:
+  78              		.section	.text.bus_fault_exception,"ax",%progbits
+  79              		.align	1
+  80              		.global	bus_fault_exception
+  81              		.thumb
+  82              		.thumb_func
+  84              	bus_fault_exception:
+  85              	.LFB3:
+  34:arch/stm32/stm32_exceptions.c ****     while(1);
+  35:arch/stm32/stm32_exceptions.c **** }
+  36:arch/stm32/stm32_exceptions.c **** 
+  37:arch/stm32/stm32_exceptions.c **** void bus_fault_exception(void){
+  86              		.loc 1 37 0
+  87              		.cfi_startproc
+  88              		@ args = 0, pretend = 0, frame = 0
+  89              		@ frame_needed = 0, uses_anonymous_args = 0
+  90              		@ link register save eliminated.
+  91              	.L10:
+  92 0000 FEE7     		b	.L10
+  93              		.cfi_endproc
+  94              	.LFE3:
+  96              		.section	.text.usage_fault_exception,"ax",%progbits
+  97              		.align	1
+  98              		.global	usage_fault_exception
+  99              		.thumb
+ 100              		.thumb_func
+ 102              	usage_fault_exception:
+ 103              	.LFB4:
+  38:arch/stm32/stm32_exceptions.c ****     while(1);
+  39:arch/stm32/stm32_exceptions.c **** }
+  40:arch/stm32/stm32_exceptions.c **** 
+  41:arch/stm32/stm32_exceptions.c **** void usage_fault_exception(void){
+ 104              		.loc 1 41 0
+ 105              		.cfi_startproc
+ 106              		@ args = 0, pretend = 0, frame = 0
+ 107              		@ frame_needed = 0, uses_anonymous_args = 0
+ 108              		@ link register save eliminated.
+ 109              	.L13:
+ 110 0000 FEE7     		b	.L13
+ 111              		.cfi_endproc
+ 112              	.LFE4:
+ 114              		.text
+ 115              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 stm32_exceptions.c
+     /tmp/cc9dKS7N.s:24     .text.nmi_exception:00000000 $t
+     /tmp/cc9dKS7N.s:29     .text.nmi_exception:00000000 nmi_exception
+     /tmp/cc9dKS7N.s:43     .text.hard_fault_exception:00000000 $t
+     /tmp/cc9dKS7N.s:48     .text.hard_fault_exception:00000000 hard_fault_exception
+     /tmp/cc9dKS7N.s:61     .text.mem_manage_exception:00000000 $t
+     /tmp/cc9dKS7N.s:66     .text.mem_manage_exception:00000000 mem_manage_exception
+     /tmp/cc9dKS7N.s:79     .text.bus_fault_exception:00000000 $t
+     /tmp/cc9dKS7N.s:84     .text.bus_fault_exception:00000000 bus_fault_exception
+     /tmp/cc9dKS7N.s:97     .text.usage_fault_exception:00000000 $t
+     /tmp/cc9dKS7N.s:102    .text.usage_fault_exception:00000000 usage_fault_exception
+                     .debug_frame:00000010 $d
+
+NO UNDEFINED SYMBOLS

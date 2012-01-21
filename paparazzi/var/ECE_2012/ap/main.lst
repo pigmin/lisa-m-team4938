@@ -1,0 +1,242 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"main.c"
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.section	.text.main,"ax",%progbits
+  24              		.align	1
+  25              		.global	main
+  26              		.thumb
+  27              		.thumb_func
+  29              	main:
+  30              	.LFB27:
+  31              		.file 1 "firmwares/fixedwing/main.c"
+   1:firmwares/fixedwing/main.c **** /*
+   2:firmwares/fixedwing/main.c ****  * Paparazzi $Id$
+   3:firmwares/fixedwing/main.c ****  *
+   4:firmwares/fixedwing/main.c ****  * Copyright (C) 2005 Pascal Brisset, Antoine Drouin
+   5:firmwares/fixedwing/main.c ****  *
+   6:firmwares/fixedwing/main.c ****  * This file is part of paparazzi.
+   7:firmwares/fixedwing/main.c ****  *
+   8:firmwares/fixedwing/main.c ****  * paparazzi is free software; you can redistribute it and/or modify
+   9:firmwares/fixedwing/main.c ****  * it under the terms of the GNU General Public License as published by
+  10:firmwares/fixedwing/main.c ****  * the Free Software Foundation; either version 2, or (at your option)
+  11:firmwares/fixedwing/main.c ****  * any later version.
+  12:firmwares/fixedwing/main.c ****  *
+  13:firmwares/fixedwing/main.c ****  * paparazzi is distributed in the hope that it will be useful,
+  14:firmwares/fixedwing/main.c ****  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  15:firmwares/fixedwing/main.c ****  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  16:firmwares/fixedwing/main.c ****  * GNU General Public License for more details.
+  17:firmwares/fixedwing/main.c ****  *
+  18:firmwares/fixedwing/main.c ****  * You should have received a copy of the GNU General Public License
+  19:firmwares/fixedwing/main.c ****  * along with paparazzi; see the file COPYING.  If not, write to
+  20:firmwares/fixedwing/main.c ****  * the Free Software Foundation, 59 Temple Place - Suite 330,
+  21:firmwares/fixedwing/main.c ****  * Boston, MA 02111-1307, USA.
+  22:firmwares/fixedwing/main.c ****  *
+  23:firmwares/fixedwing/main.c ****  */
+  24:firmwares/fixedwing/main.c **** /** \file main.c
+  25:firmwares/fixedwing/main.c ****  * \brief main loop used both on single and dual MCU configuration */
+  26:firmwares/fixedwing/main.c **** 
+  27:firmwares/fixedwing/main.c **** 
+  28:firmwares/fixedwing/main.c **** #include "sys_time.h"
+  29:firmwares/fixedwing/main.c **** 
+  30:firmwares/fixedwing/main.c **** #ifdef FBW
+  31:firmwares/fixedwing/main.c **** #include "firmwares/fixedwing/main_fbw.h"
+  32:firmwares/fixedwing/main.c **** #define Fbw(f) f ## _fbw()
+  33:firmwares/fixedwing/main.c **** #else
+  34:firmwares/fixedwing/main.c **** #define Fbw(f)
+  35:firmwares/fixedwing/main.c **** #endif
+  36:firmwares/fixedwing/main.c **** 
+  37:firmwares/fixedwing/main.c **** #ifdef AP
+  38:firmwares/fixedwing/main.c **** #include "firmwares/fixedwing/main_ap.h"
+  39:firmwares/fixedwing/main.c **** #define Ap(f) f ## _ap()
+  40:firmwares/fixedwing/main.c **** #else
+  41:firmwares/fixedwing/main.c **** #define Ap(f)
+  42:firmwares/fixedwing/main.c **** #endif
+  43:firmwares/fixedwing/main.c **** 
+  44:firmwares/fixedwing/main.c **** int main( void ) {
+  32              		.loc 1 44 0
+  33              		.cfi_startproc
+  34              		@ args = 0, pretend = 0, frame = 0
+  35              		@ frame_needed = 0, uses_anonymous_args = 0
+  36 0000 08B5     		push	{r3, lr}
+  37              	.LCFI0:
+  38              		.cfi_def_cfa_offset 8
+  45:firmwares/fixedwing/main.c ****   Fbw(init);
+  39              		.loc 1 45 0
+  40              		.cfi_offset 14, -4
+  41              		.cfi_offset 3, -8
+  42 0002 FFF7FEFF 		bl	init_fbw
+  46:firmwares/fixedwing/main.c ****   Ap(init);
+  43              		.loc 1 46 0
+  44 0006 FFF7FEFF 		bl	init_ap
+  45              	.L4:
+  46              	.LBB4:
+  47              	.LBB5:
+  48              		.file 2 "/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h"
+   1:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** /*
+   2:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  * Paparazzi $Id$
+   3:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  *
+   4:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  * Copyright (C) 2009-2010 The Paparazzi Team
+   5:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  *
+   6:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  * This file is part of paparazzi.
+   7:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  *
+   8:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  * paparazzi is free software; you can redistribute it and/or modify
+   9:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  * it under the terms of the GNU General Public License as published by
+  10:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  * the Free Software Foundation; either version 2, or (at your option)
+  11:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  * any later version.
+  12:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  *
+  13:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  * paparazzi is distributed in the hope that it will be useful,
+  14:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  15:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  16:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  * GNU General Public License for more details.
+  17:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  *
+  18:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  * You should have received a copy of the GNU General Public License
+  19:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  * along with paparazzi; see the file COPYING.  If not, write to
+  20:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  * the Free Software Foundation, 59 Temple Place - Suite 330,
+  21:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  * Boston, MA 02111-1307, USA.
+  22:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  *
+  23:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  */
+  24:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** 
+  25:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** /*
+  26:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  *\brief STM32 timing functions
+  27:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  *
+  28:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****  */
+  29:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** 
+  30:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** #ifndef SYS_TIME_HW_H
+  31:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** #define SYS_TIME_HW_H
+  32:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** 
+  33:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** #include "sys_time.h"
+  34:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** 
+  35:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** #include <stm32/gpio.h>
+  36:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** #include <stm32/rcc.h>
+  37:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** #include "std.h"
+  38:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** #ifdef SYS_TIME_LED
+  39:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** #include "led.h"
+  40:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** #endif
+  41:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** 
+  42:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** #define InitSysTimePeriodic()
+  43:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** 
+  44:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** extern void sys_time_init( void );
+  45:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** extern void sys_tick_irq_handler(void);
+  46:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** 
+  47:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** extern volatile bool_t sys_time_period_elapsed;
+  48:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** extern uint32_t cpu_time_ticks;
+  49:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** 
+  50:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** #define SYS_TICS_OF_SEC(s)        (uint32_t)((s) * AHB_CLK + 0.5)
+  51:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** #define SIGNED_SYS_TICS_OF_SEC(s)  (int32_t)((s) * AHB_CLK + 0.5)
+  52:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** 
+  53:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** static inline bool_t sys_time_periodic( void ) {
+  54:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****   if (sys_time_period_elapsed) {
+  49              		.loc 2 54 0
+  50 000a 134B     		ldr	r3, .L7
+  51 000c 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
+  52 000e C2B1     		cbz	r2, .L2
+  55:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****     sys_time_period_elapsed = FALSE;
+  53              		.loc 2 55 0
+  54 0010 0022     		movs	r2, #0
+  55 0012 1A70     		strb	r2, [r3, #0]
+  56:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****     cpu_time_ticks += PERIODIC_TASK_PERIOD;
+  56              		.loc 2 56 0
+  57 0014 114A     		ldr	r2, .L7+4
+  57:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****     if (cpu_time_ticks >= TIME_TICKS_PER_SEC) {
+  58              		.loc 2 57 0
+  59 0016 1248     		ldr	r0, .L7+8
+  56:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****     cpu_time_ticks += PERIODIC_TASK_PERIOD;
+  60              		.loc 2 56 0
+  61 0018 1168     		ldr	r1, [r2, #0]
+  62 001a 01F59213 		add	r3, r1, #1196032
+  63 001e 03F57863 		add	r3, r3, #3968
+  64              		.loc 2 57 0
+  65 0022 8342     		cmp	r3, r0
+  56:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****     cpu_time_ticks += PERIODIC_TASK_PERIOD;
+  66              		.loc 2 56 0
+  67 0024 1360     		str	r3, [r2, #0]
+  68              		.loc 2 57 0
+  69 0026 11D9     		bls	.L3
+  58:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****       cpu_time_ticks -= TIME_TICKS_PER_SEC;
+  70              		.loc 2 58 0
+  71 0028 0E4B     		ldr	r3, .L7+12
+  72 002a CB18     		adds	r3, r1, r3
+  73 002c 1360     		str	r3, [r2, #0]
+  59:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****       cpu_time_sec++;
+  74              		.loc 2 59 0
+  75 002e 0E4B     		ldr	r3, .L7+16
+  76 0030 1A88     		ldrh	r2, [r3, #0]
+  77 0032 0132     		adds	r2, r2, #1
+  78 0034 1A80     		strh	r2, [r3, #0]	@ movhi
+  60:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h **** #ifdef SYS_TIME_LED
+  61:/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h ****       LED_TOGGLE(SYS_TIME_LED);
+  79              		.loc 2 61 0
+  80 0036 0D4B     		ldr	r3, .L7+20
+  81 0038 DA68     		ldr	r2, [r3, #12]
+  82 003a 82F01002 		eor	r2, r2, #16
+  83 003e DA60     		str	r2, [r3, #12]
+  84 0040 04E0     		b	.L3
+  85              	.L2:
+  86              	.LBE5:
+  87              	.LBE4:
+  47:firmwares/fixedwing/main.c ****   InitSysTimePeriodic();
+  48:firmwares/fixedwing/main.c ****   while (1) {
+  49:firmwares/fixedwing/main.c ****     if (sys_time_periodic()) {
+  50:firmwares/fixedwing/main.c ****       Fbw(periodic_task);
+  51:firmwares/fixedwing/main.c ****       Ap(periodic_task);
+  52:firmwares/fixedwing/main.c ****       LED_PERIODIC();
+  53:firmwares/fixedwing/main.c ****     }
+  54:firmwares/fixedwing/main.c ****     Fbw(event_task);
+  88              		.loc 1 54 0
+  89 0042 FFF7FEFF 		bl	event_task_fbw
+  55:firmwares/fixedwing/main.c ****     Ap(event_task);
+  90              		.loc 1 55 0
+  91 0046 FFF7FEFF 		bl	event_task_ap
+  56:firmwares/fixedwing/main.c ****   }
+  92              		.loc 1 56 0
+  93 004a DEE7     		b	.L4
+  94              	.L3:
+  50:firmwares/fixedwing/main.c ****       Fbw(periodic_task);
+  95              		.loc 1 50 0
+  96 004c FFF7FEFF 		bl	periodic_task_fbw
+  51:firmwares/fixedwing/main.c ****       Ap(periodic_task);
+  97              		.loc 1 51 0
+  98 0050 FFF7FEFF 		bl	periodic_task_ap
+  99 0054 F5E7     		b	.L2
+ 100              	.L8:
+ 101 0056 00BF     		.align	2
+ 102              	.L7:
+ 103 0058 00000000 		.word	sys_time_period_elapsed
+ 104 005c 00000000 		.word	cpu_time_ticks
+ 105 0060 FFA14A04 		.word	71999999
+ 106 0064 80ADC7FB 		.word	-70800000
+ 107 0068 00000000 		.word	cpu_time_sec
+ 108 006c 000C0140 		.word	1073810432
+ 109              		.cfi_endproc
+ 110              	.LFE27:
+ 112              		.text
+ 113              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+     /tmp/ccXo6j62.s:24     .text.main:00000000 $t
+     /tmp/ccXo6j62.s:29     .text.main:00000000 main
+     /tmp/ccXo6j62.s:103    .text.main:00000058 $d
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+init_fbw
+init_ap
+event_task_fbw
+event_task_ap
+periodic_task_fbw
+periodic_task_ap
+sys_time_period_elapsed
+cpu_time_ticks
+cpu_time_sec

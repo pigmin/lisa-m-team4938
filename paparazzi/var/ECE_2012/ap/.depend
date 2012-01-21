@@ -1,0 +1,468 @@
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/mcu.o: mcu.c mcu.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_arch.h \
+ led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ mcu_periph/uart.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ mcu_periph/adc.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_periph/adc_arch.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/mcu_arch.o: arch/stm32/mcu_arch.c mcu.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_arch.h \
+ boards/lisa_m_1.0.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/led_hw.o: arch/stm32/led_hw.c led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/sys_time.o: sys_time.c sys_time.h boards/lisa_m_1.0.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h \
+ sys_time.h /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/inter_mcu.o: inter_mcu.c inter_mcu.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h paparazzi.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/airframe.h \
+ subsystems/radio_control.h led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h paparazzi.h subsystems/radio_control/ppm.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/subsystems/radio_control/ppm_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/radio.h \
+ subsystems/electrical.h firmwares/fixedwing/main_fbw.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/pprz_geodetic_int.o: math/pprz_geodetic_int.c math/pprz_geodetic_int.h \
+ math/pprz_geodetic.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ math/pprz_algebra_int.h math/pprz_algebra.h math/pprz_trig_int.h \
+ math/pprz_algebra_int.h math/pprz_geodetic_float.h \
+ math/pprz_algebra_float.h math/pprz_algebra.h \
+ math/pprz_geodetic_double.h math/pprz_algebra_double.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/pprz_geodetic_float.o: math/pprz_geodetic_float.c \
+ math/pprz_geodetic_float.h math/pprz_geodetic.h \
+ math/pprz_algebra_float.h math/pprz_algebra.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ math/pprz_geodetic_double.h math/pprz_algebra_double.h \
+ math/pprz_geodetic_utm.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/pprz_geodetic_double.o: math/pprz_geodetic_double.c \
+ math/pprz_geodetic_double.h math/pprz_geodetic.h \
+ math/pprz_algebra_double.h math/pprz_algebra.h math/pprz_algebra_float.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ math/pprz_geodetic_utm.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/pprz_trig_int.o: math/pprz_trig_int.c math/pprz_trig_int.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ math/pprz_algebra_int.h math/pprz_algebra.h math/pprz_trig_int.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/i2c.o: mcu_periph/i2c.c mcu_periph/i2c.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_periph/i2c_arch.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/i2c_arch.o: arch/stm32/mcu_periph/i2c_arch.c mcu_periph/i2c.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_periph/i2c_arch.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/main_fbw.o: firmwares/fixedwing/main_fbw.c \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/airframe.h \
+ firmwares/fixedwing/main_fbw.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h mcu.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_arch.h \
+ sys_time.h boards/lisa_m_1.0.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h \
+ led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h commands.h paparazzi.h \
+ firmwares/fixedwing/actuators.h paparazzi.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/servos_direct_hw.h \
+ firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.h \
+ subsystems/electrical.h subsystems/radio_control.h \
+ subsystems/radio_control/ppm.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/subsystems/radio_control/ppm_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/radio.h \
+ firmwares/fixedwing/autopilot.h estimator.h fbw_downlink.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/messages.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/periodic.h \
+ commands.h firmwares/fixedwing/actuators.h mcu_periph/uart.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ firmwares/fixedwing/main_fbw.h subsystems/radio_control.h \
+ subsystems/electrical.h inter_mcu.h downlink.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/modules.h \
+ pprz_transport.h datalink.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/dl_protocol.h modem.h \
+ xbee.h xbee24.h inter_mcu.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/electrical.o: subsystems/electrical.c subsystems/electrical.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h mcu_periph/adc.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_periph/adc_arch.h \
+ commands.h paparazzi.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/airframe.h \
+ boards/lisa_m_1.0.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/commands.o: commands.c commands.h paparazzi.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/airframe.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/main_ap.o: firmwares/fixedwing/main_ap.c firmwares/fixedwing/main_ap.h \
+ mcu.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_arch.h \
+ firmwares/fixedwing/stabilization/stabilization_attitude.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h paparazzi.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/airframe.h \
+ firmwares/fixedwing/guidance/guidance_v.h subsystems/gps.h \
+ math/pprz_geodetic_int.h math/pprz_geodetic.h math/pprz_algebra_int.h \
+ math/pprz_algebra.h math/pprz_trig_int.h math/pprz_algebra_int.h \
+ subsystems/gps/gps_ubx.h mcu_periph/uart.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/ubx_protocol.h gyro.h \
+ ap_downlink.h downlink.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/modules.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/messages.h \
+ pprz_transport.h datalink.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/dl_protocol.h modem.h \
+ xbee.h xbee24.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/periodic.h \
+ firmwares/fixedwing/stabilization/stabilization_adaptive.h \
+ subsystems/nav.h subsystems/navigation/nav_survey_rectangle.h \
+ subsystems/navigation/common_flight_plan.h \
+ subsystems/navigation/common_nav.h firmwares/fixedwing/autopilot.h \
+ sys_time.h boards/lisa_m_1.0.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h \
+ led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h estimator.h subsystems/radio_control.h \
+ subsystems/radio_control/ppm.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/subsystems/radio_control/ppm_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/radio.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h \
+ firmwares/fixedwing/autopilot.h downlink.h link_mcu.h inter_mcu.h \
+ paparazzi.h subsystems/radio_control.h subsystems/electrical.h \
+ firmwares/fixedwing/main_fbw.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/link_mcu_hw.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/flight_plan.h \
+ datalink.h subsystems/settings.h xbee.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/gpio.h \
+ rc_settings.h subsystems/navigation/traffic_info.h subsystems/ahrs.h \
+ math/pprz_algebra_float.h math/pprz_algebra.h \
+ subsystems/ahrs/ahrs_float_dcm.h subsystems/ahrs/ahrs_aligner.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/estimator.o: estimator.c estimator.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h mcu_periph/uart.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ ap_downlink.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/airframe.h \
+ downlink.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/modules.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/messages.h \
+ pprz_transport.h datalink.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/dl_protocol.h modem.h \
+ xbee.h xbee24.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/periodic.h \
+ firmwares/fixedwing/stabilization/stabilization_adaptive.h paparazzi.h \
+ subsystems/gps.h math/pprz_geodetic_int.h math/pprz_geodetic.h \
+ math/pprz_algebra_int.h math/pprz_algebra.h math/pprz_trig_int.h \
+ math/pprz_algebra_int.h subsystems/gps/gps_ubx.h mcu_periph/uart.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/ubx_protocol.h \
+ subsystems/nav.h firmwares/fixedwing/guidance/guidance_v.h \
+ subsystems/navigation/nav_survey_rectangle.h subsystems/nav.h \
+ subsystems/navigation/common_flight_plan.h \
+ subsystems/navigation/common_nav.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/stm32_exceptions.o: arch/stm32/stm32_exceptions.c \
+ arch/stm32/stm32_exceptions.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/stm32_vector_table.o: arch/stm32/stm32_vector_table.c \
+ arch/stm32/stm32_vector_table.h arch/stm32/stm32_exceptions.h sys_time.h \
+ boards/lisa_m_1.0.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h mcu_periph/uart.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_periph/uart_arch.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/plug_sys.o: lisa/plug_sys.c
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/main.o: firmwares/fixedwing/main.c sys_time.h boards/lisa_m_1.0.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h firmwares/fixedwing/main_fbw.h \
+ firmwares/fixedwing/main_ap.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/sys_time_hw.o: arch/stm32/sys_time_hw.c sys_time.h boards/lisa_m_1.0.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/uart.o: mcu_periph/uart.c mcu_periph/uart.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/uart_arch.o: arch/stm32/mcu_periph/uart_arch.c mcu_periph/uart.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/pprz_baudrate.h \
+ boards/lisa_m_1.0.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/settings.o: subsystems/settings.c subsystems/settings.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h \
+ firmwares/fixedwing/autopilot.h sys_time.h boards/lisa_m_1.0.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h \
+ led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h estimator.h subsystems/radio_control.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/airframe.h \
+ paparazzi.h subsystems/radio_control/ppm.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/subsystems/radio_control/ppm_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/radio.h \
+ downlink.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/modules.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/messages.h \
+ pprz_transport.h datalink.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/dl_protocol.h modem.h \
+ xbee.h xbee24.h subsystems/gps.h math/pprz_geodetic_int.h \
+ math/pprz_geodetic.h math/pprz_algebra_int.h math/pprz_algebra.h \
+ math/pprz_trig_int.h math/pprz_algebra_int.h subsystems/gps/gps_ubx.h \
+ mcu_periph/uart.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/ubx_protocol.h \
+ subsystems/nav.h firmwares/fixedwing/guidance/guidance_v.h \
+ subsystems/navigation/nav_survey_rectangle.h \
+ subsystems/navigation/common_flight_plan.h \
+ subsystems/navigation/common_nav.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/settings_arch.o: arch/stm32/subsystems/settings_arch.c \
+ subsystems/settings.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h \
+ firmwares/fixedwing/autopilot.h sys_time.h boards/lisa_m_1.0.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h \
+ led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h estimator.h subsystems/radio_control.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/airframe.h \
+ paparazzi.h subsystems/radio_control/ppm.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/subsystems/radio_control/ppm_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/radio.h \
+ downlink.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/modules.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/messages.h \
+ pprz_transport.h datalink.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/dl_protocol.h modem.h \
+ xbee.h xbee24.h subsystems/gps.h math/pprz_geodetic_int.h \
+ math/pprz_geodetic.h math/pprz_algebra_int.h math/pprz_algebra.h \
+ math/pprz_trig_int.h math/pprz_algebra_int.h subsystems/gps/gps_ubx.h \
+ mcu_periph/uart.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/ubx_protocol.h \
+ subsystems/nav.h firmwares/fixedwing/guidance/guidance_v.h \
+ subsystems/navigation/nav_survey_rectangle.h \
+ subsystems/navigation/common_flight_plan.h \
+ subsystems/navigation/common_nav.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/adc_arch.o: arch/stm32/mcu_periph/adc_arch.c mcu_periph/adc.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_periph/adc_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/servos_direct_hw.o: arch/stm32/servos_direct_hw.c \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ firmwares/fixedwing/actuators.h paparazzi.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/airframe.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/servos_direct_hw.h \
+ firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.h \
+ arch/stm32/servos_direct_hw.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/actuators.o: actuators.c firmwares/fixedwing/actuators.h paparazzi.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/airframe.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/servos_direct_hw.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/actuators_pwm_arch.o: \
+ firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c \
+ firmwares/rotorcraft/actuators/actuators_pwm.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ firmwares/rotorcraft/actuators.h boards/lisa_m_1.0.h \
+ firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/radio_control.o: subsystems/radio_control.c subsystems/radio_control.h \
+ led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/airframe.h \
+ paparazzi.h subsystems/radio_control/ppm.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/subsystems/radio_control/ppm_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/radio.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/ppm.o: subsystems/radio_control/ppm.c subsystems/radio_control.h led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/airframe.h \
+ paparazzi.h subsystems/radio_control/ppm.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/subsystems/radio_control/ppm_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/radio.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/ppm_arch.o: arch/stm32/subsystems/radio_control/ppm_arch.c \
+ subsystems/radio_control.h led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/airframe.h \
+ paparazzi.h subsystems/radio_control/ppm.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/subsystems/radio_control/ppm_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/radio.h \
+ sys_time.h boards/lisa_m_1.0.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/downlink.o: downlink.c \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/airframe.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/pprz_transport.o: pprz_transport.c pprz_transport.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h datalink.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/dl_protocol.h \
+ mcu_periph/uart.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_periph/uart_arch.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/datalink.o: firmwares/fixedwing/datalink.c datalink.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/dl_protocol.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/modules.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/messages.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/airframe.h \
+ subsystems/navigation/traffic_info.h estimator.h subsystems/nav.h \
+ paparazzi.h firmwares/fixedwing/guidance/guidance_v.h \
+ subsystems/navigation/nav_survey_rectangle.h \
+ subsystems/navigation/common_flight_plan.h \
+ subsystems/navigation/common_nav.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/settings.h \
+ firmwares/fixedwing/autopilot.h sys_time.h boards/lisa_m_1.0.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h \
+ led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h subsystems/radio_control.h \
+ subsystems/radio_control/ppm.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/subsystems/radio_control/ppm_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/radio.h \
+ downlink.h pprz_transport.h datalink.h modem.h xbee.h xbee24.h \
+ subsystems/gps.h math/pprz_geodetic_int.h math/pprz_geodetic.h \
+ math/pprz_algebra_int.h math/pprz_algebra.h math/pprz_trig_int.h \
+ math/pprz_algebra_int.h subsystems/gps/gps_ubx.h mcu_periph/uart.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/ubx_protocol.h \
+ math/pprz_geodetic_float.h math/pprz_algebra_float.h math/pprz_algebra.h \
+ ap_downlink.h downlink.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/periodic.h \
+ firmwares/fixedwing/stabilization/stabilization_adaptive.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/stabilization_attitude.o: \
+ firmwares/fixedwing/stabilization/stabilization_attitude.c \
+ firmwares/fixedwing/stabilization/stabilization_attitude.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h paparazzi.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/airframe.h \
+ led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h estimator.h subsystems/nav.h \
+ firmwares/fixedwing/guidance/guidance_v.h \
+ subsystems/navigation/nav_survey_rectangle.h \
+ subsystems/navigation/common_flight_plan.h \
+ subsystems/navigation/common_nav.h firmwares/fixedwing/autopilot.h \
+ sys_time.h boards/lisa_m_1.0.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h \
+ subsystems/radio_control.h subsystems/radio_control/ppm.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/subsystems/radio_control/ppm_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/radio.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/guidance_v.o: firmwares/fixedwing/guidance/guidance_v.c \
+ firmwares/fixedwing/guidance/guidance_v.h paparazzi.h estimator.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h subsystems/nav.h \
+ subsystems/navigation/nav_survey_rectangle.h \
+ subsystems/navigation/common_flight_plan.h \
+ subsystems/navigation/common_nav.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/airframe.h \
+ firmwares/fixedwing/autopilot.h sys_time.h boards/lisa_m_1.0.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h \
+ led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h subsystems/radio_control.h \
+ subsystems/radio_control/ppm.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/subsystems/radio_control/ppm_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/radio.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/ahrs.o: subsystems/ahrs.c subsystems/ahrs.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ math/pprz_algebra_int.h math/pprz_algebra.h math/pprz_trig_int.h \
+ math/pprz_algebra_float.h math/pprz_algebra.h \
+ subsystems/ahrs/ahrs_float_dcm.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/ahrs_aligner.o: subsystems/ahrs/ahrs_aligner.c \
+ subsystems/ahrs/ahrs_aligner.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ math/pprz_algebra_int.h math/pprz_algebra.h math/pprz_trig_int.h \
+ subsystems/imu.h math/pprz_algebra_float.h math/pprz_algebra.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/airframe.h \
+ led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/ahrs_float_dcm.o: subsystems/ahrs/ahrs_float_dcm.c \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h subsystems/ahrs.h \
+ math/pprz_algebra_int.h math/pprz_algebra.h math/pprz_trig_int.h \
+ math/pprz_algebra_float.h math/pprz_algebra.h \
+ subsystems/ahrs/ahrs_float_dcm.h subsystems/ahrs/ahrs_float_utils.h \
+ subsystems/ahrs/ahrs_magnetic_field_model.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/airframe.h \
+ subsystems/ahrs/ahrs_aligner.h subsystems/imu.h \
+ subsystems/ahrs/ahrs_float_dcm_algebra.h subsystems/gps.h \
+ math/pprz_geodetic_int.h math/pprz_geodetic.h math/pprz_algebra_int.h \
+ subsystems/gps/gps_ubx.h mcu_periph/uart.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/ubx_protocol.h \
+ estimator.h led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/messages.h downlink.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/modules.h \
+ pprz_transport.h datalink.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/dl_protocol.h modem.h \
+ xbee.h xbee24.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/gps_ubx.o: subsystems/gps/gps_ubx.c subsystems/gps.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ math/pprz_geodetic_int.h math/pprz_geodetic.h math/pprz_algebra_int.h \
+ math/pprz_algebra.h math/pprz_trig_int.h math/pprz_algebra_int.h \
+ subsystems/gps/gps_ubx.h mcu_periph/uart.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/ubx_protocol.h led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h subsystems/nav.h paparazzi.h \
+ firmwares/fixedwing/guidance/guidance_v.h \
+ subsystems/navigation/nav_survey_rectangle.h \
+ subsystems/navigation/common_flight_plan.h \
+ subsystems/navigation/common_nav.h math/pprz_geodetic_float.h \
+ math/pprz_algebra_float.h math/pprz_algebra.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/gps.o: subsystems/gps.c subsystems/gps.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ math/pprz_geodetic_int.h math/pprz_geodetic.h math/pprz_algebra_int.h \
+ math/pprz_algebra.h math/pprz_trig_int.h math/pprz_algebra_int.h \
+ subsystems/gps/gps_ubx.h mcu_periph/uart.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/ubx_protocol.h led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/nav.o: subsystems/nav.c subsystems/nav.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h paparazzi.h \
+ firmwares/fixedwing/guidance/guidance_v.h \
+ subsystems/navigation/nav_survey_rectangle.h \
+ subsystems/navigation/common_flight_plan.h \
+ subsystems/navigation/common_nav.h subsystems/gps.h \
+ math/pprz_geodetic_int.h math/pprz_geodetic.h math/pprz_algebra_int.h \
+ math/pprz_algebra.h math/pprz_trig_int.h math/pprz_algebra_int.h \
+ subsystems/gps/gps_ubx.h mcu_periph/uart.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/include/ubx_protocol.h \
+ estimator.h firmwares/fixedwing/stabilization/stabilization_attitude.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/airframe.h \
+ firmwares/fixedwing/autopilot.h sys_time.h boards/lisa_m_1.0.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h \
+ led.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_1.0.h subsystems/radio_control.h \
+ subsystems/radio_control/ppm.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/subsystems/radio_control/ppm_arch.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/radio.h \
+ inter_mcu.h paparazzi.h subsystems/radio_control.h \
+ subsystems/electrical.h firmwares/fixedwing/main_fbw.h \
+ subsystems/navigation/traffic_info.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/flight_plan.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/modules.h \
+ subsystems/navigation/common_nav.c math/pprz_geodetic_float.h \
+ math/pprz_algebra_float.h math/pprz_algebra.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/common_flight_plan.o: subsystems/navigation/common_flight_plan.c \
+ subsystems/navigation/common_flight_plan.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/flight_plan.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/modules.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/traffic_info.o: subsystems/navigation/traffic_info.c \
+ subsystems/navigation/traffic_info.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/airframe.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/nav_survey_rectangle.o: subsystems/navigation/nav_survey_rectangle.c \
+ subsystems/navigation/nav_survey_rectangle.h subsystems/nav.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h paparazzi.h \
+ firmwares/fixedwing/guidance/guidance_v.h \
+ subsystems/navigation/common_flight_plan.h \
+ subsystems/navigation/common_nav.h estimator.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/flight_plan.h \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/modules.h
+/home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/ap/nav_line.o: subsystems/navigation/nav_line.c \
+ /home/mav/lisa-m-team4938/paparazzi/var/ECE_2012/generated/airframe.h \
+ subsystems/navigation/nav_line.h \
+ /home/mav/lisa-m-team4938/paparazzi/sw/include/std.h subsystems/nav.h \
+ paparazzi.h firmwares/fixedwing/guidance/guidance_v.h \
+ subsystems/navigation/nav_survey_rectangle.h \
+ subsystems/navigation/common_flight_plan.h \
+ subsystems/navigation/common_nav.h

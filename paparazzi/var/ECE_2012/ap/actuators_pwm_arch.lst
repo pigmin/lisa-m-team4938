@@ -1,0 +1,534 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"actuators_pwm_arch.c"
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.section	.text.actuators_pwm_commit,"ax",%progbits
+  24              		.align	1
+  25              		.global	actuators_pwm_commit
+  26              		.thumb
+  27              		.thumb_func
+  29              	actuators_pwm_commit:
+  30              	.LFB25:
+  31              		.file 1 "firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c"
+   1:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** /*
+   2:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****  * $Id$
+   3:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****  *
+   4:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****  * Copyright (C) 2010 The Paparazzi Team
+   5:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****  *
+   6:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****  * This file is part of Paparazzi.
+   7:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****  *
+   8:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****  * Paparazzi is free software; you can redistribute it and/or modify
+   9:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****  * it under the terms of the GNU General Public License as published by
+  10:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****  * the Free Software Foundation; either version 2, or (at your option)
+  11:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****  * any later version.
+  12:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****  *
+  13:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****  * Paparazzi is distributed in the hope that it will be useful,
+  14:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  15:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  16:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****  * GNU General Public License for more details.
+  17:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****  *
+  18:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****  * You should have received a copy of the GNU General Public License
+  19:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****  * along with Paparazzi; see the file COPYING.  If not, write to
+  20:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****  * the Free Software Foundation, 59 Temple Place - Suite 330,
+  21:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****  * Boston, MA 02111-1307, USA.
+  22:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****  *
+  23:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****  */
+  24:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+  25:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #include "firmwares/rotorcraft/actuators/actuators_pwm.h"
+  26:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+  27:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #include <stm32/gpio.h>
+  28:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #include <stm32/rcc.h>
+  29:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #include <stm32/flash.h>
+  30:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #include <stm32/misc.h>
+  31:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #include <stm32/tim.h>
+  32:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+  33:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #define PCLK 72000000
+  34:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #define ONE_MHZ_CLK 1000000
+  35:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #ifndef SERVO_HZ
+  36:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #define SERVO_HZ 40
+  37:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #endif
+  38:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+  39:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #ifndef PWM_5AND6_TIMER
+  40:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #define PWM_5AND6_TIMER TIM4
+  41:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #define PWM_5AND6_RCC RCC_APB1Periph_TIM4
+  42:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #define PWM_5AND6_GPIO GPIOB
+  43:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #define PWM5_OC 3
+  44:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #define PWM6_OC 4
+  45:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #define PWM5_Pin GPIO_Pin_8
+  46:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #define PWM6_Pin GPIO_Pin_9
+  47:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #endif
+  48:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+  49:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #define _TIM_OC_INIT(n) TIM_OC##n##Init
+  50:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #define TIM_OC_INIT(n) _TIM_OC_INIT(n)
+  51:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+  52:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #define _TIM_OC_PRELOADCONFIG(n) TIM_OC##n##PreloadConfig
+  53:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #define TIM_OC_PRELOADCONFIG(n) _TIM_OC_PRELOADCONFIG(n)
+  54:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+  55:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #define _TIM_SETCOMPARE(n) TIM_SetCompare##n
+  56:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #define TIM_SETCOMPARE(n) _TIM_SETCOMPARE(n)
+  57:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+  58:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** void actuators_pwm_arch_init(void) {
+  59:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+  60:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   /* TIM3 and TIM4 clock enable */
+  61:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+  62:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   RCC_APB1PeriphClockCmd(PWM_5AND6_RCC, ENABLE);
+  63:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #ifdef USE_SERVOS_7AND8
+  64:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
+  65:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #endif
+  66:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+  67:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   /* GPIO A,B and C clock enable */
+  68:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC |
+  69:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****              RCC_APB2Periph_AFIO, ENABLE);
+  70:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   /* GPIO C */
+  71:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   /* PC6=servo1 PC7=servo2 PC8=servo3 PC9=servo4 */
+  72:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_InitTypeDef GPIO_InitStructure;
+  73:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9;
+  74:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_PP;
+  75:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  76:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_Init(GPIOC, &GPIO_InitStructure);
+  77:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   /* need to remate alternate function, pins 37, 38, 39, 40 on LQFP64 */
+  78:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_PinRemapConfig(GPIO_FullRemap_TIM3, ENABLE);
+  79:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+  80:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   /* PWM 5/6 GPIO */
+  81:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   /* PB8=servo5 PB9=servo6 */
+  82:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_InitStructure.GPIO_Pin   = PWM5_Pin | PWM6_Pin;
+  83:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_Init(PWM_5AND6_GPIO, &GPIO_InitStructure);
+  84:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+  85:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #ifdef USE_SERVOS_7AND8
+  86:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_6 | GPIO_Pin_7;
+  87:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_Init(GPIOB, &GPIO_InitStructure);
+  88:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #endif
+  89:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+  90:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   /* Time base configuration */
+  91:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+  92:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_TimeBaseStructure.TIM_Prescaler = (PCLK / ONE_MHZ_CLK) - 1; // 1uS
+  93:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_TimeBaseStructure.TIM_Period = (ONE_MHZ_CLK / SERVO_HZ) - 1;
+  94:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+  95:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+  96:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+  97:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+  98:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+  99:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #ifdef SERVO_HZ_SECONDARY
+ 100:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_TimeBaseStructure.TIM_Period = (ONE_MHZ_CLK / SERVO_HZ_SECONDARY) - 1;
+ 101:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #endif
+ 102:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_TimeBaseInit(PWM_5AND6_TIMER, &TIM_TimeBaseStructure);
+ 103:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #ifdef USE_SERVOS_7AND8
+ 104:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
+ 105:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #endif
+ 106:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+ 107:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   /* PWM1 Mode configuration: All Channels */
+ 108:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OCInitTypeDef  TIM_OCInitStructure;
+ 109:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+ 110:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+ 111:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OCInitStructure.TIM_Pulse = 0; // default low (no pulse)
+ 112:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+ 113:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+ 114:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   /* PWM1 Mode configuration: TIM3 Channel1 */
+ 115:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC1Init(TIM3, &TIM_OCInitStructure);
+ 116:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable);
+ 117:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+ 118:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   /* PWM2 Mode configuration: TIM3 Channel2 */
+ 119:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC2Init(TIM3, &TIM_OCInitStructure);
+ 120:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC2PreloadConfig(TIM3, TIM_OCPreload_Enable);
+ 121:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+ 122:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   /* PWM3 Mode configuration: TIM3 Channel3 */
+ 123:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC3Init(TIM3, &TIM_OCInitStructure);
+ 124:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable);
+ 125:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+ 126:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   /* PWM4 Mode configuration: TIM3 Channel4 */
+ 127:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC4Init(TIM3, &TIM_OCInitStructure);
+ 128:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC4PreloadConfig(TIM3, TIM_OCPreload_Enable);
+ 129:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+ 130:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   /* PWM5 Mode configuration: TIM4 Channel3 */
+ 131:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC_INIT(PWM5_OC) (PWM_5AND6_TIMER, &TIM_OCInitStructure);
+ 132:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC_PRELOADCONFIG(PWM5_OC)(PWM_5AND6_TIMER, TIM_OCPreload_Enable);
+ 133:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+ 134:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   /* PWM6 Mode configuration: TIM4 Channel4 */
+ 135:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC_INIT(PWM6_OC)(PWM_5AND6_TIMER, &TIM_OCInitStructure);
+ 136:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC_PRELOADCONFIG(PWM6_OC)(PWM_5AND6_TIMER, TIM_OCPreload_Enable);
+ 137:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+ 138:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #ifdef USE_SERVOS_7AND8
+ 139:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   /* PWM7 Mode configuration: TIM4 Channel3 */
+ 140:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC1Init(TIM4, &TIM_OCInitStructure);
+ 141:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC1PreloadConfig(TIM4, TIM_OCPreload_Enable);
+ 142:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+ 143:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   /* PWM8 Mode configuration: TIM4 Channel4 */
+ 144:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC2Init(TIM4, &TIM_OCInitStructure);
+ 145:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC2PreloadConfig(TIM4, TIM_OCPreload_Enable);
+ 146:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+ 147:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   /* TIM4 enable */
+ 148:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_ARRPreloadConfig(TIM4, ENABLE);
+ 149:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_CtrlPWMOutputs(TIM4, ENABLE);
+ 150:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_Cmd(TIM4, ENABLE);
+ 151:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #endif
+ 152:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+ 153:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   /* PWM1-4 enable */
+ 154:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_ARRPreloadConfig(TIM3, ENABLE);
+ 155:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_CtrlPWMOutputs(TIM3, ENABLE);
+ 156:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_Cmd(TIM3, ENABLE);
+ 157:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+ 158:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   /* PWM5/6 enable */
+ 159:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_ARRPreloadConfig(PWM_5AND6_TIMER, ENABLE);
+ 160:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_CtrlPWMOutputs(PWM_5AND6_TIMER, ENABLE);
+ 161:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_Cmd(PWM_5AND6_TIMER, ENABLE);
+ 162:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+ 163:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** }
+ 164:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+ 165:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** /* set pulse widths from actuator values, assumed to be in us */
+ 166:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** void actuators_pwm_commit(void) {
+  32              		.loc 1 166 0
+  33              		.cfi_startproc
+  34              		@ args = 0, pretend = 0, frame = 0
+  35              		@ frame_needed = 0, uses_anonymous_args = 0
+  36 0000 10B5     		push	{r4, lr}
+  37              	.LCFI0:
+  38              		.cfi_def_cfa_offset 8
+ 167:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_SetCompare1(TIM3, actuators_pwm_values[0]);
+  39              		.loc 1 167 0
+  40 0002 0D4C     		ldr	r4, .L3
+  41              		.cfi_offset 14, -4
+  42              		.cfi_offset 4, -8
+  43 0004 0D48     		ldr	r0, .L3+4
+  44 0006 2188     		ldrh	r1, [r4, #0]
+  45 0008 FFF7FEFF 		bl	TIM_SetCompare1
+ 168:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_SetCompare2(TIM3, actuators_pwm_values[1]);
+  46              		.loc 1 168 0
+  47 000c A188     		ldrh	r1, [r4, #4]
+  48 000e 0B48     		ldr	r0, .L3+4
+  49 0010 FFF7FEFF 		bl	TIM_SetCompare2
+ 169:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_SetCompare3(TIM3, actuators_pwm_values[2]);
+  50              		.loc 1 169 0
+  51 0014 2189     		ldrh	r1, [r4, #8]
+  52 0016 0948     		ldr	r0, .L3+4
+  53 0018 FFF7FEFF 		bl	TIM_SetCompare3
+ 170:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_SetCompare4(TIM3, actuators_pwm_values[3]);
+  54              		.loc 1 170 0
+  55 001c A189     		ldrh	r1, [r4, #12]
+  56 001e 0748     		ldr	r0, .L3+4
+  57 0020 FFF7FEFF 		bl	TIM_SetCompare4
+ 171:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+ 172:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_SETCOMPARE(PWM5_OC)(PWM_5AND6_TIMER, actuators_pwm_values[4]);
+  58              		.loc 1 172 0
+  59 0024 218A     		ldrh	r1, [r4, #16]
+  60 0026 0648     		ldr	r0, .L3+8
+  61 0028 FFF7FEFF 		bl	TIM_SetCompare1
+ 173:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_SETCOMPARE(PWM6_OC)(PWM_5AND6_TIMER, actuators_pwm_values[5]);
+  62              		.loc 1 173 0
+  63 002c 0448     		ldr	r0, .L3+8
+  64 002e A18A     		ldrh	r1, [r4, #20]
+ 174:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** 
+ 175:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #ifdef USE_SERVOS_7AND8
+ 176:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_SetCompare1(TIM4, actuators_pwm_values[6]);
+ 177:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_SetCompare2(TIM4, actuators_pwm_values[7]);
+ 178:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** #endif
+ 179:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** }
+  65              		.loc 1 179 0
+  66 0030 BDE81040 		pop	{r4, lr}
+ 173:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_SETCOMPARE(PWM6_OC)(PWM_5AND6_TIMER, actuators_pwm_values[5]);
+  67              		.loc 1 173 0
+  68 0034 FFF7FEBF 		b	TIM_SetCompare2
+  69              	.L4:
+  70              		.align	2
+  71              	.L3:
+  72 0038 00000000 		.word	actuators_pwm_values
+  73 003c 00040040 		.word	1073742848
+  74 0040 000C0040 		.word	1073744896
+  75              		.cfi_endproc
+  76              	.LFE25:
+  78              		.section	.text.actuators_pwm_arch_init,"ax",%progbits
+  79              		.align	1
+  80              		.global	actuators_pwm_arch_init
+  81              		.thumb
+  82              		.thumb_func
+  84              	actuators_pwm_arch_init:
+  85              	.LFB24:
+  58:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** void actuators_pwm_arch_init(void) {
+  86              		.loc 1 58 0
+  87              		.cfi_startproc
+  88              		@ args = 0, pretend = 0, frame = 32
+  89              		@ frame_needed = 0, uses_anonymous_args = 0
+  90 0000 30B5     		push	{r4, r5, lr}
+  91              	.LCFI1:
+  92              		.cfi_def_cfa_offset 12
+  61:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+  93              		.loc 1 61 0
+  94 0002 0220     		movs	r0, #2
+  58:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** void actuators_pwm_arch_init(void) {
+  95              		.loc 1 58 0
+  96 0004 89B0     		sub	sp, sp, #36
+  97              	.LCFI2:
+  98              		.cfi_def_cfa_offset 48
+  61:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+  99              		.loc 1 61 0
+ 100 0006 0121     		movs	r1, #1
+ 101              		.cfi_offset 14, -4
+ 102              		.cfi_offset 5, -8
+ 103              		.cfi_offset 4, -12
+ 104 0008 FFF7FEFF 		bl	RCC_APB1PeriphClockCmd
+  62:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   RCC_APB1PeriphClockCmd(PWM_5AND6_RCC, ENABLE);
+ 105              		.loc 1 62 0
+ 106 000c 0820     		movs	r0, #8
+ 107 000e 0121     		movs	r1, #1
+ 108 0010 FFF7FEFF 		bl	RCC_APB1PeriphClockCmd
+  68:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC |
+ 109              		.loc 1 68 0
+ 110 0014 1D20     		movs	r0, #29
+ 111 0016 0121     		movs	r1, #1
+ 112 0018 FFF7FEFF 		bl	RCC_APB2PeriphClockCmd
+  76:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_Init(GPIOC, &GPIO_InitStructure);
+ 113              		.loc 1 76 0
+ 114 001c 07AC     		add	r4, sp, #28
+  73:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9;
+ 115              		.loc 1 73 0
+ 116 001e 4FF47073 		mov	r3, #960	@ movhi
+  75:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+ 117              		.loc 1 75 0
+ 118 0022 0325     		movs	r5, #3
+  73:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9;
+ 119              		.loc 1 73 0
+ 120 0024 ADF81C30 		strh	r3, [sp, #28]	@ movhi
+  76:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_Init(GPIOC, &GPIO_InitStructure);
+ 121              		.loc 1 76 0
+ 122 0028 2146     		mov	r1, r4
+  74:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_PP;
+ 123              		.loc 1 74 0
+ 124 002a 1823     		movs	r3, #24
+  76:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_Init(GPIOC, &GPIO_InitStructure);
+ 125              		.loc 1 76 0
+ 126 002c 3E48     		ldr	r0, .L7
+  74:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_PP;
+ 127              		.loc 1 74 0
+ 128 002e 8DF81F30 		strb	r3, [sp, #31]
+  75:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+ 129              		.loc 1 75 0
+ 130 0032 8DF81E50 		strb	r5, [sp, #30]
+  76:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_Init(GPIOC, &GPIO_InitStructure);
+ 131              		.loc 1 76 0
+ 132 0036 FFF7FEFF 		bl	GPIO_Init
+  78:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_PinRemapConfig(GPIO_FullRemap_TIM3, ENABLE);
+ 133              		.loc 1 78 0
+ 134 003a 0121     		movs	r1, #1
+ 135 003c 3B48     		ldr	r0, .L7+4
+ 136 003e FFF7FEFF 		bl	GPIO_PinRemapConfig
+  83:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_Init(PWM_5AND6_GPIO, &GPIO_InitStructure);
+ 137              		.loc 1 83 0
+ 138 0042 2146     		mov	r1, r4
+ 139 0044 3A48     		ldr	r0, .L7+8
+  97:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+ 140              		.loc 1 97 0
+ 141 0046 04AC     		add	r4, sp, #16
+  82:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_InitStructure.GPIO_Pin   = PWM5_Pin | PWM6_Pin;
+ 142              		.loc 1 82 0
+ 143 0048 ADF81C50 		strh	r5, [sp, #28]	@ movhi
+  83:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   GPIO_Init(PWM_5AND6_GPIO, &GPIO_InitStructure);
+ 144              		.loc 1 83 0
+ 145 004c FFF7FEFF 		bl	GPIO_Init
+  92:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_TimeBaseStructure.TIM_Prescaler = (PCLK / ONE_MHZ_CLK) - 1; // 1uS
+ 146              		.loc 1 92 0
+ 147 0050 4FF04703 		mov	r3, #71	@ movhi
+  94:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+ 148              		.loc 1 94 0
+ 149 0054 033D     		subs	r5, r5, #3
+  92:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_TimeBaseStructure.TIM_Prescaler = (PCLK / ONE_MHZ_CLK) - 1; // 1uS
+ 150              		.loc 1 92 0
+ 151 0056 ADF81030 		strh	r3, [sp, #16]	@ movhi
+  97:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+ 152              		.loc 1 97 0
+ 153 005a 2146     		mov	r1, r4
+  93:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_TimeBaseStructure.TIM_Period = (ONE_MHZ_CLK / SERVO_HZ) - 1;
+ 154              		.loc 1 93 0
+ 155 005c 46F2A713 		movw	r3, 24999	@ movhi
+  97:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+ 156              		.loc 1 97 0
+ 157 0060 3448     		ldr	r0, .L7+12
+  93:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_TimeBaseStructure.TIM_Period = (ONE_MHZ_CLK / SERVO_HZ) - 1;
+ 158              		.loc 1 93 0
+ 159 0062 ADF81430 		strh	r3, [sp, #20]	@ movhi
+  94:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+ 160              		.loc 1 94 0
+ 161 0066 ADF81650 		strh	r5, [sp, #22]	@ movhi
+  95:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+ 162              		.loc 1 95 0
+ 163 006a ADF81250 		strh	r5, [sp, #18]	@ movhi
+  97:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+ 164              		.loc 1 97 0
+ 165 006e FFF7FEFF 		bl	TIM_TimeBaseInit
+ 102:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_TimeBaseInit(PWM_5AND6_TIMER, &TIM_TimeBaseStructure);
+ 166              		.loc 1 102 0
+ 167 0072 2146     		mov	r1, r4
+ 168 0074 3048     		ldr	r0, .L7+16
+ 169 0076 FFF7FEFF 		bl	TIM_TimeBaseInit
+ 110:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+ 170              		.loc 1 110 0
+ 171 007a 0124     		movs	r4, #1
+ 109:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+ 172              		.loc 1 109 0
+ 173 007c 4FF06003 		mov	r3, #96	@ movhi
+ 115:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC1Init(TIM3, &TIM_OCInitStructure);
+ 174              		.loc 1 115 0
+ 175 0080 6946     		mov	r1, sp
+ 176 0082 2C48     		ldr	r0, .L7+12
+ 109:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+ 177              		.loc 1 109 0
+ 178 0084 ADF80030 		strh	r3, [sp, #0]	@ movhi
+ 111:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OCInitStructure.TIM_Pulse = 0; // default low (no pulse)
+ 179              		.loc 1 111 0
+ 180 0088 ADF80650 		strh	r5, [sp, #6]	@ movhi
+ 112:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+ 181              		.loc 1 112 0
+ 182 008c ADF80850 		strh	r5, [sp, #8]	@ movhi
+ 110:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+ 183              		.loc 1 110 0
+ 184 0090 ADF80240 		strh	r4, [sp, #2]	@ movhi
+ 115:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC1Init(TIM3, &TIM_OCInitStructure);
+ 185              		.loc 1 115 0
+ 186 0094 FFF7FEFF 		bl	TIM_OC1Init
+ 116:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable);
+ 187              		.loc 1 116 0
+ 188 0098 0821     		movs	r1, #8
+ 189 009a 2648     		ldr	r0, .L7+12
+ 190 009c FFF7FEFF 		bl	TIM_OC1PreloadConfig
+ 119:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC2Init(TIM3, &TIM_OCInitStructure);
+ 191              		.loc 1 119 0
+ 192 00a0 6946     		mov	r1, sp
+ 193 00a2 2448     		ldr	r0, .L7+12
+ 194 00a4 FFF7FEFF 		bl	TIM_OC2Init
+ 120:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC2PreloadConfig(TIM3, TIM_OCPreload_Enable);
+ 195              		.loc 1 120 0
+ 196 00a8 0821     		movs	r1, #8
+ 197 00aa 2248     		ldr	r0, .L7+12
+ 198 00ac FFF7FEFF 		bl	TIM_OC2PreloadConfig
+ 123:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC3Init(TIM3, &TIM_OCInitStructure);
+ 199              		.loc 1 123 0
+ 200 00b0 6946     		mov	r1, sp
+ 201 00b2 2048     		ldr	r0, .L7+12
+ 202 00b4 FFF7FEFF 		bl	TIM_OC3Init
+ 124:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable);
+ 203              		.loc 1 124 0
+ 204 00b8 0821     		movs	r1, #8
+ 205 00ba 1E48     		ldr	r0, .L7+12
+ 206 00bc FFF7FEFF 		bl	TIM_OC3PreloadConfig
+ 127:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC4Init(TIM3, &TIM_OCInitStructure);
+ 207              		.loc 1 127 0
+ 208 00c0 6946     		mov	r1, sp
+ 209 00c2 1C48     		ldr	r0, .L7+12
+ 210 00c4 FFF7FEFF 		bl	TIM_OC4Init
+ 128:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC4PreloadConfig(TIM3, TIM_OCPreload_Enable);
+ 211              		.loc 1 128 0
+ 212 00c8 0821     		movs	r1, #8
+ 213 00ca 1A48     		ldr	r0, .L7+12
+ 214 00cc FFF7FEFF 		bl	TIM_OC4PreloadConfig
+ 131:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC_INIT(PWM5_OC) (PWM_5AND6_TIMER, &TIM_OCInitStructure);
+ 215              		.loc 1 131 0
+ 216 00d0 6946     		mov	r1, sp
+ 217 00d2 1948     		ldr	r0, .L7+16
+ 218 00d4 FFF7FEFF 		bl	TIM_OC1Init
+ 132:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC_PRELOADCONFIG(PWM5_OC)(PWM_5AND6_TIMER, TIM_OCPreload_Enable);
+ 219              		.loc 1 132 0
+ 220 00d8 1748     		ldr	r0, .L7+16
+ 221 00da 0821     		movs	r1, #8
+ 222 00dc FFF7FEFF 		bl	TIM_OC1PreloadConfig
+ 135:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC_INIT(PWM6_OC)(PWM_5AND6_TIMER, &TIM_OCInitStructure);
+ 223              		.loc 1 135 0
+ 224 00e0 6946     		mov	r1, sp
+ 225 00e2 1548     		ldr	r0, .L7+16
+ 226 00e4 FFF7FEFF 		bl	TIM_OC2Init
+ 136:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC_PRELOADCONFIG(PWM6_OC)(PWM_5AND6_TIMER, TIM_OCPreload_Enable);
+ 227              		.loc 1 136 0
+ 228 00e8 0821     		movs	r1, #8
+ 229 00ea 1348     		ldr	r0, .L7+16
+ 230 00ec FFF7FEFF 		bl	TIM_OC2PreloadConfig
+ 154:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_ARRPreloadConfig(TIM3, ENABLE);
+ 231              		.loc 1 154 0
+ 232 00f0 2146     		mov	r1, r4
+ 233 00f2 1048     		ldr	r0, .L7+12
+ 234 00f4 FFF7FEFF 		bl	TIM_ARRPreloadConfig
+ 155:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_CtrlPWMOutputs(TIM3, ENABLE);
+ 235              		.loc 1 155 0
+ 236 00f8 2146     		mov	r1, r4
+ 237 00fa 0E48     		ldr	r0, .L7+12
+ 238 00fc FFF7FEFF 		bl	TIM_CtrlPWMOutputs
+ 156:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_Cmd(TIM3, ENABLE);
+ 239              		.loc 1 156 0
+ 240 0100 2146     		mov	r1, r4
+ 241 0102 0C48     		ldr	r0, .L7+12
+ 242 0104 FFF7FEFF 		bl	TIM_Cmd
+ 159:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_ARRPreloadConfig(PWM_5AND6_TIMER, ENABLE);
+ 243              		.loc 1 159 0
+ 244 0108 2146     		mov	r1, r4
+ 245 010a 0B48     		ldr	r0, .L7+16
+ 246 010c FFF7FEFF 		bl	TIM_ARRPreloadConfig
+ 160:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_CtrlPWMOutputs(PWM_5AND6_TIMER, ENABLE);
+ 247              		.loc 1 160 0
+ 248 0110 2146     		mov	r1, r4
+ 249 0112 0948     		ldr	r0, .L7+16
+ 250 0114 FFF7FEFF 		bl	TIM_CtrlPWMOutputs
+ 161:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_Cmd(PWM_5AND6_TIMER, ENABLE);
+ 251              		.loc 1 161 0
+ 252 0118 0748     		ldr	r0, .L7+16
+ 253 011a 2146     		mov	r1, r4
+ 115:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_OC1Init(TIM3, &TIM_OCInitStructure);
+ 254              		.loc 1 115 0
+ 255 011c 6D46     		mov	r5, sp
+ 161:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c ****   TIM_Cmd(PWM_5AND6_TIMER, ENABLE);
+ 256              		.loc 1 161 0
+ 257 011e FFF7FEFF 		bl	TIM_Cmd
+ 163:firmwares/rotorcraft/actuators/arch/stm32/actuators_pwm_arch.c **** }
+ 258              		.loc 1 163 0
+ 259 0122 09B0     		add	sp, sp, #36
+ 260 0124 30BD     		pop	{r4, r5, pc}
+ 261              	.L8:
+ 262 0126 00BF     		.align	2
+ 263              	.L7:
+ 264 0128 00100140 		.word	1073811456
+ 265 012c 000C1A00 		.word	1707008
+ 266 0130 00080140 		.word	1073809408
+ 267 0134 00040040 		.word	1073742848
+ 268 0138 000C0040 		.word	1073744896
+ 269              		.cfi_endproc
+ 270              	.LFE24:
+ 272              		.text
+ 273              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 actuators_pwm_arch.c
+     /tmp/cchzKxW8.s:24     .text.actuators_pwm_commit:00000000 $t
+     /tmp/cchzKxW8.s:29     .text.actuators_pwm_commit:00000000 actuators_pwm_commit
+     /tmp/cchzKxW8.s:72     .text.actuators_pwm_commit:00000038 $d
+     /tmp/cchzKxW8.s:79     .text.actuators_pwm_arch_init:00000000 $t
+     /tmp/cchzKxW8.s:84     .text.actuators_pwm_arch_init:00000000 actuators_pwm_arch_init
+     /tmp/cchzKxW8.s:264    .text.actuators_pwm_arch_init:00000128 $d
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+TIM_SetCompare1
+TIM_SetCompare2
+TIM_SetCompare3
+TIM_SetCompare4
+actuators_pwm_values
+RCC_APB1PeriphClockCmd
+RCC_APB2PeriphClockCmd
+GPIO_Init
+GPIO_PinRemapConfig
+TIM_TimeBaseInit
+TIM_OC1Init
+TIM_OC1PreloadConfig
+TIM_OC2Init
+TIM_OC2PreloadConfig
+TIM_OC3Init
+TIM_OC3PreloadConfig
+TIM_OC4Init
+TIM_OC4PreloadConfig
+TIM_ARRPreloadConfig
+TIM_CtrlPWMOutputs
+TIM_Cmd

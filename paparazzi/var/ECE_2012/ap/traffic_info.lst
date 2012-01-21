@@ -1,0 +1,174 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"traffic_info.c"
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.section	.text.traffic_info_init,"ax",%progbits
+  24              		.align	1
+  25              		.global	traffic_info_init
+  26              		.thumb
+  27              		.thumb_func
+  29              	traffic_info_init:
+  30              	.LFB0:
+  31              		.file 1 "subsystems/navigation/traffic_info.c"
+   1:subsystems/navigation/traffic_info.c **** /*
+   2:subsystems/navigation/traffic_info.c ****  * $Id$
+   3:subsystems/navigation/traffic_info.c ****  *
+   4:subsystems/navigation/traffic_info.c ****  * Copyright (C) 2005  Pascal Brisset, Antoine Drouin
+   5:subsystems/navigation/traffic_info.c ****  *
+   6:subsystems/navigation/traffic_info.c ****  * This file is part of paparazzi.
+   7:subsystems/navigation/traffic_info.c ****  *
+   8:subsystems/navigation/traffic_info.c ****  * paparazzi is free software; you can redistribute it and/or modify
+   9:subsystems/navigation/traffic_info.c ****  * it under the terms of the GNU General Public License as published by
+  10:subsystems/navigation/traffic_info.c ****  * the Free Software Foundation; either version 2, or (at your option)
+  11:subsystems/navigation/traffic_info.c ****  * any later version.
+  12:subsystems/navigation/traffic_info.c ****  *
+  13:subsystems/navigation/traffic_info.c ****  * paparazzi is distributed in the hope that it will be useful,
+  14:subsystems/navigation/traffic_info.c ****  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  15:subsystems/navigation/traffic_info.c ****  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  16:subsystems/navigation/traffic_info.c ****  * GNU General Public License for more details.
+  17:subsystems/navigation/traffic_info.c ****  *
+  18:subsystems/navigation/traffic_info.c ****  * You should have received a copy of the GNU General Public License
+  19:subsystems/navigation/traffic_info.c ****  * along with paparazzi; see the file COPYING.  If not, write to
+  20:subsystems/navigation/traffic_info.c ****  * the Free Software Foundation, 59 Temple Place - Suite 330,
+  21:subsystems/navigation/traffic_info.c ****  * Boston, MA 02111-1307, USA.
+  22:subsystems/navigation/traffic_info.c ****  *
+  23:subsystems/navigation/traffic_info.c ****  */
+  24:subsystems/navigation/traffic_info.c **** /** \file traffic_info.c
+  25:subsystems/navigation/traffic_info.c ****  *  \brief Informations relative to the other aircrafts
+  26:subsystems/navigation/traffic_info.c ****  *
+  27:subsystems/navigation/traffic_info.c ****  */
+  28:subsystems/navigation/traffic_info.c **** 
+  29:subsystems/navigation/traffic_info.c **** #include <inttypes.h>
+  30:subsystems/navigation/traffic_info.c **** #include "subsystems/navigation/traffic_info.h"
+  31:subsystems/navigation/traffic_info.c **** #include "generated/airframe.h"
+  32:subsystems/navigation/traffic_info.c **** 
+  33:subsystems/navigation/traffic_info.c **** uint8_t acs_idx;
+  34:subsystems/navigation/traffic_info.c **** uint8_t the_acs_id[NB_ACS_ID];
+  35:subsystems/navigation/traffic_info.c **** struct ac_info_ the_acs[NB_ACS];
+  36:subsystems/navigation/traffic_info.c **** 
+  37:subsystems/navigation/traffic_info.c **** void traffic_info_init( void ) {
+  32              		.loc 1 37 0
+  33              		.cfi_startproc
+  34              		@ args = 0, pretend = 0, frame = 0
+  35              		@ frame_needed = 0, uses_anonymous_args = 0
+  36              		@ link register save eliminated.
+  38:subsystems/navigation/traffic_info.c ****   the_acs_id[0] = 0;  // ground station
+  37              		.loc 1 38 0
+  38 0000 054A     		ldr	r2, .L3
+  39 0002 0023     		movs	r3, #0
+  40 0004 1370     		strb	r3, [r2, #0]
+  39:subsystems/navigation/traffic_info.c ****   the_acs_id[AC_ID] = 1;
+  41              		.loc 1 39 0
+  42 0006 0133     		adds	r3, r3, #1
+  43 0008 5370     		strb	r3, [r2, #1]
+  40:subsystems/navigation/traffic_info.c ****   the_acs[the_acs_id[AC_ID]].ac_id = AC_ID;
+  44              		.loc 1 40 0
+  45 000a 044A     		ldr	r2, .L3+4
+  46 000c 82F82030 		strb	r3, [r2, #32]
+  41:subsystems/navigation/traffic_info.c ****   acs_idx = 2;
+  47              		.loc 1 41 0
+  48 0010 034B     		ldr	r3, .L3+8
+  49 0012 0222     		movs	r2, #2
+  50 0014 1A70     		strb	r2, [r3, #0]
+  42:subsystems/navigation/traffic_info.c **** }
+  51              		.loc 1 42 0
+  52 0016 7047     		bx	lr
+  53              	.L4:
+  54              		.align	2
+  55              	.L3:
+  56 0018 00000000 		.word	.LANCHOR0
+  57 001c 00000000 		.word	.LANCHOR1
+  58 0020 00000000 		.word	.LANCHOR2
+  59              		.cfi_endproc
+  60              	.LFE0:
+  62              		.section	.text.get_ac_info,"ax",%progbits
+  63              		.align	1
+  64              		.global	get_ac_info
+  65              		.thumb
+  66              		.thumb_func
+  68              	get_ac_info:
+  69              	.LFB1:
+  43:subsystems/navigation/traffic_info.c **** 
+  44:subsystems/navigation/traffic_info.c **** struct ac_info_ * get_ac_info(uint8_t id) {
+  70              		.loc 1 44 0
+  71              		.cfi_startproc
+  72              		@ args = 0, pretend = 0, frame = 0
+  73              		@ frame_needed = 0, uses_anonymous_args = 0
+  74              		@ link register save eliminated.
+  75              	.LVL0:
+  76              		.loc 1 44 0
+  77 0000 024B     		ldr	r3, .L7
+  78 0002 1B5C     		ldrb	r3, [r3, r0]	@ zero_extendqisi2
+  45:subsystems/navigation/traffic_info.c ****   return &the_acs[the_acs_id[id]];
+  46:subsystems/navigation/traffic_info.c **** }
+  79              		.loc 1 46 0
+  80 0004 0248     		ldr	r0, .L7+4
+  81              	.LVL1:
+  44:subsystems/navigation/traffic_info.c **** struct ac_info_ * get_ac_info(uint8_t id) {
+  82              		.loc 1 44 0
+  83 0006 5B01     		lsls	r3, r3, #5
+  84              		.loc 1 46 0
+  85 0008 C018     		adds	r0, r0, r3
+  86 000a 7047     		bx	lr
+  87              	.L8:
+  88              		.align	2
+  89              	.L7:
+  90 000c 00000000 		.word	.LANCHOR0
+  91 0010 00000000 		.word	.LANCHOR1
+  92              		.cfi_endproc
+  93              	.LFE1:
+  95              		.global	acs_idx
+  96              		.global	the_acs_id
+  97              		.global	the_acs
+  98              		.section	.bss.the_acs,"aw",%nobits
+  99              		.align	2
+ 100              		.set	.LANCHOR1,. + 0
+ 103              	the_acs:
+ 104 0000 00000000 		.space	768
+ 104      00000000 
+ 104      00000000 
+ 104      00000000 
+ 104      00000000 
+ 105              		.section	.bss.acs_idx,"aw",%nobits
+ 106              		.set	.LANCHOR2,. + 0
+ 109              	acs_idx:
+ 110 0000 00       		.space	1
+ 111              		.section	.bss.the_acs_id,"aw",%nobits
+ 112              		.align	2
+ 113              		.set	.LANCHOR0,. + 0
+ 116              	the_acs_id:
+ 117 0000 00000000 		.space	256
+ 117      00000000 
+ 117      00000000 
+ 117      00000000 
+ 117      00000000 
+ 118              		.text
+ 119              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 traffic_info.c
+     /tmp/ccFp47bo.s:24     .text.traffic_info_init:00000000 $t
+     /tmp/ccFp47bo.s:29     .text.traffic_info_init:00000000 traffic_info_init
+     /tmp/ccFp47bo.s:56     .text.traffic_info_init:00000018 $d
+     /tmp/ccFp47bo.s:63     .text.get_ac_info:00000000 $t
+     /tmp/ccFp47bo.s:68     .text.get_ac_info:00000000 get_ac_info
+     /tmp/ccFp47bo.s:90     .text.get_ac_info:0000000c $d
+     /tmp/ccFp47bo.s:109    .bss.acs_idx:00000000 acs_idx
+     /tmp/ccFp47bo.s:116    .bss.the_acs_id:00000000 the_acs_id
+     /tmp/ccFp47bo.s:103    .bss.the_acs:00000000 the_acs
+     /tmp/ccFp47bo.s:99     .bss.the_acs:00000000 $d
+     /tmp/ccFp47bo.s:110    .bss.acs_idx:00000000 $d
+     /tmp/ccFp47bo.s:112    .bss.the_acs_id:00000000 $d
+                     .debug_frame:00000010 $d
+
+NO UNDEFINED SYMBOLS

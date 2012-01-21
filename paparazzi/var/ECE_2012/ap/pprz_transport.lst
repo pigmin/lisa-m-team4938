@@ -1,0 +1,72 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"pprz_transport.c"
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.global	pprz_msg_received
+  24              		.global	ck_a
+  25              		.global	ck_b
+  26              		.global	pprz_payload
+  27              		.global	pprz_ovrn
+  28              		.global	pprz_error
+  29              		.global	pprz_payload_len
+  30              		.section	.bss.pprz_error,"aw",%nobits
+  33              	pprz_error:
+  34 0000 00       		.space	1
+  35              		.section	.bss.pprz_payload,"aw",%nobits
+  36              		.align	2
+  39              	pprz_payload:
+  40 0000 00000000 		.space	256
+  40      00000000 
+  40      00000000 
+  40      00000000 
+  40      00000000 
+  41              		.section	.bss.ck_a,"aw",%nobits
+  44              	ck_a:
+  45 0000 00       		.space	1
+  46              		.section	.bss.ck_b,"aw",%nobits
+  49              	ck_b:
+  50 0000 00       		.space	1
+  51              		.section	.bss.pprz_msg_received,"aw",%nobits
+  54              	pprz_msg_received:
+  55 0000 00       		.space	1
+  56              		.section	.bss.pprz_ovrn,"aw",%nobits
+  59              	pprz_ovrn:
+  60 0000 00       		.space	1
+  61              		.section	.bss.pprz_payload_len,"aw",%nobits
+  64              	pprz_payload_len:
+  65 0000 00       		.space	1
+  66              		.text
+  67              	.Letext0:
+  68              		.file 1 "/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include
+  69              		.file 2 "/home/mav/lisa-m-team4938/paparazzi/sw/include/std.h"
+  70              		.file 3 "datalink.h"
+  71              		.file 4 "pprz_transport.c"
+DEFINED SYMBOLS
+                            *ABS*:00000000 pprz_transport.c
+     /tmp/ccShK7yR.s:54     .bss.pprz_msg_received:00000000 pprz_msg_received
+     /tmp/ccShK7yR.s:44     .bss.ck_a:00000000 ck_a
+     /tmp/ccShK7yR.s:49     .bss.ck_b:00000000 ck_b
+     /tmp/ccShK7yR.s:39     .bss.pprz_payload:00000000 pprz_payload
+     /tmp/ccShK7yR.s:59     .bss.pprz_ovrn:00000000 pprz_ovrn
+     /tmp/ccShK7yR.s:33     .bss.pprz_error:00000000 pprz_error
+     /tmp/ccShK7yR.s:64     .bss.pprz_payload_len:00000000 pprz_payload_len
+     /tmp/ccShK7yR.s:34     .bss.pprz_error:00000000 $d
+     /tmp/ccShK7yR.s:36     .bss.pprz_payload:00000000 $d
+     /tmp/ccShK7yR.s:45     .bss.ck_a:00000000 $d
+     /tmp/ccShK7yR.s:50     .bss.ck_b:00000000 $d
+     /tmp/ccShK7yR.s:55     .bss.pprz_msg_received:00000000 $d
+     /tmp/ccShK7yR.s:60     .bss.pprz_ovrn:00000000 $d
+     /tmp/ccShK7yR.s:65     .bss.pprz_payload_len:00000000 $d
+
+NO UNDEFINED SYMBOLS

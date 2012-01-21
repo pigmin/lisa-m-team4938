@@ -1,0 +1,32 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"sys_time.c"
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.global	cpu_time_sec
+  24              		.section	.bss.cpu_time_sec,"aw",%nobits
+  25              		.align	1
+  28              	cpu_time_sec:
+  29 0000 0000     		.space	2
+  30              		.text
+  31              	.Letext0:
+  32              		.file 1 "/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include
+  33              		.file 2 "/home/mav/lisa-m-team4938/paparazzi/sw/include/std.h"
+  34              		.file 3 "sys_time.c"
+  35              		.file 4 "/home/mav/lisa-m-team4938/paparazzi/sw/airborne/arch/stm32/sys_time_hw.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 sys_time.c
+     /tmp/ccdGqRCC.s:28     .bss.cpu_time_sec:00000000 cpu_time_sec
+     /tmp/ccdGqRCC.s:25     .bss.cpu_time_sec:00000000 $d
+
+NO UNDEFINED SYMBOLS

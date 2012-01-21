@@ -1,0 +1,1346 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"gps_ubx.c"
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.section	.text.gps_impl_init,"ax",%progbits
+  24              		.align	1
+  25              		.global	gps_impl_init
+  26              		.thumb
+  27              		.thumb_func
+  29              	gps_impl_init:
+  30              	.LFB27:
+  31              		.file 1 "subsystems/gps/gps_ubx.c"
+   1:subsystems/gps/gps_ubx.c **** /*
+   2:subsystems/gps/gps_ubx.c ****  * Copyright (C) 2010 Antoine Drouin <poinix@gmail.com>
+   3:subsystems/gps/gps_ubx.c ****  *
+   4:subsystems/gps/gps_ubx.c ****  * This file is part of paparazzi.
+   5:subsystems/gps/gps_ubx.c ****  *
+   6:subsystems/gps/gps_ubx.c ****  * paparazzi is free software; you can redistribute it and/or modify
+   7:subsystems/gps/gps_ubx.c ****  * it under the terms of the GNU General Public License as published by
+   8:subsystems/gps/gps_ubx.c ****  * the Free Software Foundation; either version 2, or (at your option)
+   9:subsystems/gps/gps_ubx.c ****  * any later version.
+  10:subsystems/gps/gps_ubx.c ****  *
+  11:subsystems/gps/gps_ubx.c ****  * paparazzi is distributed in the hope that it will be useful,
+  12:subsystems/gps/gps_ubx.c ****  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  13:subsystems/gps/gps_ubx.c ****  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  14:subsystems/gps/gps_ubx.c ****  * GNU General Public License for more details.
+  15:subsystems/gps/gps_ubx.c ****  *
+  16:subsystems/gps/gps_ubx.c ****  * You should have received a copy of the GNU General Public License
+  17:subsystems/gps/gps_ubx.c ****  * along with paparazzi; see the file COPYING.  If not, write to
+  18:subsystems/gps/gps_ubx.c ****  * the Free Software Foundation, 59 Temple Place - Suite 330,
+  19:subsystems/gps/gps_ubx.c ****  * Boston, MA 02111-1307, USA.
+  20:subsystems/gps/gps_ubx.c ****  */
+  21:subsystems/gps/gps_ubx.c **** 
+  22:subsystems/gps/gps_ubx.c **** 
+  23:subsystems/gps/gps_ubx.c **** #include "subsystems/gps.h"
+  24:subsystems/gps/gps_ubx.c **** 
+  25:subsystems/gps/gps_ubx.c **** #include "led.h"
+  26:subsystems/gps/gps_ubx.c **** 
+  27:subsystems/gps/gps_ubx.c **** #ifdef GPS_USE_LATLONG
+  28:subsystems/gps/gps_ubx.c **** #include "subsystems/nav.h"
+  29:subsystems/gps/gps_ubx.c **** #include "math/pprz_geodetic_float.h"
+  30:subsystems/gps/gps_ubx.c **** #endif
+  31:subsystems/gps/gps_ubx.c **** 
+  32:subsystems/gps/gps_ubx.c **** /* parser status */
+  33:subsystems/gps/gps_ubx.c **** #define UNINIT        0
+  34:subsystems/gps/gps_ubx.c **** #define GOT_SYNC1     1
+  35:subsystems/gps/gps_ubx.c **** #define GOT_SYNC2     2
+  36:subsystems/gps/gps_ubx.c **** #define GOT_CLASS     3
+  37:subsystems/gps/gps_ubx.c **** #define GOT_ID        4
+  38:subsystems/gps/gps_ubx.c **** #define GOT_LEN1      5
+  39:subsystems/gps/gps_ubx.c **** #define GOT_LEN2      6
+  40:subsystems/gps/gps_ubx.c **** #define GOT_PAYLOAD   7
+  41:subsystems/gps/gps_ubx.c **** #define GOT_CHECKSUM1 8
+  42:subsystems/gps/gps_ubx.c **** 
+  43:subsystems/gps/gps_ubx.c **** /* last error type */
+  44:subsystems/gps/gps_ubx.c **** #define GPS_UBX_ERR_NONE         0
+  45:subsystems/gps/gps_ubx.c **** #define GPS_UBX_ERR_OVERRUN      1
+  46:subsystems/gps/gps_ubx.c **** #define GPS_UBX_ERR_MSG_TOO_LONG 2
+  47:subsystems/gps/gps_ubx.c **** #define GPS_UBX_ERR_CHECKSUM     3
+  48:subsystems/gps/gps_ubx.c **** #define GPS_UBX_ERR_UNEXPECTED   4
+  49:subsystems/gps/gps_ubx.c **** #define GPS_UBX_ERR_OUT_OF_SYNC  5
+  50:subsystems/gps/gps_ubx.c **** 
+  51:subsystems/gps/gps_ubx.c **** #define UTM_HEM_NORTH 0
+  52:subsystems/gps/gps_ubx.c **** #define UTM_HEM_SOUTH 1
+  53:subsystems/gps/gps_ubx.c **** 
+  54:subsystems/gps/gps_ubx.c **** 
+  55:subsystems/gps/gps_ubx.c **** #define GpsUartSend1(c) GpsLink(Transmit(c))
+  56:subsystems/gps/gps_ubx.c **** #define GpsUartSetBaudrate(_a) GpsLink(SetBaudrate(_a))
+  57:subsystems/gps/gps_ubx.c **** #define GpsUartRunning GpsLink(TxRunning)
+  58:subsystems/gps/gps_ubx.c **** #define GpsUartSendMessage GpsLink(SendMessage)
+  59:subsystems/gps/gps_ubx.c **** 
+  60:subsystems/gps/gps_ubx.c **** #define UbxInitCheksum() { gps_ubx.send_ck_a = gps_ubx.send_ck_b = 0; }
+  61:subsystems/gps/gps_ubx.c **** #define UpdateChecksum(c) { gps_ubx.send_ck_a += c; gps_ubx.send_ck_b += gps_ubx.send_ck_a; }
+  62:subsystems/gps/gps_ubx.c **** #define UbxTrailer() { GpsUartSend1(gps_ubx.send_ck_a);  GpsUartSend1(gps_ubx.send_ck_b); GpsUartSe
+  63:subsystems/gps/gps_ubx.c **** 
+  64:subsystems/gps/gps_ubx.c **** #define UbxSend1(c) { uint8_t i8=c; GpsUartSend1(i8); UpdateChecksum(i8); }
+  65:subsystems/gps/gps_ubx.c **** #define UbxSend2(c) { uint16_t i16=c; UbxSend1(i16&0xff); UbxSend1(i16 >> 8); }
+  66:subsystems/gps/gps_ubx.c **** #define UbxSend1ByAddr(x) { UbxSend1(*x); }
+  67:subsystems/gps/gps_ubx.c **** #define UbxSend2ByAddr(x) { UbxSend1(*x); UbxSend1(*(x+1)); }
+  68:subsystems/gps/gps_ubx.c **** #define UbxSend4ByAddr(x) { UbxSend1(*x); UbxSend1(*(x+1)); UbxSend1(*(x+2)); UbxSend1(*(x+3)); }
+  69:subsystems/gps/gps_ubx.c **** 
+  70:subsystems/gps/gps_ubx.c **** #define UbxHeader(nav_id, msg_id, len) {        \
+  71:subsystems/gps/gps_ubx.c ****     GpsUartSend1(UBX_SYNC1);                    \
+  72:subsystems/gps/gps_ubx.c ****     GpsUartSend1(UBX_SYNC2);                    \
+  73:subsystems/gps/gps_ubx.c ****     UbxInitCheksum();                           \
+  74:subsystems/gps/gps_ubx.c ****     UbxSend1(nav_id);                           \
+  75:subsystems/gps/gps_ubx.c ****     UbxSend1(msg_id);                           \
+  76:subsystems/gps/gps_ubx.c ****     UbxSend2(len);                              \
+  77:subsystems/gps/gps_ubx.c ****   }
+  78:subsystems/gps/gps_ubx.c **** 
+  79:subsystems/gps/gps_ubx.c **** 
+  80:subsystems/gps/gps_ubx.c **** struct GpsUbx gps_ubx;
+  81:subsystems/gps/gps_ubx.c **** 
+  82:subsystems/gps/gps_ubx.c **** void gps_impl_init(void) {
+  32              		.loc 1 82 0
+  33              		.cfi_startproc
+  34              		@ args = 0, pretend = 0, frame = 0
+  35              		@ frame_needed = 0, uses_anonymous_args = 0
+  36              		@ link register save eliminated.
+  83:subsystems/gps/gps_ubx.c ****    gps_ubx.status = UNINIT;
+  37              		.loc 1 83 0
+  38 0000 054B     		ldr	r3, .L3
+  39 0002 0022     		movs	r2, #0
+  40 0004 83F80921 		strb	r2, [r3, #265]
+  84:subsystems/gps/gps_ubx.c ****    gps_ubx.msg_available = FALSE;
+  41              		.loc 1 84 0
+  42 0008 1A70     		strb	r2, [r3, #0]
+  85:subsystems/gps/gps_ubx.c ****    gps_ubx.error_cnt = 0;
+  43              		.loc 1 85 0
+  44 000a 83F81121 		strb	r2, [r3, #273]
+  86:subsystems/gps/gps_ubx.c ****    gps_ubx.error_last = GPS_UBX_ERR_NONE;
+  45              		.loc 1 86 0
+  46 000e 83F81221 		strb	r2, [r3, #274]
+  87:subsystems/gps/gps_ubx.c ****    gps_ubx.have_velned = 0;
+  47              		.loc 1 87 0
+  48 0012 83F81521 		strb	r2, [r3, #277]
+  88:subsystems/gps/gps_ubx.c **** }
+  49              		.loc 1 88 0
+  50 0016 7047     		bx	lr
+  51              	.L4:
+  52              		.align	2
+  53              	.L3:
+  54 0018 00000000 		.word	.LANCHOR0
+  55              		.cfi_endproc
+  56              	.LFE27:
+  58              		.section	.text.gps_ubx_parse,"ax",%progbits
+  59              		.align	1
+  60              		.global	gps_ubx_parse
+  61              		.thumb
+  62              		.thumb_func
+  64              	gps_ubx_parse:
+  65              	.LFB29:
+  89:subsystems/gps/gps_ubx.c **** 
+  90:subsystems/gps/gps_ubx.c **** 
+  91:subsystems/gps/gps_ubx.c **** void gps_ubx_read_message(void) {
+  92:subsystems/gps/gps_ubx.c **** 
+  93:subsystems/gps/gps_ubx.c ****   if (gps_ubx.msg_class == UBX_NAV_ID) {
+  94:subsystems/gps/gps_ubx.c ****     if (gps_ubx.msg_id == UBX_NAV_SOL_ID) {
+  95:subsystems/gps/gps_ubx.c **** #ifdef GPS_TIMESTAMP
+  96:subsystems/gps/gps_ubx.c ****       /* get hardware clock ticks */
+  97:subsystems/gps/gps_ubx.c ****       SysTimeTimerStart(gps.t0);
+  98:subsystems/gps/gps_ubx.c ****       gps.t0_tow        = UBX_NAV_SOL_ITOW(gps_ubx.msg_buf);
+  99:subsystems/gps/gps_ubx.c ****       gps.t0_tow_frac   = UBX_NAV_SOL_Frac(gps_ubx.msg_buf);
+ 100:subsystems/gps/gps_ubx.c **** #endif
+ 101:subsystems/gps/gps_ubx.c ****       gps.tow        = UBX_NAV_SOL_ITOW(gps_ubx.msg_buf);
+ 102:subsystems/gps/gps_ubx.c ****       gps.week       = UBX_NAV_SOL_week(gps_ubx.msg_buf);
+ 103:subsystems/gps/gps_ubx.c ****       gps.fix        = UBX_NAV_SOL_GPSfix(gps_ubx.msg_buf);
+ 104:subsystems/gps/gps_ubx.c ****       gps.ecef_pos.x = UBX_NAV_SOL_ECEF_X(gps_ubx.msg_buf);
+ 105:subsystems/gps/gps_ubx.c ****       gps.ecef_pos.y = UBX_NAV_SOL_ECEF_Y(gps_ubx.msg_buf);
+ 106:subsystems/gps/gps_ubx.c ****       gps.ecef_pos.z = UBX_NAV_SOL_ECEF_Z(gps_ubx.msg_buf);
+ 107:subsystems/gps/gps_ubx.c ****       gps.pacc       = UBX_NAV_SOL_Pacc(gps_ubx.msg_buf);
+ 108:subsystems/gps/gps_ubx.c ****       gps.ecef_vel.x = UBX_NAV_SOL_ECEFVX(gps_ubx.msg_buf);
+ 109:subsystems/gps/gps_ubx.c ****       gps.ecef_vel.y = UBX_NAV_SOL_ECEFVY(gps_ubx.msg_buf);
+ 110:subsystems/gps/gps_ubx.c ****       gps.ecef_vel.z = UBX_NAV_SOL_ECEFVZ(gps_ubx.msg_buf);
+ 111:subsystems/gps/gps_ubx.c ****       gps.sacc       = UBX_NAV_SOL_Sacc(gps_ubx.msg_buf);
+ 112:subsystems/gps/gps_ubx.c ****       gps.pdop       = UBX_NAV_SOL_PDOP(gps_ubx.msg_buf);
+ 113:subsystems/gps/gps_ubx.c ****       gps.num_sv     = UBX_NAV_SOL_numSV(gps_ubx.msg_buf);
+ 114:subsystems/gps/gps_ubx.c **** #ifdef GPS_LED
+ 115:subsystems/gps/gps_ubx.c ****       if (gps.fix == GPS_FIX_3D) {
+ 116:subsystems/gps/gps_ubx.c ****         LED_ON(GPS_LED);
+ 117:subsystems/gps/gps_ubx.c ****       }
+ 118:subsystems/gps/gps_ubx.c ****       else {
+ 119:subsystems/gps/gps_ubx.c ****         LED_TOGGLE(GPS_LED);
+ 120:subsystems/gps/gps_ubx.c ****       }
+ 121:subsystems/gps/gps_ubx.c **** #endif
+ 122:subsystems/gps/gps_ubx.c ****     } else if (gps_ubx.msg_id == UBX_NAV_POSLLH_ID) {
+ 123:subsystems/gps/gps_ubx.c ****       gps.lla_pos.lat = RadOfDeg(UBX_NAV_POSLLH_LAT(gps_ubx.msg_buf));
+ 124:subsystems/gps/gps_ubx.c ****       gps.lla_pos.lon = RadOfDeg(UBX_NAV_POSLLH_LON(gps_ubx.msg_buf));
+ 125:subsystems/gps/gps_ubx.c ****       gps.lla_pos.alt = UBX_NAV_POSLLH_HEIGHT(gps_ubx.msg_buf);
+ 126:subsystems/gps/gps_ubx.c ****       gps.hmsl        = UBX_NAV_POSLLH_HMSL(gps_ubx.msg_buf);
+ 127:subsystems/gps/gps_ubx.c **** #ifdef GPS_USE_LATLONG
+ 128:subsystems/gps/gps_ubx.c ****       /* Computes from (lat, long) in the referenced UTM zone */
+ 129:subsystems/gps/gps_ubx.c ****       struct LlaCoor_f lla_f;
+ 130:subsystems/gps/gps_ubx.c ****       lla_f.lat = ((float) gps.lla_pos.lat) / 1e7;
+ 131:subsystems/gps/gps_ubx.c ****       lla_f.lon = ((float) gps.lla_pos.lon) / 1e7;
+ 132:subsystems/gps/gps_ubx.c ****       struct UtmCoor_f utm_f;
+ 133:subsystems/gps/gps_ubx.c ****       utm_f.zone = nav_utm_zone0;
+ 134:subsystems/gps/gps_ubx.c ****       /* convert to utm */
+ 135:subsystems/gps/gps_ubx.c ****       utm_of_lla_f(&utm_f, &lla_f);
+ 136:subsystems/gps/gps_ubx.c ****       /* copy results of utm conversion */
+ 137:subsystems/gps/gps_ubx.c ****       gps.utm_pos.east = utm_f.east*100;
+ 138:subsystems/gps/gps_ubx.c ****       gps.utm_pos.north = utm_f.north*100;
+ 139:subsystems/gps/gps_ubx.c ****       gps.utm_pos.alt = utm_f.alt*1000;
+ 140:subsystems/gps/gps_ubx.c ****       gps.utm_pos.zone = nav_utm_zone0;
+ 141:subsystems/gps/gps_ubx.c **** #else
+ 142:subsystems/gps/gps_ubx.c ****     }
+ 143:subsystems/gps/gps_ubx.c ****     else if (gps_ubx.msg_id == UBX_NAV_POSUTM_ID) {
+ 144:subsystems/gps/gps_ubx.c ****       gps.utm_pos.east = UBX_NAV_POSUTM_EAST(gps_ubx.msg_buf);
+ 145:subsystems/gps/gps_ubx.c ****       gps.utm_pos.north = UBX_NAV_POSUTM_NORTH(gps_ubx.msg_buf);
+ 146:subsystems/gps/gps_ubx.c ****       uint8_t hem = UBX_NAV_POSUTM_HEM(gps_ubx.msg_buf);
+ 147:subsystems/gps/gps_ubx.c ****       if (hem == UTM_HEM_SOUTH)
+ 148:subsystems/gps/gps_ubx.c ****         gps.utm_pos.north -= 1000000000; /* Subtract false northing: -10000km */
+ 149:subsystems/gps/gps_ubx.c ****       gps.utm_pos.alt = UBX_NAV_POSUTM_ALT(gps_ubx.msg_buf)*10;
+ 150:subsystems/gps/gps_ubx.c ****       gps.hmsl = gps.utm_pos.alt;
+ 151:subsystems/gps/gps_ubx.c ****       gps.lla_pos.alt = gps.utm_pos.alt; // FIXME: with UTM only you do not receive ellipsoid altit
+ 152:subsystems/gps/gps_ubx.c ****       gps.utm_pos.zone = UBX_NAV_POSUTM_ZONE(gps_ubx.msg_buf);
+ 153:subsystems/gps/gps_ubx.c **** #endif
+ 154:subsystems/gps/gps_ubx.c ****     }
+ 155:subsystems/gps/gps_ubx.c ****     else if (gps_ubx.msg_id == UBX_NAV_VELNED_ID) {
+ 156:subsystems/gps/gps_ubx.c ****       gps.speed_3d = UBX_NAV_VELNED_Speed(gps_ubx.msg_buf);
+ 157:subsystems/gps/gps_ubx.c ****       gps.gspeed = UBX_NAV_VELNED_GSpeed(gps_ubx.msg_buf);
+ 158:subsystems/gps/gps_ubx.c ****       gps.ned_vel.x = UBX_NAV_VELNED_VEL_N(gps_ubx.msg_buf);
+ 159:subsystems/gps/gps_ubx.c ****       gps.ned_vel.y = UBX_NAV_VELNED_VEL_E(gps_ubx.msg_buf);
+ 160:subsystems/gps/gps_ubx.c ****       gps.ned_vel.z = UBX_NAV_VELNED_VEL_D(gps_ubx.msg_buf);
+ 161:subsystems/gps/gps_ubx.c ****       // Ublox gives I4 heading in 1e-5 degrees, apparenty from 0 to 360 degrees (not -180 to 180)
+ 162:subsystems/gps/gps_ubx.c ****       // I4 max = 2^31 = 214 * 1e5 * 100 < 360 * 1e7: overflow on angles over 214 deg -> casted to 
+ 163:subsystems/gps/gps_ubx.c ****       // solution: First to radians, and then scale to 1e-7 radians
+ 164:subsystems/gps/gps_ubx.c ****       // First x 10 for loosing less resolution, then to radians, then multiply x 10 again
+ 165:subsystems/gps/gps_ubx.c ****       gps.course = (RadOfDeg(UBX_NAV_VELNED_Heading(gps_ubx.msg_buf)*10)) * 10;
+ 166:subsystems/gps/gps_ubx.c ****       gps.tow = UBX_NAV_VELNED_ITOW(gps_ubx.msg_buf);
+ 167:subsystems/gps/gps_ubx.c ****       gps_ubx.have_velned = 1;
+ 168:subsystems/gps/gps_ubx.c ****     }
+ 169:subsystems/gps/gps_ubx.c ****     else if (gps_ubx.msg_id == UBX_NAV_SVINFO_ID) {
+ 170:subsystems/gps/gps_ubx.c ****       gps.nb_channels = Min(UBX_NAV_SVINFO_NCH(gps_ubx.msg_buf), GPS_NB_CHANNELS);
+ 171:subsystems/gps/gps_ubx.c ****       uint8_t i;
+ 172:subsystems/gps/gps_ubx.c ****       for(i = 0; i < gps.nb_channels; i++) {
+ 173:subsystems/gps/gps_ubx.c ****         gps.svinfos[i].svid = UBX_NAV_SVINFO_SVID(gps_ubx.msg_buf, i);
+ 174:subsystems/gps/gps_ubx.c ****         gps.svinfos[i].flags = UBX_NAV_SVINFO_Flags(gps_ubx.msg_buf, i);
+ 175:subsystems/gps/gps_ubx.c ****         gps.svinfos[i].qi = UBX_NAV_SVINFO_QI(gps_ubx.msg_buf, i);
+ 176:subsystems/gps/gps_ubx.c ****         gps.svinfos[i].cno = UBX_NAV_SVINFO_CNO(gps_ubx.msg_buf, i);
+ 177:subsystems/gps/gps_ubx.c ****         gps.svinfos[i].elev = UBX_NAV_SVINFO_Elev(gps_ubx.msg_buf, i);
+ 178:subsystems/gps/gps_ubx.c ****         gps.svinfos[i].azim = UBX_NAV_SVINFO_Azim(gps_ubx.msg_buf, i);
+ 179:subsystems/gps/gps_ubx.c ****       }
+ 180:subsystems/gps/gps_ubx.c ****     }
+ 181:subsystems/gps/gps_ubx.c ****     else if (gps_ubx.msg_id == UBX_NAV_STATUS_ID) {
+ 182:subsystems/gps/gps_ubx.c ****       gps.fix = UBX_NAV_STATUS_GPSfix(gps_ubx.msg_buf);
+ 183:subsystems/gps/gps_ubx.c ****       gps_ubx.status_flags = UBX_NAV_STATUS_Flags(gps_ubx.msg_buf);
+ 184:subsystems/gps/gps_ubx.c ****       gps_ubx.sol_flags = UBX_NAV_SOL_Flags(gps_ubx.msg_buf);
+ 185:subsystems/gps/gps_ubx.c ****     }
+ 186:subsystems/gps/gps_ubx.c ****   }
+ 187:subsystems/gps/gps_ubx.c **** }
+ 188:subsystems/gps/gps_ubx.c **** 
+ 189:subsystems/gps/gps_ubx.c **** 
+ 190:subsystems/gps/gps_ubx.c **** /* UBX parsing */
+ 191:subsystems/gps/gps_ubx.c **** void gps_ubx_parse( uint8_t c ) {
+  66              		.loc 1 191 0
+  67              		.cfi_startproc
+  68              		@ args = 0, pretend = 0, frame = 0
+  69              		@ frame_needed = 0, uses_anonymous_args = 0
+  70              		@ link register save eliminated.
+  71              	.LVL0:
+ 192:subsystems/gps/gps_ubx.c ****   if (gps_ubx.status < GOT_PAYLOAD) {
+  72              		.loc 1 192 0
+  73 0000 3E4B     		ldr	r3, .L32
+  74 0002 93F80921 		ldrb	r2, [r3, #265]	@ zero_extendqisi2
+  75 0006 062A     		cmp	r2, #6
+  76 0008 0AD8     		bhi	.L6
+ 193:subsystems/gps/gps_ubx.c ****     gps_ubx.ck_a += c;
+  77              		.loc 1 193 0
+  78 000a 93F80D21 		ldrb	r2, [r3, #269]	@ zero_extendqisi2
+ 194:subsystems/gps/gps_ubx.c ****     gps_ubx.ck_b += gps_ubx.ck_a;
+  79              		.loc 1 194 0
+  80 000e 93F80E11 		ldrb	r1, [r3, #270]	@ zero_extendqisi2
+ 193:subsystems/gps/gps_ubx.c ****     gps_ubx.ck_a += c;
+  81              		.loc 1 193 0
+  82 0012 8218     		adds	r2, r0, r2
+  83 0014 D2B2     		uxtb	r2, r2
+  84 0016 83F80D21 		strb	r2, [r3, #269]
+  85              		.loc 1 194 0
+  86 001a 5218     		adds	r2, r2, r1
+  87 001c 83F80E21 		strb	r2, [r3, #270]
+  88              	.L6:
+ 195:subsystems/gps/gps_ubx.c ****   }
+ 196:subsystems/gps/gps_ubx.c ****   switch (gps_ubx.status) {
+  89              		.loc 1 196 0
+  90 0020 364B     		ldr	r3, .L32
+  91 0022 93F80931 		ldrb	r3, [r3, #265]	@ zero_extendqisi2
+  92 0026 082B     		cmp	r3, #8
+  93 0028 59D8     		bhi	.L7
+  94 002a DFE803F0 		tbb	[pc, r3]
+  95              	.L17:
+  96 002e 05       		.byte	(.L8-.L17)/2
+  97 002f 0A       		.byte	(.L9-.L17)/2
+  98 0030 15       		.byte	(.L10-.L17)/2
+  99 0031 1D       		.byte	(.L11-.L17)/2
+ 100 0032 21       		.byte	(.L12-.L17)/2
+ 101 0033 25       		.byte	(.L13-.L17)/2
+ 102 0034 34       		.byte	(.L14-.L17)/2
+ 103 0035 45       		.byte	(.L15-.L17)/2
+ 104 0036 4E       		.byte	(.L16-.L17)/2
+ 105 0037 00       		.align	1
+ 106              	.L8:
+ 197:subsystems/gps/gps_ubx.c ****   case UNINIT:
+ 198:subsystems/gps/gps_ubx.c ****     if (c == UBX_SYNC1)
+ 107              		.loc 1 198 0
+ 108 0038 B528     		cmp	r0, #181
+ 109 003a 5ED1     		bne	.L26
+ 199:subsystems/gps/gps_ubx.c ****       gps_ubx.status++;
+ 110              		.loc 1 199 0
+ 111 003c 0122     		movs	r2, #1
+ 112 003e 2F4B     		ldr	r3, .L32
+ 113 0040 40E0     		b	.L28
+ 114              	.L9:
+ 200:subsystems/gps/gps_ubx.c ****     break;
+ 201:subsystems/gps/gps_ubx.c ****   case GOT_SYNC1:
+ 202:subsystems/gps/gps_ubx.c ****     if (c != UBX_SYNC2) {
+ 115              		.loc 1 202 0
+ 116 0042 6228     		cmp	r0, #98
+ 117 0044 2D4B     		ldr	r3, .L32
+ 118 0046 01D0     		beq	.L19
+ 203:subsystems/gps/gps_ubx.c ****       gps_ubx.error_last = GPS_UBX_ERR_OUT_OF_SYNC;
+ 119              		.loc 1 203 0
+ 120 0048 0522     		movs	r2, #5
+ 121 004a 4AE0     		b	.L27
+ 122              	.L19:
+ 204:subsystems/gps/gps_ubx.c ****       goto error;
+ 205:subsystems/gps/gps_ubx.c ****     }
+ 206:subsystems/gps/gps_ubx.c ****     gps_ubx.ck_a = 0;
+ 123              		.loc 1 206 0
+ 124 004c 0022     		movs	r2, #0
+ 125 004e 83F80D21 		strb	r2, [r3, #269]
+ 207:subsystems/gps/gps_ubx.c ****     gps_ubx.ck_b = 0;
+ 126              		.loc 1 207 0
+ 127 0052 83F80E21 		strb	r2, [r3, #270]
+ 128 0056 2BE0     		b	.L29
+ 129              	.L10:
+ 208:subsystems/gps/gps_ubx.c ****     gps_ubx.status++;
+ 209:subsystems/gps/gps_ubx.c ****     break;
+ 210:subsystems/gps/gps_ubx.c ****   case GOT_SYNC2:
+ 211:subsystems/gps/gps_ubx.c ****     if (gps_ubx.msg_available) {
+ 130              		.loc 1 211 0
+ 131 0058 284B     		ldr	r3, .L32
+ 132 005a 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
+ 133 005c 0AB1     		cbz	r2, .L21
+ 212:subsystems/gps/gps_ubx.c ****       /* Previous message has not yet been parsed: discard this one */
+ 213:subsystems/gps/gps_ubx.c ****       gps_ubx.error_last = GPS_UBX_ERR_OVERRUN;
+ 134              		.loc 1 213 0
+ 135 005e 0122     		movs	r2, #1
+ 136 0060 3FE0     		b	.L27
+ 137              	.L21:
+ 214:subsystems/gps/gps_ubx.c ****       goto error;
+ 215:subsystems/gps/gps_ubx.c ****     }
+ 216:subsystems/gps/gps_ubx.c ****     gps_ubx.msg_class = c;
+ 138              		.loc 1 216 0
+ 139 0062 83F80801 		strb	r0, [r3, #264]
+ 140 0066 23E0     		b	.L29
+ 141              	.L11:
+ 217:subsystems/gps/gps_ubx.c ****     gps_ubx.status++;
+ 218:subsystems/gps/gps_ubx.c ****     break;
+ 219:subsystems/gps/gps_ubx.c ****   case GOT_CLASS:
+ 220:subsystems/gps/gps_ubx.c ****     gps_ubx.msg_id = c;
+ 142              		.loc 1 220 0
+ 143 0068 244B     		ldr	r3, .L32
+ 144 006a 83F80701 		strb	r0, [r3, #263]
+ 145 006e 1FE0     		b	.L29
+ 146              	.L12:
+ 221:subsystems/gps/gps_ubx.c ****     gps_ubx.status++;
+ 222:subsystems/gps/gps_ubx.c ****     break;
+ 223:subsystems/gps/gps_ubx.c ****   case GOT_ID:
+ 224:subsystems/gps/gps_ubx.c ****     gps_ubx.len = c;
+ 147              		.loc 1 224 0
+ 148 0070 224B     		ldr	r3, .L32
+ 149 0072 A3F80A01 		strh	r0, [r3, #266]	@ movhi
+ 150 0076 1BE0     		b	.L29
+ 151              	.L13:
+ 225:subsystems/gps/gps_ubx.c ****     gps_ubx.status++;
+ 226:subsystems/gps/gps_ubx.c ****     break;
+ 227:subsystems/gps/gps_ubx.c ****   case GOT_LEN1:
+ 228:subsystems/gps/gps_ubx.c ****     gps_ubx.len |= (c<<8);
+ 152              		.loc 1 228 0
+ 153 0078 204B     		ldr	r3, .L32
+ 154 007a B3F80A21 		ldrh	r2, [r3, #266]
+ 155 007e 42EA0020 		orr	r0, r2, r0, lsl #8
+ 156              	.LVL1:
+ 229:subsystems/gps/gps_ubx.c ****     if (gps_ubx.len > GPS_UBX_MAX_PAYLOAD) {
+ 157              		.loc 1 229 0
+ 158 0082 FF28     		cmp	r0, #255
+ 228:subsystems/gps/gps_ubx.c ****     gps_ubx.len |= (c<<8);
+ 159              		.loc 1 228 0
+ 160 0084 A3F80A01 		strh	r0, [r3, #266]	@ movhi
+ 161              		.loc 1 229 0
+ 162 0088 01D9     		bls	.L22
+ 230:subsystems/gps/gps_ubx.c ****       gps_ubx.error_last = GPS_UBX_ERR_MSG_TOO_LONG;
+ 163              		.loc 1 230 0
+ 164 008a 0222     		movs	r2, #2
+ 165 008c 29E0     		b	.L27
+ 166              	.L22:
+ 231:subsystems/gps/gps_ubx.c ****       goto error;
+ 232:subsystems/gps/gps_ubx.c ****     }
+ 233:subsystems/gps/gps_ubx.c ****     gps_ubx.msg_idx = 0;
+ 167              		.loc 1 233 0
+ 168 008e 0022     		movs	r2, #0
+ 169 0090 83F80C21 		strb	r2, [r3, #268]
+ 170 0094 0CE0     		b	.L29
+ 171              	.LVL2:
+ 172              	.L14:
+ 234:subsystems/gps/gps_ubx.c ****     gps_ubx.status++;
+ 235:subsystems/gps/gps_ubx.c ****     break;
+ 236:subsystems/gps/gps_ubx.c ****   case GOT_LEN2:
+ 237:subsystems/gps/gps_ubx.c ****     gps_ubx.msg_buf[gps_ubx.msg_idx] = c;
+ 173              		.loc 1 237 0
+ 174 0096 194B     		ldr	r3, .L32
+ 175 0098 93F80C21 		ldrb	r2, [r3, #268]	@ zero_extendqisi2
+ 176 009c 9918     		adds	r1, r3, r2
+ 177 009e 0872     		strb	r0, [r1, #8]
+ 238:subsystems/gps/gps_ubx.c ****     gps_ubx.msg_idx++;
+ 178              		.loc 1 238 0
+ 179 00a0 0132     		adds	r2, r2, #1
+ 239:subsystems/gps/gps_ubx.c ****     if (gps_ubx.msg_idx >= gps_ubx.len) {
+ 180              		.loc 1 239 0
+ 181 00a2 B3F80A11 		ldrh	r1, [r3, #266]
+ 238:subsystems/gps/gps_ubx.c ****     gps_ubx.msg_idx++;
+ 182              		.loc 1 238 0
+ 183 00a6 D2B2     		uxtb	r2, r2
+ 184              		.loc 1 239 0
+ 185 00a8 9142     		cmp	r1, r2
+ 238:subsystems/gps/gps_ubx.c ****     gps_ubx.msg_idx++;
+ 186              		.loc 1 238 0
+ 187 00aa 83F80C21 		strb	r2, [r3, #268]
+ 188              		.loc 1 239 0
+ 189 00ae 24D8     		bhi	.L26
+ 190              	.L29:
+ 240:subsystems/gps/gps_ubx.c ****       gps_ubx.status++;
+ 191              		.loc 1 240 0
+ 192 00b0 93F80921 		ldrb	r2, [r3, #265]	@ zero_extendqisi2
+ 193 00b4 0132     		adds	r2, r2, #1
+ 194 00b6 05E0     		b	.L28
+ 195              	.L15:
+ 241:subsystems/gps/gps_ubx.c ****     }
+ 242:subsystems/gps/gps_ubx.c ****     break;
+ 243:subsystems/gps/gps_ubx.c ****   case GOT_PAYLOAD:
+ 244:subsystems/gps/gps_ubx.c ****     if (c != gps_ubx.ck_a) {
+ 196              		.loc 1 244 0
+ 197 00b8 104B     		ldr	r3, .L32
+ 198 00ba 93F80D21 		ldrb	r2, [r3, #269]	@ zero_extendqisi2
+ 199 00be 8242     		cmp	r2, r0
+ 200 00c0 08D1     		bne	.L30
+ 245:subsystems/gps/gps_ubx.c ****       gps_ubx.error_last = GPS_UBX_ERR_CHECKSUM;
+ 246:subsystems/gps/gps_ubx.c ****       goto error;
+ 247:subsystems/gps/gps_ubx.c ****     }
+ 248:subsystems/gps/gps_ubx.c ****     gps_ubx.status++;
+ 201              		.loc 1 248 0
+ 202 00c2 0822     		movs	r2, #8
+ 203              	.L28:
+ 204 00c4 83F80921 		strb	r2, [r3, #265]
+ 249:subsystems/gps/gps_ubx.c ****     break;
+ 205              		.loc 1 249 0
+ 206 00c8 7047     		bx	lr
+ 207              	.L16:
+ 250:subsystems/gps/gps_ubx.c ****   case GOT_CHECKSUM1:
+ 251:subsystems/gps/gps_ubx.c ****     if (c != gps_ubx.ck_b) {
+ 208              		.loc 1 251 0
+ 209 00ca 0C4B     		ldr	r3, .L32
+ 210 00cc 93F80E21 		ldrb	r2, [r3, #270]	@ zero_extendqisi2
+ 211 00d0 8242     		cmp	r2, r0
+ 212 00d2 01D0     		beq	.L24
+ 213              	.L30:
+ 252:subsystems/gps/gps_ubx.c ****       gps_ubx.error_last = GPS_UBX_ERR_CHECKSUM;
+ 214              		.loc 1 252 0
+ 215 00d4 0322     		movs	r2, #3
+ 216 00d6 04E0     		b	.L27
+ 217              	.L24:
+ 253:subsystems/gps/gps_ubx.c ****       goto error;
+ 254:subsystems/gps/gps_ubx.c ****     }
+ 255:subsystems/gps/gps_ubx.c ****     gps_ubx.msg_available = TRUE;
+ 218              		.loc 1 255 0
+ 219 00d8 0122     		movs	r2, #1
+ 220 00da 1A70     		strb	r2, [r3, #0]
+ 256:subsystems/gps/gps_ubx.c ****     goto restart;
+ 221              		.loc 1 256 0
+ 222 00dc 09E0     		b	.L25
+ 223              	.L7:
+ 257:subsystems/gps/gps_ubx.c ****     break;
+ 258:subsystems/gps/gps_ubx.c ****   default:
+ 259:subsystems/gps/gps_ubx.c ****     gps_ubx.error_last = GPS_UBX_ERR_UNEXPECTED;
+ 224              		.loc 1 259 0
+ 225 00de 074B     		ldr	r3, .L32
+ 226 00e0 0422     		movs	r2, #4
+ 227              	.L27:
+ 228              	.L20:
+ 229 00e2 83F81221 		strb	r2, [r3, #274]
+ 260:subsystems/gps/gps_ubx.c ****     goto error;
+ 261:subsystems/gps/gps_ubx.c ****   }
+ 262:subsystems/gps/gps_ubx.c ****   return;
+ 263:subsystems/gps/gps_ubx.c ****  error:
+ 264:subsystems/gps/gps_ubx.c ****   gps_ubx.error_cnt++;
+ 230              		.loc 1 264 0
+ 231 00e6 054B     		ldr	r3, .L32
+ 232 00e8 93F81121 		ldrb	r2, [r3, #273]	@ zero_extendqisi2
+ 233 00ec 0132     		adds	r2, r2, #1
+ 234 00ee 83F81121 		strb	r2, [r3, #273]
+ 235              	.L25:
+ 265:subsystems/gps/gps_ubx.c ****  restart:
+ 266:subsystems/gps/gps_ubx.c ****   gps_ubx.status = UNINIT;
+ 236              		.loc 1 266 0
+ 237 00f2 024B     		ldr	r3, .L32
+ 238 00f4 0022     		movs	r2, #0
+ 239 00f6 83F80921 		strb	r2, [r3, #265]
+ 240              	.L26:
+ 241 00fa 7047     		bx	lr
+ 242              	.L33:
+ 243              		.align	2
+ 244              	.L32:
+ 245 00fc 00000000 		.word	.LANCHOR0
+ 246              		.cfi_endproc
+ 247              	.LFE29:
+ 249              		.section	.text.ubxsend_cfg_rst,"ax",%progbits
+ 250              		.align	1
+ 251              		.global	ubxsend_cfg_rst
+ 252              		.thumb
+ 253              		.thumb_func
+ 255              	ubxsend_cfg_rst:
+ 256              	.LFB30:
+ 267:subsystems/gps/gps_ubx.c ****   return;
+ 268:subsystems/gps/gps_ubx.c **** }
+ 269:subsystems/gps/gps_ubx.c **** 
+ 270:subsystems/gps/gps_ubx.c **** #ifdef GPS_UBX_UCENTER
+ 271:subsystems/gps/gps_ubx.c **** #include GPS_UBX_UCENTER
+ 272:subsystems/gps/gps_ubx.c **** #endif
+ 273:subsystems/gps/gps_ubx.c **** 
+ 274:subsystems/gps/gps_ubx.c **** 
+ 275:subsystems/gps/gps_ubx.c **** void ubxsend_cfg_rst(uint16_t bbr , uint8_t reset_mode) {
+ 257              		.loc 1 275 0
+ 258              		.cfi_startproc
+ 259              		@ args = 0, pretend = 0, frame = 8
+ 260              		@ frame_needed = 0, uses_anonymous_args = 0
+ 261              	.LVL3:
+ 262 0000 2DE9F341 		push	{r0, r1, r4, r5, r6, r7, r8, lr}
+ 263              	.LCFI0:
+ 264              		.cfi_def_cfa_offset 32
+ 265              	.LVL4:
+ 266              		.loc 1 275 0
+ 267 0004 8046     		mov	r8, r0
+ 268              		.cfi_offset 14, -4
+ 269              		.cfi_offset 8, -8
+ 270              		.cfi_offset 7, -12
+ 271              		.cfi_offset 6, -16
+ 272              		.cfi_offset 5, -20
+ 273              		.cfi_offset 4, -24
+ 274              		.cfi_offset 1, -28
+ 275              		.cfi_offset 0, -32
+ 276              	.LVL5:
+ 277 0006 0F46     		mov	r7, r1
+ 278              	.LVL6:
+ 279              	.LBB2:
+ 276:subsystems/gps/gps_ubx.c **** #ifdef GPS_LINK
+ 277:subsystems/gps/gps_ubx.c ****   UbxSend_CFG_RST(bbr, reset_mode, 0x00);
+ 280              		.loc 1 277 0
+ 281 0008 4948     		ldr	r0, .L36
+ 282              	.LVL7:
+ 283 000a B521     		movs	r1, #181
+ 284              	.LVL8:
+ 285 000c 494C     		ldr	r4, .L36+4
+ 286 000e FFF7FEFF 		bl	uart_transmit
+ 287 0012 6221     		movs	r1, #98
+ 288 0014 4648     		ldr	r0, .L36
+ 289 0016 FFF7FEFF 		bl	uart_transmit
+ 290 001a 0025     		movs	r5, #0
+ 291              	.LBB47:
+ 292 001c 0621     		movs	r1, #6
+ 293 001e 4448     		ldr	r0, .L36
+ 294              	.LBE47:
+ 295 0020 84F81051 		strb	r5, [r4, #272]
+ 296 0024 84F80F51 		strb	r5, [r4, #271]
+ 297              	.LBB46:
+ 298 0028 FFF7FEFF 		bl	uart_transmit
+ 299 002c 94F80F31 		ldrb	r3, [r4, #271]	@ zero_extendqisi2
+ 300 0030 94F81021 		ldrb	r2, [r4, #272]	@ zero_extendqisi2
+ 301 0034 0633     		adds	r3, r3, #6
+ 302 0036 DBB2     		uxtb	r3, r3
+ 303 0038 84F80F31 		strb	r3, [r4, #271]
+ 304              	.LBE46:
+ 305              	.LBB45:
+ 306 003c 0421     		movs	r1, #4
+ 307              	.LBE45:
+ 308              	.LBB44:
+ 309 003e 9B18     		adds	r3, r3, r2
+ 310              	.LBE44:
+ 311              	.LBB43:
+ 312 0040 3B48     		ldr	r0, .L36
+ 313              	.LBE43:
+ 314              	.LBB42:
+ 315 0042 84F81031 		strb	r3, [r4, #272]
+ 316              	.LBE42:
+ 317              	.LBB41:
+ 318 0046 FFF7FEFF 		bl	uart_transmit
+ 319 004a 94F80F31 		ldrb	r3, [r4, #271]	@ zero_extendqisi2
+ 320 004e 94F81021 		ldrb	r2, [r4, #272]	@ zero_extendqisi2
+ 321 0052 0433     		adds	r3, r3, #4
+ 322 0054 DBB2     		uxtb	r3, r3
+ 323 0056 84F80F31 		strb	r3, [r4, #271]
+ 324              	.LBE41:
+ 325              	.LBB29:
+ 326              	.LBB33:
+ 327 005a 0421     		movs	r1, #4
+ 328              	.LBE33:
+ 329              	.LBE29:
+ 330              	.LBB28:
+ 331 005c 9B18     		adds	r3, r3, r2
+ 332              	.LBE28:
+ 333              	.LBB27:
+ 334              	.LBB32:
+ 335 005e 3448     		ldr	r0, .L36
+ 336              	.LBE32:
+ 337              	.LBE27:
+ 338              	.LBB26:
+ 339 0060 84F81031 		strb	r3, [r4, #272]
+ 340              	.LBE26:
+ 341              	.LBB25:
+ 342              	.LBB34:
+ 343 0064 FFF7FEFF 		bl	uart_transmit
+ 344 0068 94F80F31 		ldrb	r3, [r4, #271]	@ zero_extendqisi2
+ 345 006c 94F81021 		ldrb	r2, [r4, #272]	@ zero_extendqisi2
+ 346 0070 0433     		adds	r3, r3, #4
+ 347 0072 DBB2     		uxtb	r3, r3
+ 348 0074 84F80F31 		strb	r3, [r4, #271]
+ 349              	.LBE34:
+ 350              	.LBB35:
+ 351 0078 2946     		mov	r1, r5
+ 352              	.LBE35:
+ 353              	.LBB36:
+ 354 007a 9B18     		adds	r3, r3, r2
+ 355              	.LBE36:
+ 356              	.LBB37:
+ 357 007c 2C48     		ldr	r0, .L36
+ 358              	.LBE37:
+ 359              	.LBB38:
+ 360 007e 84F81031 		strb	r3, [r4, #272]
+ 361              	.LBE38:
+ 362              	.LBE25:
+ 363 0082 02AE     		add	r6, sp, #8
+ 364              	.LBB24:
+ 365              	.LBB31:
+ 366 0084 FFF7FEFF 		bl	uart_transmit
+ 367 0088 94F81021 		ldrb	r2, [r4, #272]	@ zero_extendqisi2
+ 368 008c 94F80F31 		ldrb	r3, [r4, #271]	@ zero_extendqisi2
+ 369              	.LBE31:
+ 370              	.LBE24:
+ 371 0090 26F8028D 		strh	r8, [r6, #-2]!	@ movhi
+ 372              	.LVL9:
+ 373              	.LBB23:
+ 374 0094 5FFA88F8 		uxtb	r8, r8
+ 375              	.LVL10:
+ 376              	.LBE23:
+ 377              	.LBB22:
+ 378              	.LBB39:
+ 379 0098 84F80F31 		strb	r3, [r4, #271]
+ 380              	.LBE39:
+ 381              	.LBE22:
+ 382              	.LBB21:
+ 383 009c 4146     		mov	r1, r8
+ 384              	.LBE21:
+ 385              	.LBB20:
+ 386              	.LBB30:
+ 387 009e 9B18     		adds	r3, r3, r2
+ 388              	.LBE30:
+ 389              	.LBE20:
+ 390              	.LBB19:
+ 391 00a0 2348     		ldr	r0, .L36
+ 392              	.LBE19:
+ 393              	.LBB18:
+ 394              	.LBB40:
+ 395 00a2 84F81031 		strb	r3, [r4, #272]
+ 396              	.LBE40:
+ 397              	.LBE18:
+ 398              	.LBB17:
+ 399 00a6 FFF7FEFF 		bl	uart_transmit
+ 400 00aa 94F80F31 		ldrb	r3, [r4, #271]	@ zero_extendqisi2
+ 401              	.LBE17:
+ 402              	.LBB16:
+ 403 00ae 2048     		ldr	r0, .L36
+ 404              	.LBE16:
+ 405              	.LBB15:
+ 406 00b0 9844     		add	r8, r8, r3
+ 407              	.LVL11:
+ 408 00b2 94F81031 		ldrb	r3, [r4, #272]	@ zero_extendqisi2
+ 409 00b6 5FFA88F8 		uxtb	r8, r8
+ 410 00ba 84F80F81 		strb	r8, [r4, #271]
+ 411 00be 9844     		add	r8, r8, r3
+ 412 00c0 84F81081 		strb	r8, [r4, #272]
+ 413              	.LBE15:
+ 414              	.LBB14:
+ 415 00c4 7678     		ldrb	r6, [r6, #1]	@ zero_extendqisi2
+ 416              	.LVL12:
+ 417 00c6 3146     		mov	r1, r6
+ 418 00c8 FFF7FEFF 		bl	uart_transmit
+ 419 00cc 94F80F31 		ldrb	r3, [r4, #271]	@ zero_extendqisi2
+ 420              	.LBE14:
+ 421              	.LBB13:
+ 422 00d0 3946     		mov	r1, r7
+ 423              	.LBE13:
+ 424              	.LBB12:
+ 425 00d2 F618     		adds	r6, r6, r3
+ 426              	.LVL13:
+ 427 00d4 94F81031 		ldrb	r3, [r4, #272]	@ zero_extendqisi2
+ 428 00d8 F6B2     		uxtb	r6, r6
+ 429 00da 84F80F61 		strb	r6, [r4, #271]
+ 430              	.LBE12:
+ 431              	.LBB11:
+ 432 00de 1448     		ldr	r0, .L36
+ 433              	.LBE11:
+ 434              	.LBB10:
+ 435 00e0 F618     		adds	r6, r6, r3
+ 436 00e2 84F81061 		strb	r6, [r4, #272]
+ 437              	.LBE10:
+ 438              	.LBB9:
+ 439 00e6 FFF7FEFF 		bl	uart_transmit
+ 440 00ea 94F80F31 		ldrb	r3, [r4, #271]	@ zero_extendqisi2
+ 441              	.LBE9:
+ 442              	.LBB8:
+ 443 00ee 2946     		mov	r1, r5
+ 444              	.LBE8:
+ 445              	.LBB7:
+ 446 00f0 FF18     		adds	r7, r7, r3
+ 447              	.LVL14:
+ 448 00f2 94F81031 		ldrb	r3, [r4, #272]	@ zero_extendqisi2
+ 449 00f6 FFB2     		uxtb	r7, r7
+ 450 00f8 84F80F71 		strb	r7, [r4, #271]
+ 451              	.LBE7:
+ 452              	.LBB6:
+ 453 00fc 0C48     		ldr	r0, .L36
+ 454              	.LBE6:
+ 455              	.LBB5:
+ 456 00fe FF18     		adds	r7, r7, r3
+ 457 0100 84F81071 		strb	r7, [r4, #272]
+ 458              	.LBE5:
+ 459              	.LBB4:
+ 460 0104 FFF7FEFF 		bl	uart_transmit
+ 461 0108 94F80F11 		ldrb	r1, [r4, #271]	@ zero_extendqisi2
+ 462 010c 94F81031 		ldrb	r3, [r4, #272]	@ zero_extendqisi2
+ 463              	.LBE4:
+ 464 0110 0748     		ldr	r0, .L36
+ 465              	.LBB3:
+ 466 0112 CB18     		adds	r3, r1, r3
+ 467 0114 84F80F11 		strb	r1, [r4, #271]
+ 468 0118 84F81031 		strb	r3, [r4, #272]
+ 469              	.LBE3:
+ 470 011c FFF7FEFF 		bl	uart_transmit
+ 471 0120 0348     		ldr	r0, .L36
+ 472 0122 94F81011 		ldrb	r1, [r4, #272]	@ zero_extendqisi2
+ 473              	.LBE2:
+ 278:subsystems/gps/gps_ubx.c **** #endif /* else less harmful for HITL */
+ 279:subsystems/gps/gps_ubx.c **** }
+ 474              		.loc 1 279 0
+ 475 0126 02B0     		add	sp, sp, #8
+ 476 0128 BDE8F041 		pop	{r4, r5, r6, r7, r8, lr}
+ 477              	.LBB48:
+ 277:subsystems/gps/gps_ubx.c ****   UbxSend_CFG_RST(bbr, reset_mode, 0x00);
+ 478              		.loc 1 277 0
+ 479 012c FFF7FEBF 		b	uart_transmit
+ 480              	.L37:
+ 481              		.align	2
+ 482              	.L36:
+ 483 0130 00000000 		.word	uart1
+ 484 0134 00000000 		.word	.LANCHOR0
+ 485              	.LBE48:
+ 486              		.cfi_endproc
+ 487              	.LFE30:
+ 489              		.global	__aeabi_i2d
+ 490              		.global	__aeabi_dmul
+ 491              		.global	__aeabi_d2iz
+ 492              		.global	__aeabi_i2f
+ 493              		.global	__aeabi_fdiv
+ 494              		.global	__aeabi_fmul
+ 495              		.global	__aeabi_f2iz
+ 496              		.section	.text.gps_ubx_read_message,"ax",%progbits
+ 497              		.align	1
+ 498              		.global	gps_ubx_read_message
+ 499              		.thumb
+ 500              		.thumb_func
+ 502              	gps_ubx_read_message:
+ 503              	.LFB28:
+  91:subsystems/gps/gps_ubx.c **** void gps_ubx_read_message(void) {
+ 504              		.loc 1 91 0
+ 505              		.cfi_startproc
+ 506              		@ args = 0, pretend = 0, frame = 32
+ 507              		@ frame_needed = 0, uses_anonymous_args = 0
+ 508 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 509              	.LCFI1:
+ 510              		.cfi_def_cfa_offset 20
+  93:subsystems/gps/gps_ubx.c ****   if (gps_ubx.msg_class == UBX_NAV_ID) {
+ 511              		.loc 1 93 0
+ 512 0002 BB4C     		ldr	r4, .L47+8
+ 513              		.cfi_offset 14, -4
+ 514              		.cfi_offset 7, -8
+ 515              		.cfi_offset 6, -12
+ 516              		.cfi_offset 5, -16
+ 517              		.cfi_offset 4, -20
+  91:subsystems/gps/gps_ubx.c **** void gps_ubx_read_message(void) {
+ 518              		.loc 1 91 0
+ 519 0004 89B0     		sub	sp, sp, #36
+ 520              	.LCFI2:
+ 521              		.cfi_def_cfa_offset 56
+  93:subsystems/gps/gps_ubx.c ****   if (gps_ubx.msg_class == UBX_NAV_ID) {
+ 522              		.loc 1 93 0
+ 523 0006 94F80861 		ldrb	r6, [r4, #264]	@ zero_extendqisi2
+ 524 000a 012E     		cmp	r6, #1
+ 525 000c 40F0A781 		bne	.L46
+  94:subsystems/gps/gps_ubx.c ****     if (gps_ubx.msg_id == UBX_NAV_SOL_ID) {
+ 526              		.loc 1 94 0
+ 527 0010 94F80731 		ldrb	r3, [r4, #263]	@ zero_extendqisi2
+ 528 0014 062B     		cmp	r3, #6
+ 529 0016 40F08E80 		bne	.L40
+ 101:subsystems/gps/gps_ubx.c ****       gps.tow        = UBX_NAV_SOL_ITOW(gps_ubx.msg_buf);
+ 530              		.loc 1 101 0
+ 531 001a A27A     		ldrb	r2, [r4, #10]	@ zero_extendqisi2
+ 532 001c E17A     		ldrb	r1, [r4, #11]	@ zero_extendqisi2
+ 533 001e 1204     		lsls	r2, r2, #16
+ 534 0020 607A     		ldrb	r0, [r4, #9]	@ zero_extendqisi2
+ 535 0022 42EA0162 		orr	r2, r2, r1, lsl #24
+ 536 0026 217A     		ldrb	r1, [r4, #8]	@ zero_extendqisi2
+ 537 0028 B24B     		ldr	r3, .L47+12
+ 538 002a 41EA0021 		orr	r1, r1, r0, lsl #8
+ 539 002e 0A43     		orrs	r2, r2, r1
+ 540 0030 DA65     		str	r2, [r3, #92]
+ 102:subsystems/gps/gps_ubx.c ****       gps.week       = UBX_NAV_SOL_week(gps_ubx.msg_buf);
+ 541              		.loc 1 102 0
+ 542 0032 617C     		ldrb	r1, [r4, #17]	@ zero_extendqisi2
+ 543 0034 227C     		ldrb	r2, [r4, #16]	@ zero_extendqisi2
+ 107:subsystems/gps/gps_ubx.c ****       gps.pacc       = UBX_NAV_SOL_Pacc(gps_ubx.msg_buf);
+ 544              		.loc 1 107 0
+ 545 0036 94F82100 		ldrb	r0, [r4, #33]	@ zero_extendqisi2
+ 102:subsystems/gps/gps_ubx.c ****       gps.week       = UBX_NAV_SOL_week(gps_ubx.msg_buf);
+ 546              		.loc 1 102 0
+ 547 003a 42EA0122 		orr	r2, r2, r1, lsl #8
+ 548 003e A3F85820 		strh	r2, [r3, #88]	@ movhi
+ 103:subsystems/gps/gps_ubx.c ****       gps.fix        = UBX_NAV_SOL_GPSfix(gps_ubx.msg_buf);
+ 549              		.loc 1 103 0
+ 550 0042 A27C     		ldrb	r2, [r4, #18]	@ zero_extendqisi2
+ 104:subsystems/gps/gps_ubx.c ****       gps.ecef_pos.x = UBX_NAV_SOL_ECEF_X(gps_ubx.msg_buf);
+ 551              		.loc 1 104 0
+ 552 0044 617D     		ldrb	r1, [r4, #21]	@ zero_extendqisi2
+ 103:subsystems/gps/gps_ubx.c ****       gps.fix        = UBX_NAV_SOL_GPSfix(gps_ubx.msg_buf);
+ 553              		.loc 1 103 0
+ 554 0046 83F85720 		strb	r2, [r3, #87]
+ 104:subsystems/gps/gps_ubx.c ****       gps.ecef_pos.x = UBX_NAV_SOL_ECEF_X(gps_ubx.msg_buf);
+ 555              		.loc 1 104 0
+ 556 004a A27D     		ldrb	r2, [r4, #22]	@ zero_extendqisi2
+ 557 004c 1204     		lsls	r2, r2, #16
+ 558 004e 42EA0122 		orr	r2, r2, r1, lsl #8
+ 559 0052 217D     		ldrb	r1, [r4, #20]	@ zero_extendqisi2
+ 560 0054 0A43     		orrs	r2, r2, r1
+ 561 0056 E17D     		ldrb	r1, [r4, #23]	@ zero_extendqisi2
+ 562 0058 42EA0162 		orr	r2, r2, r1, lsl #24
+ 563 005c 1A60     		str	r2, [r3, #0]
+ 105:subsystems/gps/gps_ubx.c ****       gps.ecef_pos.y = UBX_NAV_SOL_ECEF_Y(gps_ubx.msg_buf);
+ 564              		.loc 1 105 0
+ 565 005e A27E     		ldrb	r2, [r4, #26]	@ zero_extendqisi2
+ 566 0060 617E     		ldrb	r1, [r4, #25]	@ zero_extendqisi2
+ 567 0062 1204     		lsls	r2, r2, #16
+ 568 0064 42EA0122 		orr	r2, r2, r1, lsl #8
+ 569 0068 217E     		ldrb	r1, [r4, #24]	@ zero_extendqisi2
+ 570 006a 0A43     		orrs	r2, r2, r1
+ 571 006c E17E     		ldrb	r1, [r4, #27]	@ zero_extendqisi2
+ 572 006e 42EA0162 		orr	r2, r2, r1, lsl #24
+ 573 0072 5A60     		str	r2, [r3, #4]
+ 106:subsystems/gps/gps_ubx.c ****       gps.ecef_pos.z = UBX_NAV_SOL_ECEF_Z(gps_ubx.msg_buf);
+ 574              		.loc 1 106 0
+ 575 0074 A27F     		ldrb	r2, [r4, #30]	@ zero_extendqisi2
+ 576 0076 617F     		ldrb	r1, [r4, #29]	@ zero_extendqisi2
+ 577 0078 1204     		lsls	r2, r2, #16
+ 578 007a 42EA0122 		orr	r2, r2, r1, lsl #8
+ 579 007e 217F     		ldrb	r1, [r4, #28]	@ zero_extendqisi2
+ 580 0080 0A43     		orrs	r2, r2, r1
+ 581 0082 E17F     		ldrb	r1, [r4, #31]	@ zero_extendqisi2
+ 582 0084 42EA0162 		orr	r2, r2, r1, lsl #24
+ 583 0088 9A60     		str	r2, [r3, #8]
+ 107:subsystems/gps/gps_ubx.c ****       gps.pacc       = UBX_NAV_SOL_Pacc(gps_ubx.msg_buf);
+ 584              		.loc 1 107 0
+ 585 008a 94F82220 		ldrb	r2, [r4, #34]	@ zero_extendqisi2
+ 586 008e 94F82310 		ldrb	r1, [r4, #35]	@ zero_extendqisi2
+ 587 0092 1204     		lsls	r2, r2, #16
+ 588 0094 42EA0162 		orr	r2, r2, r1, lsl #24
+ 589 0098 94F82010 		ldrb	r1, [r4, #32]	@ zero_extendqisi2
+ 590 009c 41EA0021 		orr	r1, r1, r0, lsl #8
+ 591 00a0 0A43     		orrs	r2, r2, r1
+ 592 00a2 DA64     		str	r2, [r3, #76]
+ 108:subsystems/gps/gps_ubx.c ****       gps.ecef_vel.x = UBX_NAV_SOL_ECEFVX(gps_ubx.msg_buf);
+ 593              		.loc 1 108 0
+ 594 00a4 94F82620 		ldrb	r2, [r4, #38]	@ zero_extendqisi2
+ 595 00a8 94F82510 		ldrb	r1, [r4, #37]	@ zero_extendqisi2
+ 596 00ac 1204     		lsls	r2, r2, #16
+ 597 00ae 42EA0122 		orr	r2, r2, r1, lsl #8
+ 598 00b2 94F82410 		ldrb	r1, [r4, #36]	@ zero_extendqisi2
+ 599 00b6 0A43     		orrs	r2, r2, r1
+ 600 00b8 94F82710 		ldrb	r1, [r4, #39]	@ zero_extendqisi2
+ 601 00bc 42EA0162 		orr	r2, r2, r1, lsl #24
+ 602 00c0 DA62     		str	r2, [r3, #44]
+ 109:subsystems/gps/gps_ubx.c ****       gps.ecef_vel.y = UBX_NAV_SOL_ECEFVY(gps_ubx.msg_buf);
+ 603              		.loc 1 109 0
+ 604 00c2 94F82A20 		ldrb	r2, [r4, #42]	@ zero_extendqisi2
+ 605 00c6 94F82910 		ldrb	r1, [r4, #41]	@ zero_extendqisi2
+ 606 00ca 1204     		lsls	r2, r2, #16
+ 607 00cc 42EA0122 		orr	r2, r2, r1, lsl #8
+ 608 00d0 94F82810 		ldrb	r1, [r4, #40]	@ zero_extendqisi2
+ 111:subsystems/gps/gps_ubx.c ****       gps.sacc       = UBX_NAV_SOL_Sacc(gps_ubx.msg_buf);
+ 609              		.loc 1 111 0
+ 610 00d4 94F83100 		ldrb	r0, [r4, #49]	@ zero_extendqisi2
+ 109:subsystems/gps/gps_ubx.c ****       gps.ecef_vel.y = UBX_NAV_SOL_ECEFVY(gps_ubx.msg_buf);
+ 611              		.loc 1 109 0
+ 612 00d8 0A43     		orrs	r2, r2, r1
+ 613 00da 94F82B10 		ldrb	r1, [r4, #43]	@ zero_extendqisi2
+ 614 00de 42EA0162 		orr	r2, r2, r1, lsl #24
+ 615 00e2 1A63     		str	r2, [r3, #48]
+ 110:subsystems/gps/gps_ubx.c ****       gps.ecef_vel.z = UBX_NAV_SOL_ECEFVZ(gps_ubx.msg_buf);
+ 616              		.loc 1 110 0
+ 617 00e4 94F82E20 		ldrb	r2, [r4, #46]	@ zero_extendqisi2
+ 618 00e8 94F82D10 		ldrb	r1, [r4, #45]	@ zero_extendqisi2
+ 619 00ec 1204     		lsls	r2, r2, #16
+ 620 00ee 42EA0122 		orr	r2, r2, r1, lsl #8
+ 621 00f2 94F82C10 		ldrb	r1, [r4, #44]	@ zero_extendqisi2
+ 622 00f6 0A43     		orrs	r2, r2, r1
+ 623 00f8 94F82F10 		ldrb	r1, [r4, #47]	@ zero_extendqisi2
+ 624 00fc 42EA0162 		orr	r2, r2, r1, lsl #24
+ 625 0100 5A63     		str	r2, [r3, #52]
+ 111:subsystems/gps/gps_ubx.c ****       gps.sacc       = UBX_NAV_SOL_Sacc(gps_ubx.msg_buf);
+ 626              		.loc 1 111 0
+ 627 0102 94F83220 		ldrb	r2, [r4, #50]	@ zero_extendqisi2
+ 628 0106 94F83310 		ldrb	r1, [r4, #51]	@ zero_extendqisi2
+ 629 010a 1204     		lsls	r2, r2, #16
+ 630 010c 42EA0162 		orr	r2, r2, r1, lsl #24
+ 631 0110 94F83010 		ldrb	r1, [r4, #48]	@ zero_extendqisi2
+ 632 0114 41EA0021 		orr	r1, r1, r0, lsl #8
+ 633 0118 0A43     		orrs	r2, r2, r1
+ 634 011a 1A65     		str	r2, [r3, #80]
+ 112:subsystems/gps/gps_ubx.c ****       gps.pdop       = UBX_NAV_SOL_PDOP(gps_ubx.msg_buf);
+ 635              		.loc 1 112 0
+ 636 011c 94F83510 		ldrb	r1, [r4, #53]	@ zero_extendqisi2
+ 637 0120 94F83420 		ldrb	r2, [r4, #52]	@ zero_extendqisi2
+ 638 0124 42EA0122 		orr	r2, r2, r1, lsl #8
+ 639 0128 A3F85420 		strh	r2, [r3, #84]	@ movhi
+ 113:subsystems/gps/gps_ubx.c ****       gps.num_sv     = UBX_NAV_SOL_numSV(gps_ubx.msg_buf);
+ 640              		.loc 1 113 0
+ 641 012c 94F83720 		ldrb	r2, [r4, #55]	@ zero_extendqisi2
+ 642 0130 83F85620 		strb	r2, [r3, #86]
+ 643 0134 13E1     		b	.L46
+ 644              	.L40:
+ 122:subsystems/gps/gps_ubx.c ****     } else if (gps_ubx.msg_id == UBX_NAV_POSLLH_ID) {
+ 645              		.loc 1 122 0
+ 646 0136 022B     		cmp	r3, #2
+ 647 0138 6FD1     		bne	.L41
+ 648              	.LBB49:
+ 123:subsystems/gps/gps_ubx.c ****       gps.lla_pos.lat = RadOfDeg(UBX_NAV_POSLLH_LAT(gps_ubx.msg_buf));
+ 649              		.loc 1 123 0
+ 650 013a A37C     		ldrb	r3, [r4, #18]	@ zero_extendqisi2
+ 651 013c 627C     		ldrb	r2, [r4, #17]	@ zero_extendqisi2
+ 652 013e 1B04     		lsls	r3, r3, #16
+ 653 0140 43EA0223 		orr	r3, r3, r2, lsl #8
+ 654 0144 227C     		ldrb	r2, [r4, #16]	@ zero_extendqisi2
+ 655 0146 E07C     		ldrb	r0, [r4, #19]	@ zero_extendqisi2
+ 656 0148 1343     		orrs	r3, r3, r2
+ 657 014a 43EA0060 		orr	r0, r3, r0, lsl #24
+ 658 014e FFF7FEFF 		bl	__aeabi_i2d
+ 659 0152 65A3     		adr	r3, .L47
+ 660 0154 D3E90023 		ldrd	r2, [r3]
+ 661 0158 FFF7FEFF 		bl	__aeabi_dmul
+ 662 015c FFF7FEFF 		bl	__aeabi_d2iz
+ 124:subsystems/gps/gps_ubx.c ****       gps.lla_pos.lon = RadOfDeg(UBX_NAV_POSLLH_LON(gps_ubx.msg_buf));
+ 663              		.loc 1 124 0
+ 664 0160 A37B     		ldrb	r3, [r4, #14]	@ zero_extendqisi2
+ 665 0162 627B     		ldrb	r2, [r4, #13]	@ zero_extendqisi2
+ 123:subsystems/gps/gps_ubx.c ****       gps.lla_pos.lat = RadOfDeg(UBX_NAV_POSLLH_LAT(gps_ubx.msg_buf));
+ 666              		.loc 1 123 0
+ 667 0164 634D     		ldr	r5, .L47+12
+ 124:subsystems/gps/gps_ubx.c ****       gps.lla_pos.lon = RadOfDeg(UBX_NAV_POSLLH_LON(gps_ubx.msg_buf));
+ 668              		.loc 1 124 0
+ 669 0166 1B04     		lsls	r3, r3, #16
+ 670 0168 43EA0223 		orr	r3, r3, r2, lsl #8
+ 671 016c 227B     		ldrb	r2, [r4, #12]	@ zero_extendqisi2
+ 123:subsystems/gps/gps_ubx.c ****       gps.lla_pos.lat = RadOfDeg(UBX_NAV_POSLLH_LAT(gps_ubx.msg_buf));
+ 672              		.loc 1 123 0
+ 673 016e 0646     		mov	r6, r0
+ 674 0170 2861     		str	r0, [r5, #16]
+ 124:subsystems/gps/gps_ubx.c ****       gps.lla_pos.lon = RadOfDeg(UBX_NAV_POSLLH_LON(gps_ubx.msg_buf));
+ 675              		.loc 1 124 0
+ 676 0172 E07B     		ldrb	r0, [r4, #15]	@ zero_extendqisi2
+ 677 0174 1343     		orrs	r3, r3, r2
+ 678 0176 43EA0060 		orr	r0, r3, r0, lsl #24
+ 679 017a FFF7FEFF 		bl	__aeabi_i2d
+ 680 017e 5AA3     		adr	r3, .L47
+ 681 0180 D3E90023 		ldrd	r2, [r3]
+ 682 0184 FFF7FEFF 		bl	__aeabi_dmul
+ 683 0188 FFF7FEFF 		bl	__aeabi_d2iz
+ 125:subsystems/gps/gps_ubx.c ****       gps.lla_pos.alt = UBX_NAV_POSLLH_HEIGHT(gps_ubx.msg_buf);
+ 684              		.loc 1 125 0
+ 685 018c A37D     		ldrb	r3, [r4, #22]	@ zero_extendqisi2
+ 686 018e 627D     		ldrb	r2, [r4, #21]	@ zero_extendqisi2
+ 687 0190 1B04     		lsls	r3, r3, #16
+ 688 0192 43EA0223 		orr	r3, r3, r2, lsl #8
+ 689 0196 227D     		ldrb	r2, [r4, #20]	@ zero_extendqisi2
+ 124:subsystems/gps/gps_ubx.c ****       gps.lla_pos.lon = RadOfDeg(UBX_NAV_POSLLH_LON(gps_ubx.msg_buf));
+ 690              		.loc 1 124 0
+ 691 0198 0746     		mov	r7, r0
+ 125:subsystems/gps/gps_ubx.c ****       gps.lla_pos.alt = UBX_NAV_POSLLH_HEIGHT(gps_ubx.msg_buf);
+ 692              		.loc 1 125 0
+ 693 019a 1343     		orrs	r3, r3, r2
+ 694 019c E27D     		ldrb	r2, [r4, #23]	@ zero_extendqisi2
+ 124:subsystems/gps/gps_ubx.c ****       gps.lla_pos.lon = RadOfDeg(UBX_NAV_POSLLH_LON(gps_ubx.msg_buf));
+ 695              		.loc 1 124 0
+ 696 019e E860     		str	r0, [r5, #12]
+ 125:subsystems/gps/gps_ubx.c ****       gps.lla_pos.alt = UBX_NAV_POSLLH_HEIGHT(gps_ubx.msg_buf);
+ 697              		.loc 1 125 0
+ 698 01a0 43EA0263 		orr	r3, r3, r2, lsl #24
+ 699 01a4 6B61     		str	r3, [r5, #20]
+ 126:subsystems/gps/gps_ubx.c ****       gps.hmsl        = UBX_NAV_POSLLH_HMSL(gps_ubx.msg_buf);
+ 700              		.loc 1 126 0
+ 701 01a6 A37E     		ldrb	r3, [r4, #26]	@ zero_extendqisi2
+ 702 01a8 627E     		ldrb	r2, [r4, #25]	@ zero_extendqisi2
+ 703 01aa 1B04     		lsls	r3, r3, #16
+ 704 01ac 43EA0223 		orr	r3, r3, r2, lsl #8
+ 705 01b0 227E     		ldrb	r2, [r4, #24]	@ zero_extendqisi2
+ 130:subsystems/gps/gps_ubx.c ****       lla_f.lat = ((float) gps.lla_pos.lat) / 1e7;
+ 706              		.loc 1 130 0
+ 707 01b2 3046     		mov	r0, r6
+ 126:subsystems/gps/gps_ubx.c ****       gps.hmsl        = UBX_NAV_POSLLH_HMSL(gps_ubx.msg_buf);
+ 708              		.loc 1 126 0
+ 709 01b4 1343     		orrs	r3, r3, r2
+ 710 01b6 E27E     		ldrb	r2, [r4, #27]	@ zero_extendqisi2
+ 133:subsystems/gps/gps_ubx.c ****       utm_f.zone = nav_utm_zone0;
+ 711              		.loc 1 133 0
+ 712 01b8 4F4C     		ldr	r4, .L47+16
+ 126:subsystems/gps/gps_ubx.c ****       gps.hmsl        = UBX_NAV_POSLLH_HMSL(gps_ubx.msg_buf);
+ 713              		.loc 1 126 0
+ 714 01ba 43EA0263 		orr	r3, r3, r2, lsl #24
+ 715 01be AB62     		str	r3, [r5, #40]
+ 130:subsystems/gps/gps_ubx.c ****       lla_f.lat = ((float) gps.lla_pos.lat) / 1e7;
+ 716              		.loc 1 130 0
+ 717 01c0 FFF7FEFF 		bl	__aeabi_i2f
+ 718 01c4 4D49     		ldr	r1, .L47+20
+ 719 01c6 FFF7FEFF 		bl	__aeabi_fdiv
+ 720 01ca 0690     		str	r0, [sp, #24]	@ float
+ 131:subsystems/gps/gps_ubx.c ****       lla_f.lon = ((float) gps.lla_pos.lon) / 1e7;
+ 721              		.loc 1 131 0
+ 722 01cc 3846     		mov	r0, r7
+ 723 01ce FFF7FEFF 		bl	__aeabi_i2f
+ 724 01d2 4A49     		ldr	r1, .L47+20
+ 725 01d4 FFF7FEFF 		bl	__aeabi_fdiv
+ 133:subsystems/gps/gps_ubx.c ****       utm_f.zone = nav_utm_zone0;
+ 726              		.loc 1 133 0
+ 727 01d8 2378     		ldrb	r3, [r4, #0]	@ zero_extendqisi2
+ 131:subsystems/gps/gps_ubx.c ****       lla_f.lon = ((float) gps.lla_pos.lon) / 1e7;
+ 728              		.loc 1 131 0
+ 729 01da 0590     		str	r0, [sp, #20]	@ float
+ 135:subsystems/gps/gps_ubx.c ****       utm_of_lla_f(&utm_f, &lla_f);
+ 730              		.loc 1 135 0
+ 731 01dc 05A9     		add	r1, sp, #20
+ 732 01de 01A8     		add	r0, sp, #4
+ 133:subsystems/gps/gps_ubx.c ****       utm_f.zone = nav_utm_zone0;
+ 733              		.loc 1 133 0
+ 734 01e0 8DF81030 		strb	r3, [sp, #16]
+ 135:subsystems/gps/gps_ubx.c ****       utm_of_lla_f(&utm_f, &lla_f);
+ 735              		.loc 1 135 0
+ 736 01e4 FFF7FEFF 		bl	utm_of_lla_f
+ 137:subsystems/gps/gps_ubx.c ****       gps.utm_pos.east = utm_f.east*100;
+ 737              		.loc 1 137 0
+ 738 01e8 4549     		ldr	r1, .L47+24
+ 739 01ea 0298     		ldr	r0, [sp, #8]	@ float
+ 740 01ec FFF7FEFF 		bl	__aeabi_fmul
+ 741 01f0 FFF7FEFF 		bl	__aeabi_f2iz
+ 138:subsystems/gps/gps_ubx.c ****       gps.utm_pos.north = utm_f.north*100;
+ 742              		.loc 1 138 0
+ 743 01f4 4249     		ldr	r1, .L47+24
+ 137:subsystems/gps/gps_ubx.c ****       gps.utm_pos.east = utm_f.east*100;
+ 744              		.loc 1 137 0
+ 745 01f6 E861     		str	r0, [r5, #28]
+ 138:subsystems/gps/gps_ubx.c ****       gps.utm_pos.north = utm_f.north*100;
+ 746              		.loc 1 138 0
+ 747 01f8 0198     		ldr	r0, [sp, #4]	@ float
+ 748 01fa FFF7FEFF 		bl	__aeabi_fmul
+ 749 01fe FFF7FEFF 		bl	__aeabi_f2iz
+ 139:subsystems/gps/gps_ubx.c ****       gps.utm_pos.alt = utm_f.alt*1000;
+ 750              		.loc 1 139 0
+ 751 0202 4049     		ldr	r1, .L47+28
+ 138:subsystems/gps/gps_ubx.c ****       gps.utm_pos.north = utm_f.north*100;
+ 752              		.loc 1 138 0
+ 753 0204 A861     		str	r0, [r5, #24]
+ 139:subsystems/gps/gps_ubx.c ****       gps.utm_pos.alt = utm_f.alt*1000;
+ 754              		.loc 1 139 0
+ 755 0206 0398     		ldr	r0, [sp, #12]	@ float
+ 756 0208 FFF7FEFF 		bl	__aeabi_fmul
+ 757 020c FFF7FEFF 		bl	__aeabi_f2iz
+ 140:subsystems/gps/gps_ubx.c ****       gps.utm_pos.zone = nav_utm_zone0;
+ 758              		.loc 1 140 0
+ 759 0210 2378     		ldrb	r3, [r4, #0]	@ zero_extendqisi2
+ 139:subsystems/gps/gps_ubx.c ****       gps.utm_pos.alt = utm_f.alt*1000;
+ 760              		.loc 1 139 0
+ 761 0212 2862     		str	r0, [r5, #32]
+ 140:subsystems/gps/gps_ubx.c ****       gps.utm_pos.zone = nav_utm_zone0;
+ 762              		.loc 1 140 0
+ 763 0214 85F82430 		strb	r3, [r5, #36]
+ 764 0218 A1E0     		b	.L46
+ 765              	.L41:
+ 766              	.LBE49:
+ 155:subsystems/gps/gps_ubx.c ****     else if (gps_ubx.msg_id == UBX_NAV_VELNED_ID) {
+ 767              		.loc 1 155 0
+ 768 021a 122B     		cmp	r3, #18
+ 769 021c 59D1     		bne	.L42
+ 156:subsystems/gps/gps_ubx.c ****       gps.speed_3d = UBX_NAV_VELNED_Speed(gps_ubx.msg_buf);
+ 770              		.loc 1 156 0
+ 771 021e 627E     		ldrb	r2, [r4, #25]	@ zero_extendqisi2
+ 772 0220 237E     		ldrb	r3, [r4, #24]	@ zero_extendqisi2
+ 773 0222 344D     		ldr	r5, .L47+12
+ 774 0224 43EA0223 		orr	r3, r3, r2, lsl #8
+ 775 0228 A5F84630 		strh	r3, [r5, #70]	@ movhi
+ 157:subsystems/gps/gps_ubx.c ****       gps.gspeed = UBX_NAV_VELNED_GSpeed(gps_ubx.msg_buf);
+ 776              		.loc 1 157 0
+ 777 022c 627F     		ldrb	r2, [r4, #29]	@ zero_extendqisi2
+ 778 022e 237F     		ldrb	r3, [r4, #28]	@ zero_extendqisi2
+ 165:subsystems/gps/gps_ubx.c ****       gps.course = (RadOfDeg(UBX_NAV_VELNED_Heading(gps_ubx.msg_buf)*10)) * 10;
+ 779              		.loc 1 165 0
+ 780 0230 0A20     		movs	r0, #10
+ 157:subsystems/gps/gps_ubx.c ****       gps.gspeed = UBX_NAV_VELNED_GSpeed(gps_ubx.msg_buf);
+ 781              		.loc 1 157 0
+ 782 0232 43EA0223 		orr	r3, r3, r2, lsl #8
+ 783 0236 A5F84430 		strh	r3, [r5, #68]	@ movhi
+ 158:subsystems/gps/gps_ubx.c ****       gps.ned_vel.x = UBX_NAV_VELNED_VEL_N(gps_ubx.msg_buf);
+ 784              		.loc 1 158 0
+ 785 023a A37B     		ldrb	r3, [r4, #14]	@ zero_extendqisi2
+ 786 023c 627B     		ldrb	r2, [r4, #13]	@ zero_extendqisi2
+ 787 023e 1B04     		lsls	r3, r3, #16
+ 788 0240 43EA0223 		orr	r3, r3, r2, lsl #8
+ 789 0244 227B     		ldrb	r2, [r4, #12]	@ zero_extendqisi2
+ 790 0246 1343     		orrs	r3, r3, r2
+ 791 0248 E27B     		ldrb	r2, [r4, #15]	@ zero_extendqisi2
+ 792 024a 43EA0263 		orr	r3, r3, r2, lsl #24
+ 793 024e AB63     		str	r3, [r5, #56]
+ 159:subsystems/gps/gps_ubx.c ****       gps.ned_vel.y = UBX_NAV_VELNED_VEL_E(gps_ubx.msg_buf);
+ 794              		.loc 1 159 0
+ 795 0250 A37C     		ldrb	r3, [r4, #18]	@ zero_extendqisi2
+ 796 0252 627C     		ldrb	r2, [r4, #17]	@ zero_extendqisi2
+ 797 0254 1B04     		lsls	r3, r3, #16
+ 798 0256 43EA0223 		orr	r3, r3, r2, lsl #8
+ 799 025a 227C     		ldrb	r2, [r4, #16]	@ zero_extendqisi2
+ 800 025c 1343     		orrs	r3, r3, r2
+ 801 025e E27C     		ldrb	r2, [r4, #19]	@ zero_extendqisi2
+ 802 0260 43EA0263 		orr	r3, r3, r2, lsl #24
+ 803 0264 EB63     		str	r3, [r5, #60]
+ 160:subsystems/gps/gps_ubx.c ****       gps.ned_vel.z = UBX_NAV_VELNED_VEL_D(gps_ubx.msg_buf);
+ 804              		.loc 1 160 0
+ 805 0266 A37D     		ldrb	r3, [r4, #22]	@ zero_extendqisi2
+ 806 0268 627D     		ldrb	r2, [r4, #21]	@ zero_extendqisi2
+ 807 026a 1B04     		lsls	r3, r3, #16
+ 808 026c 43EA0223 		orr	r3, r3, r2, lsl #8
+ 809 0270 227D     		ldrb	r2, [r4, #20]	@ zero_extendqisi2
+ 810 0272 1343     		orrs	r3, r3, r2
+ 811 0274 E27D     		ldrb	r2, [r4, #23]	@ zero_extendqisi2
+ 812 0276 43EA0263 		orr	r3, r3, r2, lsl #24
+ 813 027a 2B64     		str	r3, [r5, #64]
+ 165:subsystems/gps/gps_ubx.c ****       gps.course = (RadOfDeg(UBX_NAV_VELNED_Heading(gps_ubx.msg_buf)*10)) * 10;
+ 814              		.loc 1 165 0
+ 815 027c 94F82230 		ldrb	r3, [r4, #34]	@ zero_extendqisi2
+ 816 0280 94F82120 		ldrb	r2, [r4, #33]	@ zero_extendqisi2
+ 817 0284 1B04     		lsls	r3, r3, #16
+ 818 0286 43EA0223 		orr	r3, r3, r2, lsl #8
+ 819 028a 94F82020 		ldrb	r2, [r4, #32]	@ zero_extendqisi2
+ 820 028e 1343     		orrs	r3, r3, r2
+ 821 0290 94F82320 		ldrb	r2, [r4, #35]	@ zero_extendqisi2
+ 822 0294 43EA0263 		orr	r3, r3, r2, lsl #24
+ 823 0298 5843     		muls	r0, r3, r0
+ 824 029a FFF7FEFF 		bl	__aeabi_i2d
+ 825 029e 12A3     		adr	r3, .L47
+ 826 02a0 D3E90023 		ldrd	r2, [r3]
+ 827 02a4 FFF7FEFF 		bl	__aeabi_dmul
+ 828 02a8 0022     		movs	r2, #0
+ 829 02aa 174B     		ldr	r3, .L47+32
+ 830 02ac FFF7FEFF 		bl	__aeabi_dmul
+ 831 02b0 FFF7FEFF 		bl	__aeabi_d2iz
+ 166:subsystems/gps/gps_ubx.c ****       gps.tow = UBX_NAV_VELNED_ITOW(gps_ubx.msg_buf);
+ 832              		.loc 1 166 0
+ 833 02b4 A37A     		ldrb	r3, [r4, #10]	@ zero_extendqisi2
+ 834 02b6 E27A     		ldrb	r2, [r4, #11]	@ zero_extendqisi2
+ 835 02b8 1B04     		lsls	r3, r3, #16
+ 836 02ba 43EA0263 		orr	r3, r3, r2, lsl #24
+ 837 02be 617A     		ldrb	r1, [r4, #9]	@ zero_extendqisi2
+ 838 02c0 227A     		ldrb	r2, [r4, #8]	@ zero_extendqisi2
+ 165:subsystems/gps/gps_ubx.c ****       gps.course = (RadOfDeg(UBX_NAV_VELNED_Heading(gps_ubx.msg_buf)*10)) * 10;
+ 839              		.loc 1 165 0
+ 840 02c2 A864     		str	r0, [r5, #72]
+ 166:subsystems/gps/gps_ubx.c ****       gps.tow = UBX_NAV_VELNED_ITOW(gps_ubx.msg_buf);
+ 841              		.loc 1 166 0
+ 842 02c4 42EA0122 		orr	r2, r2, r1, lsl #8
+ 843 02c8 1343     		orrs	r3, r3, r2
+ 844 02ca EB65     		str	r3, [r5, #92]
+ 167:subsystems/gps/gps_ubx.c ****       gps_ubx.have_velned = 1;
+ 845              		.loc 1 167 0
+ 846 02cc 84F81561 		strb	r6, [r4, #277]
+ 847 02d0 45E0     		b	.L46
+ 848              	.L42:
+ 169:subsystems/gps/gps_ubx.c ****     else if (gps_ubx.msg_id == UBX_NAV_SVINFO_ID) {
+ 849              		.loc 1 169 0
+ 850 02d2 302B     		cmp	r3, #48
+ 851 02d4 37D1     		bne	.L43
+ 852              	.LBB50:
+ 170:subsystems/gps/gps_ubx.c ****       gps.nb_channels = Min(UBX_NAV_SVINFO_NCH(gps_ubx.msg_buf), GPS_NB_CHANNELS);
+ 853              		.loc 1 170 0
+ 854 02d6 217B     		ldrb	r1, [r4, #12]	@ zero_extendqisi2
+ 855 02d8 064B     		ldr	r3, .L47+12
+ 856 02da 1029     		cmp	r1, #16
+ 857 02dc 28BF     		it	cs
+ 858 02de 1021     		movcs	r1, #16
+ 859 02e0 83F86010 		strb	r1, [r3, #96]
+ 860 02e4 0022     		movs	r2, #0
+ 861              	.LVL15:
+ 172:subsystems/gps/gps_ubx.c ****       for(i = 0; i < gps.nb_channels; i++) {
+ 862              		.loc 1 172 0
+ 863 02e6 29E0     		b	.L44
+ 864              	.L48:
+ 865              		.align	3
+ 866              	.L47:
+ 867 02e8 399D52A2 		.word	-1571644103
+ 868 02ec 46DF913F 		.word	1066524486
+ 869 02f0 00000000 		.word	.LANCHOR0
+ 870 02f4 00000000 		.word	gps
+ 871 02f8 00000000 		.word	nav_utm_zone0
+ 872 02fc 8096184B 		.word	1259902592
+ 873 0300 0000C842 		.word	1120403456
+ 874 0304 00007A44 		.word	1148846080
+ 875 0308 00002440 		.word	1076101120
+ 876              	.L45:
+ 173:subsystems/gps/gps_ubx.c ****         gps.svinfos[i].svid = UBX_NAV_SVINFO_SVID(gps_ubx.msg_buf, i);
+ 877              		.loc 1 173 0
+ 878 030c 6079     		ldrb	r0, [r4, #5]	@ zero_extendqisi2
+ 172:subsystems/gps/gps_ubx.c ****       for(i = 0; i < gps.nb_channels; i++) {
+ 879              		.loc 1 172 0
+ 880 030e 0132     		adds	r2, r2, #1
+ 881              	.LVL16:
+ 173:subsystems/gps/gps_ubx.c ****         gps.svinfos[i].svid = UBX_NAV_SVINFO_SVID(gps_ubx.msg_buf, i);
+ 882              		.loc 1 173 0
+ 883 0310 83F85A00 		strb	r0, [r3, #90]
+ 174:subsystems/gps/gps_ubx.c ****         gps.svinfos[i].flags = UBX_NAV_SVINFO_Flags(gps_ubx.msg_buf, i);
+ 884              		.loc 1 174 0
+ 885 0314 A079     		ldrb	r0, [r4, #6]	@ zero_extendqisi2
+ 172:subsystems/gps/gps_ubx.c ****       for(i = 0; i < gps.nb_channels; i++) {
+ 886              		.loc 1 172 0
+ 887 0316 D2B2     		uxtb	r2, r2
+ 888              	.LVL17:
+ 174:subsystems/gps/gps_ubx.c ****         gps.svinfos[i].flags = UBX_NAV_SVINFO_Flags(gps_ubx.msg_buf, i);
+ 889              		.loc 1 174 0
+ 890 0318 83F85B00 		strb	r0, [r3, #91]
+ 175:subsystems/gps/gps_ubx.c ****         gps.svinfos[i].qi = UBX_NAV_SVINFO_QI(gps_ubx.msg_buf, i);
+ 891              		.loc 1 175 0
+ 892 031c E079     		ldrb	r0, [r4, #7]	@ zero_extendqisi2
+ 893 031e 83F85C00 		strb	r0, [r3, #92]
+ 176:subsystems/gps/gps_ubx.c ****         gps.svinfos[i].cno = UBX_NAV_SVINFO_CNO(gps_ubx.msg_buf, i);
+ 894              		.loc 1 176 0
+ 895 0322 207A     		ldrb	r0, [r4, #8]	@ zero_extendqisi2
+ 896 0324 83F85D00 		strb	r0, [r3, #93]
+ 177:subsystems/gps/gps_ubx.c ****         gps.svinfos[i].elev = UBX_NAV_SVINFO_Elev(gps_ubx.msg_buf, i);
+ 897              		.loc 1 177 0
+ 898 0328 607A     		ldrb	r0, [r4, #9]	@ zero_extendqisi2
+ 899 032a 83F85E00 		strb	r0, [r3, #94]
+ 178:subsystems/gps/gps_ubx.c ****         gps.svinfos[i].azim = UBX_NAV_SVINFO_Azim(gps_ubx.msg_buf, i);
+ 900              		.loc 1 178 0
+ 901 032e 94F80BC0 		ldrb	ip, [r4, #11]	@ zero_extendqisi2
+ 902 0332 A07A     		ldrb	r0, [r4, #10]	@ zero_extendqisi2
+ 903 0334 40EA0C20 		orr	r0, r0, ip, lsl #8
+ 904 0338 A3F86000 		strh	r0, [r3, #96]	@ movhi
+ 905              	.L44:
+ 172:subsystems/gps/gps_ubx.c ****       for(i = 0; i < gps.nb_channels; i++) {
+ 906              		.loc 1 172 0
+ 907 033c 0C34     		adds	r4, r4, #12
+ 908 033e 0833     		adds	r3, r3, #8
+ 909 0340 8A42     		cmp	r2, r1
+ 910 0342 E3D1     		bne	.L45
+ 911 0344 0BE0     		b	.L46
+ 912              	.LVL18:
+ 913              	.L43:
+ 914              	.LBE50:
+ 181:subsystems/gps/gps_ubx.c ****     else if (gps_ubx.msg_id == UBX_NAV_STATUS_ID) {
+ 915              		.loc 1 181 0
+ 916 0346 032B     		cmp	r3, #3
+ 917 0348 09D1     		bne	.L46
+ 182:subsystems/gps/gps_ubx.c ****       gps.fix = UBX_NAV_STATUS_GPSfix(gps_ubx.msg_buf);
+ 918              		.loc 1 182 0
+ 919 034a 064B     		ldr	r3, .L49
+ 920 034c 227B     		ldrb	r2, [r4, #12]	@ zero_extendqisi2
+ 921 034e 83F85720 		strb	r2, [r3, #87]
+ 183:subsystems/gps/gps_ubx.c ****       gps_ubx.status_flags = UBX_NAV_STATUS_Flags(gps_ubx.msg_buf);
+ 922              		.loc 1 183 0
+ 923 0352 637B     		ldrb	r3, [r4, #13]	@ zero_extendqisi2
+ 924 0354 84F81331 		strb	r3, [r4, #275]
+ 184:subsystems/gps/gps_ubx.c ****       gps_ubx.sol_flags = UBX_NAV_SOL_Flags(gps_ubx.msg_buf);
+ 925              		.loc 1 184 0
+ 926 0358 E37C     		ldrb	r3, [r4, #19]	@ zero_extendqisi2
+ 927 035a 84F81431 		strb	r3, [r4, #276]
+ 928              	.LVL19:
+ 929              	.L46:
+ 187:subsystems/gps/gps_ubx.c **** }
+ 930              		.loc 1 187 0
+ 931 035e 09B0     		add	sp, sp, #36
+ 932 0360 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 933              	.L50:
+ 934 0362 00BF     		.align	2
+ 935              	.L49:
+ 936 0364 00000000 		.word	gps
+ 937              		.cfi_endproc
+ 938              	.LFE28:
+ 940              		.global	gps_ubx
+ 941              		.section	.bss.gps_ubx,"aw",%nobits
+ 942              		.align	3
+ 943              		.set	.LANCHOR0,. + 0
+ 946              	gps_ubx:
+ 947 0000 00000000 		.space	280
+ 947      00000000 
+ 947      00000000 
+ 947      00000000 
+ 947      00000000 
+ 948              		.text
+ 949              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 gps_ubx.c
+     /tmp/ccoJk3os.s:24     .text.gps_impl_init:00000000 $t
+     /tmp/ccoJk3os.s:29     .text.gps_impl_init:00000000 gps_impl_init
+     /tmp/ccoJk3os.s:54     .text.gps_impl_init:00000018 $d
+     /tmp/ccoJk3os.s:59     .text.gps_ubx_parse:00000000 $t
+     /tmp/ccoJk3os.s:64     .text.gps_ubx_parse:00000000 gps_ubx_parse
+     /tmp/ccoJk3os.s:96     .text.gps_ubx_parse:0000002e $d
+     /tmp/ccoJk3os.s:245    .text.gps_ubx_parse:000000fc $d
+     /tmp/ccoJk3os.s:250    .text.ubxsend_cfg_rst:00000000 $t
+     /tmp/ccoJk3os.s:255    .text.ubxsend_cfg_rst:00000000 ubxsend_cfg_rst
+     /tmp/ccoJk3os.s:483    .text.ubxsend_cfg_rst:00000130 $d
+     /tmp/ccoJk3os.s:497    .text.gps_ubx_read_message:00000000 $t
+     /tmp/ccoJk3os.s:502    .text.gps_ubx_read_message:00000000 gps_ubx_read_message
+     /tmp/ccoJk3os.s:867    .text.gps_ubx_read_message:000002e8 $d
+     /tmp/ccoJk3os.s:878    .text.gps_ubx_read_message:0000030c $t
+     /tmp/ccoJk3os.s:936    .text.gps_ubx_read_message:00000364 $d
+     /tmp/ccoJk3os.s:946    .bss.gps_ubx:00000000 gps_ubx
+     /tmp/ccoJk3os.s:942    .bss.gps_ubx:00000000 $d
+                     .debug_frame:00000010 $d
+     /tmp/ccoJk3os.s:105    .text.gps_ubx_parse:00000037 $d
+     /tmp/ccoJk3os.s:105    .text.gps_ubx_parse:00000038 $t
+
+UNDEFINED SYMBOLS
+uart_transmit
+uart1
+__aeabi_i2d
+__aeabi_dmul
+__aeabi_d2iz
+__aeabi_i2f
+__aeabi_fdiv
+__aeabi_fmul
+__aeabi_f2iz
+utm_of_lla_f
+gps
+nav_utm_zone0

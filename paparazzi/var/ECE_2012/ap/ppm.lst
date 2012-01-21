@@ -1,0 +1,107 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"ppm.c"
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.section	.text.radio_control_impl_init,"ax",%progbits
+  24              		.align	1
+  25              		.global	radio_control_impl_init
+  26              		.thumb
+  27              		.thumb_func
+  29              	radio_control_impl_init:
+  30              	.LFB27:
+  31              		.file 1 "subsystems/radio_control/ppm.c"
+   1:subsystems/radio_control/ppm.c **** /*
+   2:subsystems/radio_control/ppm.c ****  * $Id$
+   3:subsystems/radio_control/ppm.c ****  *
+   4:subsystems/radio_control/ppm.c ****  * Copyright (C) 2010 The Paparazzi Team
+   5:subsystems/radio_control/ppm.c ****  *
+   6:subsystems/radio_control/ppm.c ****  * This file is part of paparazzi.
+   7:subsystems/radio_control/ppm.c ****  *
+   8:subsystems/radio_control/ppm.c ****  * paparazzi is free software; you can redistribute it and/or modify
+   9:subsystems/radio_control/ppm.c ****  * it under the terms of the GNU General Public License as published by
+  10:subsystems/radio_control/ppm.c ****  * the Free Software Foundation; either version 2, or (at your option)
+  11:subsystems/radio_control/ppm.c ****  * any later version.
+  12:subsystems/radio_control/ppm.c ****  *
+  13:subsystems/radio_control/ppm.c ****  * paparazzi is distributed in the hope that it will be useful,
+  14:subsystems/radio_control/ppm.c ****  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  15:subsystems/radio_control/ppm.c ****  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  16:subsystems/radio_control/ppm.c ****  * GNU General Public License for more details.
+  17:subsystems/radio_control/ppm.c ****  *
+  18:subsystems/radio_control/ppm.c ****  * You should have received a copy of the GNU General Public License
+  19:subsystems/radio_control/ppm.c ****  * along with paparazzi; see the file COPYING.  If not, write to
+  20:subsystems/radio_control/ppm.c ****  * the Free Software Foundation, 59 Temple Place - Suite 330,
+  21:subsystems/radio_control/ppm.c ****  * Boston, MA 02111-1307, USA.
+  22:subsystems/radio_control/ppm.c ****  */
+  23:subsystems/radio_control/ppm.c **** 
+  24:subsystems/radio_control/ppm.c **** #include "subsystems/radio_control.h"
+  25:subsystems/radio_control/ppm.c **** #include "subsystems/radio_control/ppm.h"
+  26:subsystems/radio_control/ppm.c **** 
+  27:subsystems/radio_control/ppm.c **** uint16_t ppm_pulses[ PPM_NB_CHANNEL ];
+  28:subsystems/radio_control/ppm.c **** volatile bool_t ppm_frame_available;
+  29:subsystems/radio_control/ppm.c **** 
+  30:subsystems/radio_control/ppm.c **** void radio_control_impl_init(void) {
+  32              		.loc 1 30 0
+  33              		.cfi_startproc
+  34              		@ args = 0, pretend = 0, frame = 0
+  35              		@ frame_needed = 0, uses_anonymous_args = 0
+  36              		@ link register save eliminated.
+  31:subsystems/radio_control/ppm.c ****   ppm_frame_available = FALSE;
+  37              		.loc 1 31 0
+  38 0000 024B     		ldr	r3, .L3
+  39 0002 0022     		movs	r2, #0
+  40 0004 1A70     		strb	r2, [r3, #0]
+  32:subsystems/radio_control/ppm.c ****   ppm_arch_init();
+  33:subsystems/radio_control/ppm.c **** }
+  41              		.loc 1 33 0
+  32:subsystems/radio_control/ppm.c ****   ppm_arch_init();
+  42              		.loc 1 32 0
+  43 0006 FFF7FEBF 		b	ppm_arch_init
+  44              	.L4:
+  45 000a 00BF     		.align	2
+  46              	.L3:
+  47 000c 00000000 		.word	.LANCHOR0
+  48              		.cfi_endproc
+  49              	.LFE27:
+  51              		.global	ppm_pulses
+  52              		.global	ppm_frame_available
+  53              		.section	.bss.ppm_pulses,"aw",%nobits
+  54              		.align	2
+  57              	ppm_pulses:
+  58 0000 00000000 		.space	14
+  58      00000000 
+  58      00000000 
+  58      0000
+  59 000e 0000     		.section	.bss.ppm_frame_available,"aw",%nobits
+  60              		.set	.LANCHOR0,. + 0
+  63              	ppm_frame_available:
+  64 0000 00       		.space	1
+  65              		.text
+  66              	.Letext0:
+  67              		.file 2 "/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include
+  68              		.file 3 "/home/mav/lisa-m-team4938/paparazzi/sw/include/std.h"
+  69              		.file 4 "./paparazzi.h"
+  70              		.file 5 "./subsystems/radio_control.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 ppm.c
+     /tmp/ccbTH7dm.s:24     .text.radio_control_impl_init:00000000 $t
+     /tmp/ccbTH7dm.s:29     .text.radio_control_impl_init:00000000 radio_control_impl_init
+     /tmp/ccbTH7dm.s:47     .text.radio_control_impl_init:0000000c $d
+     /tmp/ccbTH7dm.s:57     .bss.ppm_pulses:00000000 ppm_pulses
+     /tmp/ccbTH7dm.s:63     .bss.ppm_frame_available:00000000 ppm_frame_available
+     /tmp/ccbTH7dm.s:54     .bss.ppm_pulses:00000000 $d
+     /tmp/ccbTH7dm.s:64     .bss.ppm_frame_available:00000000 $d
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+ppm_arch_init

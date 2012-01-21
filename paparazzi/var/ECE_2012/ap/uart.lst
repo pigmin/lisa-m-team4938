@@ -1,0 +1,177 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"uart.c"
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.section	.text.uart_periph_init,"ax",%progbits
+  24              		.align	1
+  25              		.global	uart_periph_init
+  26              		.thumb
+  27              		.thumb_func
+  29              	uart_periph_init:
+  30              	.LFB0:
+  31              		.file 1 "mcu_periph/uart.c"
+   1:mcu_periph/uart.c **** /*
+   2:mcu_periph/uart.c ****  * Paparazzi $Id$
+   3:mcu_periph/uart.c ****  *
+   4:mcu_periph/uart.c ****  * Copyright (C) 2010 The Paparazzi Team
+   5:mcu_periph/uart.c ****  *
+   6:mcu_periph/uart.c ****  * This file is part of paparazzi.
+   7:mcu_periph/uart.c ****  *
+   8:mcu_periph/uart.c ****  * paparazzi is free software; you can redistribute it and/or modify
+   9:mcu_periph/uart.c ****  * it under the terms of the GNU General Public License as published by
+  10:mcu_periph/uart.c ****  * the Free Software Foundation; either version 2, or (at your option)
+  11:mcu_periph/uart.c ****  * any later version.
+  12:mcu_periph/uart.c ****  *
+  13:mcu_periph/uart.c ****  * paparazzi is distributed in the hope that it will be useful,
+  14:mcu_periph/uart.c ****  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  15:mcu_periph/uart.c ****  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  16:mcu_periph/uart.c ****  * GNU General Public License for more details.
+  17:mcu_periph/uart.c ****  *
+  18:mcu_periph/uart.c ****  * You should have received a copy of the GNU General Public License
+  19:mcu_periph/uart.c ****  * along with paparazzi; see the file COPYING.  If not, write to
+  20:mcu_periph/uart.c ****  * the Free Software Foundation, 59 Temple Place - Suite 330,
+  21:mcu_periph/uart.c ****  * Boston, MA 02111-1307, USA.
+  22:mcu_periph/uart.c ****  *
+  23:mcu_periph/uart.c ****  */
+  24:mcu_periph/uart.c **** 
+  25:mcu_periph/uart.c **** #include "mcu_periph/uart.h"
+  26:mcu_periph/uart.c **** 
+  27:mcu_periph/uart.c **** #ifdef USE_UART0
+  28:mcu_periph/uart.c **** struct uart_periph uart0;
+  29:mcu_periph/uart.c **** #endif
+  30:mcu_periph/uart.c **** 
+  31:mcu_periph/uart.c **** #ifdef USE_UART1
+  32:mcu_periph/uart.c **** struct uart_periph uart1;
+  33:mcu_periph/uart.c **** #endif
+  34:mcu_periph/uart.c **** 
+  35:mcu_periph/uart.c **** #ifdef USE_UART2
+  36:mcu_periph/uart.c **** struct uart_periph uart2;
+  37:mcu_periph/uart.c **** #endif
+  38:mcu_periph/uart.c **** 
+  39:mcu_periph/uart.c **** #ifdef USE_UART3
+  40:mcu_periph/uart.c **** struct uart_periph uart3;
+  41:mcu_periph/uart.c **** #endif
+  42:mcu_periph/uart.c **** 
+  43:mcu_periph/uart.c **** #ifdef USE_UART5
+  44:mcu_periph/uart.c **** struct uart_periph uart5;
+  45:mcu_periph/uart.c **** #endif
+  46:mcu_periph/uart.c **** 
+  47:mcu_periph/uart.c **** void uart_periph_init(struct uart_periph* p) {
+  32              		.loc 1 47 0
+  33              		.cfi_startproc
+  34              		@ args = 0, pretend = 0, frame = 0
+  35              		@ frame_needed = 0, uses_anonymous_args = 0
+  36              		@ link register save eliminated.
+  37              	.LVL0:
+  48:mcu_periph/uart.c ****   p->rx_insert_idx = 0;
+  38              		.loc 1 48 0
+  39 0000 0023     		movs	r3, #0
+  40 0002 A0F88030 		strh	r3, [r0, #128]	@ movhi
+  49:mcu_periph/uart.c ****   p->rx_extract_idx = 0;
+  41              		.loc 1 49 0
+  42 0006 A0F88230 		strh	r3, [r0, #130]	@ movhi
+  50:mcu_periph/uart.c ****   p->tx_insert_idx = 0;
+  43              		.loc 1 50 0
+  44 000a A0F80431 		strh	r3, [r0, #260]	@ movhi
+  51:mcu_periph/uart.c ****   p->tx_extract_idx = 0;
+  45              		.loc 1 51 0
+  46 000e A0F80631 		strh	r3, [r0, #262]	@ movhi
+  52:mcu_periph/uart.c ****   p->tx_running = FALSE;
+  47              		.loc 1 52 0
+  48 0012 80F80831 		strb	r3, [r0, #264]
+  53:mcu_periph/uart.c **** }
+  49              		.loc 1 53 0
+  50 0016 7047     		bx	lr
+  51              		.cfi_endproc
+  52              	.LFE0:
+  54              		.section	.text.uart_check_free_space,"ax",%progbits
+  55              		.align	1
+  56              		.global	uart_check_free_space
+  57              		.thumb
+  58              		.thumb_func
+  60              	uart_check_free_space:
+  61              	.LFB1:
+  54:mcu_periph/uart.c **** 
+  55:mcu_periph/uart.c **** bool_t uart_check_free_space(struct uart_periph* p, uint8_t len) {
+  62              		.loc 1 55 0
+  63              		.cfi_startproc
+  64              		@ args = 0, pretend = 0, frame = 0
+  65              		@ frame_needed = 0, uses_anonymous_args = 0
+  66              		@ link register save eliminated.
+  67              	.LVL1:
+  56:mcu_periph/uart.c ****   int16_t space = p->tx_extract_idx - p->tx_insert_idx;
+  68              		.loc 1 56 0
+  69 0000 B0F80621 		ldrh	r2, [r0, #262]
+  70 0004 B0F80431 		ldrh	r3, [r0, #260]
+  71 0008 D31A     		subs	r3, r2, r3
+  72 000a 9BB2     		uxth	r3, r3
+  73              	.LVL2:
+  57:mcu_periph/uart.c ****   if (space <= 0)
+  74              		.loc 1 57 0
+  75 000c 1AB2     		sxth	r2, r3
+  76              	.LVL3:
+  77 000e 002A     		cmp	r2, #0
+  78 0010 01DC     		bgt	.L4
+  58:mcu_periph/uart.c ****     space += UART_TX_BUFFER_SIZE;
+  79              		.loc 1 58 0
+  80 0012 8033     		adds	r3, r3, #128
+  81 0014 9BB2     		uxth	r3, r3
+  82              	.LVL4:
+  83              	.L4:
+  84 0016 013B     		subs	r3, r3, #1
+  85 0018 98B2     		uxth	r0, r3
+  86              	.LVL5:
+  59:mcu_periph/uart.c ****   return (uint16_t)(space - 1) >= len;
+  60:mcu_periph/uart.c **** }
+  87              		.loc 1 60 0
+  88 001a 8842     		cmp	r0, r1
+  89 001c 34BF     		ite	cc
+  90 001e 0020     		movcc	r0, #0
+  91 0020 0120     		movcs	r0, #1
+  92 0022 7047     		bx	lr
+  93              		.cfi_endproc
+  94              	.LFE1:
+  96              		.global	uart1
+  97              		.global	uart2
+  98              		.section	.bss.uart1,"aw",%nobits
+  99              		.align	2
+ 102              	uart1:
+ 103 0000 00000000 		.space	288
+ 103      00000000 
+ 103      00000000 
+ 103      00000000 
+ 103      00000000 
+ 104              		.section	.bss.uart2,"aw",%nobits
+ 105              		.align	2
+ 108              	uart2:
+ 109 0000 00000000 		.space	288
+ 109      00000000 
+ 109      00000000 
+ 109      00000000 
+ 109      00000000 
+ 110              		.text
+ 111              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 uart.c
+     /tmp/ccv4zvei.s:24     .text.uart_periph_init:00000000 $t
+     /tmp/ccv4zvei.s:29     .text.uart_periph_init:00000000 uart_periph_init
+     /tmp/ccv4zvei.s:55     .text.uart_check_free_space:00000000 $t
+     /tmp/ccv4zvei.s:60     .text.uart_check_free_space:00000000 uart_check_free_space
+     /tmp/ccv4zvei.s:102    .bss.uart1:00000000 uart1
+     /tmp/ccv4zvei.s:108    .bss.uart2:00000000 uart2
+     /tmp/ccv4zvei.s:99     .bss.uart1:00000000 $d
+     /tmp/ccv4zvei.s:105    .bss.uart2:00000000 $d
+                     .debug_frame:00000010 $d
+
+NO UNDEFINED SYMBOLS

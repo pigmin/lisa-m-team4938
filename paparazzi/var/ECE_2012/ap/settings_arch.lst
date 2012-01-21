@@ -1,0 +1,813 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"settings_arch.c"
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.section	.text.pflash_checksum,"ax",%progbits
+  24              		.align	1
+  25              		.thumb
+  26              		.thumb_func
+  28              	pflash_checksum:
+  29              	.LFB37:
+  30              		.file 1 "arch/stm32/subsystems/settings_arch.c"
+   1:arch/stm32/subsystems/settings_arch.c **** /*
+   2:arch/stm32/subsystems/settings_arch.c ****  * Paparazzi persistent settings low level flash routines stm32
+   3:arch/stm32/subsystems/settings_arch.c ****  *
+   4:arch/stm32/subsystems/settings_arch.c ****  * Copyright (C) 2011 Martin Mueller <martinmm@pfump.org>
+   5:arch/stm32/subsystems/settings_arch.c ****  *
+   6:arch/stm32/subsystems/settings_arch.c ****  * This file is part of Paparazzi.
+   7:arch/stm32/subsystems/settings_arch.c ****  *
+   8:arch/stm32/subsystems/settings_arch.c ****  * Paparazzi is free software; you can redistribute it and/or modify
+   9:arch/stm32/subsystems/settings_arch.c ****  * it under the terms of the GNU General Public License as published by
+  10:arch/stm32/subsystems/settings_arch.c ****  * the Free Software Foundation; either version 2, or (at your option)
+  11:arch/stm32/subsystems/settings_arch.c ****  * any later version.
+  12:arch/stm32/subsystems/settings_arch.c ****  *
+  13:arch/stm32/subsystems/settings_arch.c ****  * Paparazzi is distributed in the hope that it will be useful,
+  14:arch/stm32/subsystems/settings_arch.c ****  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  15:arch/stm32/subsystems/settings_arch.c ****  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  16:arch/stm32/subsystems/settings_arch.c ****  * GNU General Public License for more details.
+  17:arch/stm32/subsystems/settings_arch.c ****  *
+  18:arch/stm32/subsystems/settings_arch.c ****  * You should have received a copy of the GNU General Public License
+  19:arch/stm32/subsystems/settings_arch.c ****  * along with Paparazzi; see the file COPYING.  If not, write to
+  20:arch/stm32/subsystems/settings_arch.c ****  * the Free Software Foundation, 59 Temple Place - Suite 330,
+  21:arch/stm32/subsystems/settings_arch.c ****  * Boston, MA 02111-1307, USA.
+  22:arch/stm32/subsystems/settings_arch.c ****  *
+  23:arch/stm32/subsystems/settings_arch.c ****  */
+  24:arch/stm32/subsystems/settings_arch.c **** 
+  25:arch/stm32/subsystems/settings_arch.c **** /*
+  26:arch/stm32/subsystems/settings_arch.c ****   flash data is located in the last page/sector of flash
+  27:arch/stm32/subsystems/settings_arch.c **** 
+  28:arch/stm32/subsystems/settings_arch.c ****   data          flash_addr
+  29:arch/stm32/subsystems/settings_arch.c ****   data_size     flash_end - FSIZ
+  30:arch/stm32/subsystems/settings_arch.c ****   checksum      flash_end - FCHK
+  31:arch/stm32/subsystems/settings_arch.c **** 
+  32:arch/stm32/subsystems/settings_arch.c ****   STM32: minimum write size 2 bytes, endurance 10k cycles,
+  33:arch/stm32/subsystems/settings_arch.c ****          max sector erase time 40ms, max prog time 70us per 2 bytes
+  34:arch/stm32/subsystems/settings_arch.c **** */
+  35:arch/stm32/subsystems/settings_arch.c **** 
+  36:arch/stm32/subsystems/settings_arch.c **** #include "subsystems/settings.h"
+  37:arch/stm32/subsystems/settings_arch.c **** 
+  38:arch/stm32/subsystems/settings_arch.c **** #if defined(STM32F1) || defined(STM32F2) || defined(STM32F4)
+  39:arch/stm32/subsystems/settings_arch.c **** #include <libopencm3/stm32/f1/flash.h>
+  40:arch/stm32/subsystems/settings_arch.c **** #else
+  41:arch/stm32/subsystems/settings_arch.c **** #include <libopencm3/stm32/flash.h>
+  42:arch/stm32/subsystems/settings_arch.c **** #endif
+  43:arch/stm32/subsystems/settings_arch.c **** 
+  44:arch/stm32/subsystems/settings_arch.c **** #include <libopencm3/stm32/crc.h>
+  45:arch/stm32/subsystems/settings_arch.c **** #include <libopencm3/stm32/dbgmcu.h>
+  46:arch/stm32/subsystems/settings_arch.c **** 
+  47:arch/stm32/subsystems/settings_arch.c **** struct FlashInfo {
+  48:arch/stm32/subsystems/settings_arch.c ****     uint32_t addr;
+  49:arch/stm32/subsystems/settings_arch.c ****     uint32_t total_size;
+  50:arch/stm32/subsystems/settings_arch.c ****     uint32_t page_nr;
+  51:arch/stm32/subsystems/settings_arch.c ****     uint32_t page_size;
+  52:arch/stm32/subsystems/settings_arch.c **** };
+  53:arch/stm32/subsystems/settings_arch.c **** 
+  54:arch/stm32/subsystems/settings_arch.c **** 
+  55:arch/stm32/subsystems/settings_arch.c **** static uint32_t pflash_checksum(uint32_t ptr, uint32_t size);
+  56:arch/stm32/subsystems/settings_arch.c **** static int32_t flash_detect(struct FlashInfo* flash);
+  57:arch/stm32/subsystems/settings_arch.c **** static int32_t pflash_program_bytes(struct FlashInfo* flash,
+  58:arch/stm32/subsystems/settings_arch.c ****                      uint32_t src,
+  59:arch/stm32/subsystems/settings_arch.c ****                      uint32_t size,
+  60:arch/stm32/subsystems/settings_arch.c ****                      uint32_t chksum);
+  61:arch/stm32/subsystems/settings_arch.c **** 
+  62:arch/stm32/subsystems/settings_arch.c **** #define FLASH_SIZE_ MMIO16(0x1FFFF7E0)
+  63:arch/stm32/subsystems/settings_arch.c **** 
+  64:arch/stm32/subsystems/settings_arch.c **** #define FLASH_BEGIN 0x08000000
+  65:arch/stm32/subsystems/settings_arch.c **** #define FSIZ        8
+  66:arch/stm32/subsystems/settings_arch.c **** #define FCHK        4
+  67:arch/stm32/subsystems/settings_arch.c **** 
+  68:arch/stm32/subsystems/settings_arch.c **** 
+  69:arch/stm32/subsystems/settings_arch.c **** static uint32_t pflash_checksum(uint32_t ptr, uint32_t size) {
+  31              		.loc 1 69 0
+  32              		.cfi_startproc
+  33              		@ args = 0, pretend = 0, frame = 0
+  34              		@ frame_needed = 0, uses_anonymous_args = 0
+  35              	.LVL0:
+  70:arch/stm32/subsystems/settings_arch.c ****   uint32_t i;
+  71:arch/stm32/subsystems/settings_arch.c **** 
+  72:arch/stm32/subsystems/settings_arch.c ****   /* reset crc */
+  73:arch/stm32/subsystems/settings_arch.c ****   CRC_CR = CRC_CR_RESET;
+  36              		.loc 1 73 0
+  37 0000 234B     		ldr	r3, .L15
+  38 0002 0122     		movs	r2, #1
+  39 0004 1A60     		str	r2, [r3, #0]
+  74:arch/stm32/subsystems/settings_arch.c **** 
+  75:arch/stm32/subsystems/settings_arch.c ****   if (ptr % 4) {
+  40              		.loc 1 75 0
+  41 0006 10F00303 		ands	r3, r0, #3
+  69:arch/stm32/subsystems/settings_arch.c **** static uint32_t pflash_checksum(uint32_t ptr, uint32_t size) {
+  42              		.loc 1 69 0
+  43 000a 30B5     		push	{r4, r5, lr}
+  44              	.LCFI0:
+  45              		.cfi_def_cfa_offset 12
+  46              		.loc 1 75 0
+  47 000c 1ED0     		beq	.L3
+  48              		.cfi_offset 14, -4
+  49              		.cfi_offset 5, -8
+  50              		.cfi_offset 4, -12
+  51 000e 0246     		mov	r2, r0
+  52 0010 0023     		movs	r3, #0
+  53              	.LVL1:
+  54 0012 11E0     		b	.L4
+  55              	.LVL2:
+  56              	.L5:
+  76:arch/stm32/subsystems/settings_arch.c ****     /* calc in 8bit chunks */
+  77:arch/stm32/subsystems/settings_arch.c ****     for (i=0; i<(size & ~3); i+=4) {
+  78:arch/stm32/subsystems/settings_arch.c ****       CRC_DR = (*(uint8_t*) (ptr+i)) |
+  57              		.loc 1 78 0
+  58 0014 12F8025C 		ldrb	r5, [r2, #-2]	@ zero_extendqisi2
+  59 0018 12F803CC 		ldrb	ip, [r2, #-3]	@ zero_extendqisi2
+  60 001c 2D04     		lsls	r5, r5, #16
+  61 001e 45EA0C25 		orr	r5, r5, ip, lsl #8
+  62 0022 13F800C0 		ldrb	ip, [r3, r0]	@ zero_extendqisi2
+  63 0026 1B4C     		ldr	r4, .L15+4
+  64 0028 45EA0C05 		orr	r5, r5, ip
+  65 002c 12F801CC 		ldrb	ip, [r2, #-1]	@ zero_extendqisi2
+  77:arch/stm32/subsystems/settings_arch.c ****     for (i=0; i<(size & ~3); i+=4) {
+  66              		.loc 1 77 0
+  67 0030 0433     		adds	r3, r3, #4
+  68              		.loc 1 78 0
+  69 0032 45EA0C65 		orr	r5, r5, ip, lsl #24
+  70 0036 2560     		str	r5, [r4, #0]
+  71              	.L4:
+  77:arch/stm32/subsystems/settings_arch.c ****     for (i=0; i<(size & ~3); i+=4) {
+  72              		.loc 1 77 0
+  73 0038 21F0030C 		bic	ip, r1, #3
+  74 003c 0432     		adds	r2, r2, #4
+  75 003e 6345     		cmp	r3, ip
+  76 0040 E8D3     		bcc	.L5
+  77 0042 07E0     		b	.L6
+  78              	.LVL3:
+  79              	.L7:
+  79:arch/stm32/subsystems/settings_arch.c ****                (*(uint8_t*) (ptr+i+1)) << 8 |
+  80:arch/stm32/subsystems/settings_arch.c ****                (*(uint8_t*) (ptr+i+2)) << 16 |
+  81:arch/stm32/subsystems/settings_arch.c ****                (*(uint8_t*) (ptr+i+3)) << 24;
+  82:arch/stm32/subsystems/settings_arch.c ****     }
+  83:arch/stm32/subsystems/settings_arch.c ****   } else {
+  84:arch/stm32/subsystems/settings_arch.c ****     /* calc in 32bit */
+  85:arch/stm32/subsystems/settings_arch.c ****     for (i=0; i<(size & ~3); i+=4) {
+  86:arch/stm32/subsystems/settings_arch.c ****       CRC_DR = *(uint32_t*) (ptr+i);
+  80              		.loc 1 86 0
+  81 0044 1C58     		ldr	r4, [r3, r0]
+  82 0046 134A     		ldr	r2, .L15+4
+  85:arch/stm32/subsystems/settings_arch.c ****     for (i=0; i<(size & ~3); i+=4) {
+  83              		.loc 1 85 0
+  84 0048 0433     		adds	r3, r3, #4
+  85              		.loc 1 86 0
+  86 004a 1460     		str	r4, [r2, #0]
+  87              	.L3:
+  85:arch/stm32/subsystems/settings_arch.c ****     for (i=0; i<(size & ~3); i+=4) {
+  88              		.loc 1 85 0
+  89 004c 21F00302 		bic	r2, r1, #3
+  90 0050 9342     		cmp	r3, r2
+  91 0052 F7D3     		bcc	.L7
+  92              	.LVL4:
+  93              	.L6:
+  87:arch/stm32/subsystems/settings_arch.c ****     }
+  88:arch/stm32/subsystems/settings_arch.c ****   }
+  89:arch/stm32/subsystems/settings_arch.c **** 
+  90:arch/stm32/subsystems/settings_arch.c ****   /* remaining bytes */
+  91:arch/stm32/subsystems/settings_arch.c ****   switch (size % 4) {
+  94              		.loc 1 91 0
+  95 0054 01F00301 		and	r1, r1, #3
+  96              	.LVL5:
+  97 0058 0229     		cmp	r1, #2
+  98 005a 05D0     		beq	.L10
+  99 005c 0329     		cmp	r1, #3
+ 100 005e 09D0     		beq	.L11
+ 101 0060 0129     		cmp	r1, #1
+ 102 0062 11D1     		bne	.L8
+  92:arch/stm32/subsystems/settings_arch.c ****     case 1:
+  93:arch/stm32/subsystems/settings_arch.c ****       CRC_DR = *(uint8_t*) (ptr+i);
+ 103              		.loc 1 93 0
+ 104 0064 1A5C     		ldrb	r2, [r3, r0]	@ zero_extendqisi2
+ 105 0066 0DE0     		b	.L13
+ 106              	.LVL6:
+ 107              	.L10:
+  94:arch/stm32/subsystems/settings_arch.c ****       break;
+  95:arch/stm32/subsystems/settings_arch.c ****     case 2:
+  96:arch/stm32/subsystems/settings_arch.c ****       CRC_DR = (*(uint8_t*) (ptr+i)) |
+ 108              		.loc 1 96 0
+ 109 0068 1A18     		adds	r2, r3, r0
+ 110 006a 5278     		ldrb	r2, [r2, #1]	@ zero_extendqisi2
+ 111 006c 1B5C     		ldrb	r3, [r3, r0]	@ zero_extendqisi2
+ 112              	.LVL7:
+ 113 006e 43EA0222 		orr	r2, r3, r2, lsl #8
+ 114 0072 07E0     		b	.L13
+ 115              	.LVL8:
+ 116              	.L11:
+  97:arch/stm32/subsystems/settings_arch.c ****                (*(uint8_t*) (ptr+i+1)) << 8;
+  98:arch/stm32/subsystems/settings_arch.c ****       break;
+  99:arch/stm32/subsystems/settings_arch.c ****     case 3:
+ 100:arch/stm32/subsystems/settings_arch.c ****       CRC_DR = (*(uint8_t*) (ptr+i)) |
+ 117              		.loc 1 100 0
+ 118 0074 1A18     		adds	r2, r3, r0
+ 119 0076 5178     		ldrb	r1, [r2, #1]	@ zero_extendqisi2
+ 120 0078 9278     		ldrb	r2, [r2, #2]	@ zero_extendqisi2
+ 121 007a 1B5C     		ldrb	r3, [r3, r0]	@ zero_extendqisi2
+ 122              	.LVL9:
+ 123 007c 1204     		lsls	r2, r2, #16
+ 124 007e 42EA0122 		orr	r2, r2, r1, lsl #8
+ 125 0082 1A43     		orrs	r2, r2, r3
+ 126              	.LVL10:
+ 127              	.L13:
+ 128 0084 034B     		ldr	r3, .L15+4
+ 129              	.LVL11:
+ 130 0086 1A60     		str	r2, [r3, #0]
+ 131              	.LVL12:
+ 132              	.L8:
+ 101:arch/stm32/subsystems/settings_arch.c ****                (*(uint8_t*) (ptr+i+1)) << 8 |
+ 102:arch/stm32/subsystems/settings_arch.c ****                (*(uint8_t*) (ptr+i+2)) << 16;
+ 103:arch/stm32/subsystems/settings_arch.c ****       break;
+ 104:arch/stm32/subsystems/settings_arch.c ****     default:
+ 105:arch/stm32/subsystems/settings_arch.c ****       break;
+ 106:arch/stm32/subsystems/settings_arch.c ****   }
+ 107:arch/stm32/subsystems/settings_arch.c **** 
+ 108:arch/stm32/subsystems/settings_arch.c ****   return CRC_DR;
+ 133              		.loc 1 108 0
+ 134 0088 024B     		ldr	r3, .L15+4
+ 135              	.LVL13:
+ 136 008a 1868     		ldr	r0, [r3, #0]
+ 137              	.LVL14:
+ 109:arch/stm32/subsystems/settings_arch.c **** }
+ 138              		.loc 1 109 0
+ 139 008c 30BD     		pop	{r4, r5, pc}
+ 140              	.L16:
+ 141 008e 00BF     		.align	2
+ 142              	.L15:
+ 143 0090 08300240 		.word	1073885192
+ 144 0094 00300240 		.word	1073885184
+ 145              		.cfi_endproc
+ 146              	.LFE37:
+ 148              		.section	.text.flash_detect,"ax",%progbits
+ 149              		.align	1
+ 150              		.thumb
+ 151              		.thumb_func
+ 153              	flash_detect:
+ 154              	.LFB38:
+ 110:arch/stm32/subsystems/settings_arch.c **** 
+ 111:arch/stm32/subsystems/settings_arch.c **** static int32_t flash_detect(struct FlashInfo* flash) {
+ 155              		.loc 1 111 0
+ 156              		.cfi_startproc
+ 157              		@ args = 0, pretend = 0, frame = 0
+ 158              		@ frame_needed = 0, uses_anonymous_args = 0
+ 159              		@ link register save eliminated.
+ 160              	.LVL15:
+ 112:arch/stm32/subsystems/settings_arch.c **** 
+ 113:arch/stm32/subsystems/settings_arch.c ****   flash->total_size = FLASH_SIZE_ * 0x400;
+ 161              		.loc 1 113 0
+ 162 0000 1A4B     		ldr	r3, .L28
+ 163 0002 1B88     		ldrh	r3, [r3, #0]
+ 164 0004 9BB2     		uxth	r3, r3
+ 165 0006 9B02     		lsls	r3, r3, #10
+ 114:arch/stm32/subsystems/settings_arch.c **** 
+ 115:arch/stm32/subsystems/settings_arch.c **** #if 1
+ 116:arch/stm32/subsystems/settings_arch.c ****   /* FIXME This will not work for connectivity line (needs ID, see below), but
+ 117:arch/stm32/subsystems/settings_arch.c ****            device ID is only readable when freshly loaded through JTAG?! */
+ 118:arch/stm32/subsystems/settings_arch.c **** 
+ 119:arch/stm32/subsystems/settings_arch.c ****   switch (flash->total_size) {
+ 166              		.loc 1 119 0
+ 167 0008 B3F5003F 		cmp	r3, #131072
+ 113:arch/stm32/subsystems/settings_arch.c ****   flash->total_size = FLASH_SIZE_ * 0x400;
+ 168              		.loc 1 113 0
+ 169 000c 4360     		str	r3, [r0, #4]
+ 170              		.loc 1 119 0
+ 171 000e 1AD0     		beq	.L19
+ 172 0010 09D8     		bhi	.L21
+ 173 0012 B3F5004F 		cmp	r3, #32768
+ 174 0016 16D0     		beq	.L19
+ 175 0018 B3F5803F 		cmp	r3, #65536
+ 176 001c 13D0     		beq	.L19
+ 177 001e B3F5804F 		cmp	r3, #16384
+ 178 0022 0DD1     		bne	.L18
+ 179 0024 0FE0     		b	.L19
+ 180              	.L21:
+ 181 0026 B3F5002F 		cmp	r3, #524288
+ 182 002a 0FD0     		beq	.L20
+ 183 002c 02D8     		bhi	.L22
+ 184 002e B3F5802F 		cmp	r3, #262144
+ 185 0032 04E0     		b	.L26
+ 186              	.L22:
+ 187 0034 B3F5402F 		cmp	r3, #786432
+ 188 0038 08D0     		beq	.L20
+ 189 003a B3F5801F 		cmp	r3, #1048576
+ 190              	.L26:
+ 191 003e 05D0     		beq	.L20
+ 192              	.L18:
+ 193 0040 4FF0FF30 		mov	r0, #-1
+ 194              	.LVL16:
+ 195 0044 7047     		bx	lr
+ 196              	.LVL17:
+ 197              	.L19:
+ 120:arch/stm32/subsystems/settings_arch.c ****     /* low density */
+ 121:arch/stm32/subsystems/settings_arch.c ****     case 0x00004000: /* 16 kBytes */
+ 122:arch/stm32/subsystems/settings_arch.c ****     case 0x00008000: /* 32 kBytes */
+ 123:arch/stm32/subsystems/settings_arch.c ****     /* medium density, e.g. STM32F103RBT6 (Olimex STM32-H103) */
+ 124:arch/stm32/subsystems/settings_arch.c ****     case 0x00010000: /* 64 kBytes */
+ 125:arch/stm32/subsystems/settings_arch.c ****     case 0x00020000: /* 128 kBytes */
+ 126:arch/stm32/subsystems/settings_arch.c ****     {
+ 127:arch/stm32/subsystems/settings_arch.c ****       flash->page_size = 0x400;
+ 198              		.loc 1 127 0
+ 199 0046 4FF48063 		mov	r3, #1024
+ 200 004a 01E0     		b	.L27
+ 201              	.L20:
+ 128:arch/stm32/subsystems/settings_arch.c ****       break;
+ 129:arch/stm32/subsystems/settings_arch.c ****     }
+ 130:arch/stm32/subsystems/settings_arch.c ****     /* high density, e.g. STM32F103RE (Joby Lisa/M, Lisa/L) */
+ 131:arch/stm32/subsystems/settings_arch.c ****     case 0x00040000: /* 256 kBytes */
+ 132:arch/stm32/subsystems/settings_arch.c ****     case 0x00080000: /* 512 kBytes */
+ 133:arch/stm32/subsystems/settings_arch.c ****     /* XL density */
+ 134:arch/stm32/subsystems/settings_arch.c ****     case 0x000C0000: /* 768 kBytes */
+ 135:arch/stm32/subsystems/settings_arch.c ****     case 0x00100000: /* 1 MByte */
+ 136:arch/stm32/subsystems/settings_arch.c ****     {
+ 137:arch/stm32/subsystems/settings_arch.c ****       flash->page_size = 0x800;
+ 202              		.loc 1 137 0
+ 203 004c 4FF40063 		mov	r3, #2048
+ 204              	.L27:
+ 205 0050 C360     		str	r3, [r0, #12]
+ 138:arch/stm32/subsystems/settings_arch.c ****       break;
+ 139:arch/stm32/subsystems/settings_arch.c ****     }
+ 140:arch/stm32/subsystems/settings_arch.c ****     default: {return -1;}
+ 141:arch/stm32/subsystems/settings_arch.c ****   }
+ 142:arch/stm32/subsystems/settings_arch.c **** 
+ 143:arch/stm32/subsystems/settings_arch.c **** #else /* this is the correct way of detecting page sizes */
+ 144:arch/stm32/subsystems/settings_arch.c ****   uint32_t device_id;
+ 145:arch/stm32/subsystems/settings_arch.c **** 
+ 146:arch/stm32/subsystems/settings_arch.c ****   /* read device id */
+ 147:arch/stm32/subsystems/settings_arch.c ****   device_id = DBGMCU_IDCODE & DBGMCU_IDCODE_DEV_ID_MASK;
+ 148:arch/stm32/subsystems/settings_arch.c **** 
+ 149:arch/stm32/subsystems/settings_arch.c ****   switch (device_id) {
+ 150:arch/stm32/subsystems/settings_arch.c ****     /* low density */
+ 151:arch/stm32/subsystems/settings_arch.c ****     case 0x412:
+ 152:arch/stm32/subsystems/settings_arch.c ****     /* medium density, e.g. STM32F103RB (Olimex STM32-H103) */
+ 153:arch/stm32/subsystems/settings_arch.c ****     case 0x410:
+ 154:arch/stm32/subsystems/settings_arch.c ****     {
+ 155:arch/stm32/subsystems/settings_arch.c ****       flash->page_size = 0x400;
+ 156:arch/stm32/subsystems/settings_arch.c ****       break;
+ 157:arch/stm32/subsystems/settings_arch.c ****     }
+ 158:arch/stm32/subsystems/settings_arch.c ****     /* high density, e.g. STM32F103RE (Joby Lisa/L) */
+ 159:arch/stm32/subsystems/settings_arch.c ****     case 0x414:
+ 160:arch/stm32/subsystems/settings_arch.c ****     /* XL density */
+ 161:arch/stm32/subsystems/settings_arch.c ****     case 0x430:
+ 162:arch/stm32/subsystems/settings_arch.c ****     /* connectivity line */
+ 163:arch/stm32/subsystems/settings_arch.c ****     case 0x418:
+ 164:arch/stm32/subsystems/settings_arch.c ****     {
+ 165:arch/stm32/subsystems/settings_arch.c ****       flash->page_size = 0x800;
+ 166:arch/stm32/subsystems/settings_arch.c ****       break;
+ 167:arch/stm32/subsystems/settings_arch.c ****     }
+ 168:arch/stm32/subsystems/settings_arch.c ****     default: return -1;
+ 169:arch/stm32/subsystems/settings_arch.c ****   }
+ 170:arch/stm32/subsystems/settings_arch.c **** 
+ 171:arch/stm32/subsystems/settings_arch.c ****   switch (flash->total_size) {
+ 172:arch/stm32/subsystems/settings_arch.c ****     case 0x00004000: /* 16 kBytes */
+ 173:arch/stm32/subsystems/settings_arch.c ****     case 0x00008000: /* 32 kBytes */
+ 174:arch/stm32/subsystems/settings_arch.c ****     case 0x00010000: /* 64 kBytes */
+ 175:arch/stm32/subsystems/settings_arch.c ****     case 0x00200000: /* 128 kBytes */
+ 176:arch/stm32/subsystems/settings_arch.c ****     case 0x00040000: /* 256 kBytes */
+ 177:arch/stm32/subsystems/settings_arch.c ****     case 0x00080000: /* 512 kBytes */
+ 178:arch/stm32/subsystems/settings_arch.c ****     case 0x000C0000: /* 768 kBytes */
+ 179:arch/stm32/subsystems/settings_arch.c ****     case 0x00100000: /* 1 MByte */
+ 180:arch/stm32/subsystems/settings_arch.c ****       break;
+ 181:arch/stm32/subsystems/settings_arch.c ****     default: return -1;
+ 182:arch/stm32/subsystems/settings_arch.c ****   }
+ 183:arch/stm32/subsystems/settings_arch.c **** #endif
+ 184:arch/stm32/subsystems/settings_arch.c **** 
+ 185:arch/stm32/subsystems/settings_arch.c ****   flash->page_nr = (flash->total_size / flash->page_size) - 1;
+ 206              		.loc 1 185 0
+ 207 0052 C268     		ldr	r2, [r0, #12]
+ 208 0054 4368     		ldr	r3, [r0, #4]
+ 209 0056 B3FBF2F3 		udiv	r3, r3, r2
+ 210 005a 013B     		subs	r3, r3, #1
+ 211 005c 8360     		str	r3, [r0, #8]
+ 186:arch/stm32/subsystems/settings_arch.c ****   flash->addr = FLASH_BEGIN + flash->page_nr * flash->page_size;
+ 212              		.loc 1 186 0
+ 213 005e 5343     		muls	r3, r2, r3
+ 214 0060 03F10063 		add	r3, r3, #134217728
+ 215 0064 0360     		str	r3, [r0, #0]
+ 216 0066 0020     		movs	r0, #0
+ 217              	.LVL18:
+ 187:arch/stm32/subsystems/settings_arch.c **** 
+ 188:arch/stm32/subsystems/settings_arch.c ****   return 0;
+ 189:arch/stm32/subsystems/settings_arch.c **** }
+ 218              		.loc 1 189 0
+ 219 0068 7047     		bx	lr
+ 220              	.L29:
+ 221 006a 00BF     		.align	2
+ 222              	.L28:
+ 223 006c E0F7FF1F 		.word	536868832
+ 224              		.cfi_endproc
+ 225              	.LFE38:
+ 227              		.section	.text.persistent_read,"ax",%progbits
+ 228              		.align	1
+ 229              		.global	persistent_read
+ 230              		.thumb
+ 231              		.thumb_func
+ 233              	persistent_read:
+ 234              	.LFB41:
+ 190:arch/stm32/subsystems/settings_arch.c **** 
+ 191:arch/stm32/subsystems/settings_arch.c **** // (gdb) p *flash
+ 192:arch/stm32/subsystems/settings_arch.c **** // $1 = {addr = 134739968, total_size = 524288, page_nr = 255, page_size = 2048}
+ 193:arch/stm32/subsystems/settings_arch.c **** //              0x807F800             0x80000
+ 194:arch/stm32/subsystems/settings_arch.c **** 
+ 195:arch/stm32/subsystems/settings_arch.c **** static int32_t pflash_program_bytes(struct FlashInfo* flash,
+ 196:arch/stm32/subsystems/settings_arch.c ****                     uint32_t   src,
+ 197:arch/stm32/subsystems/settings_arch.c ****                     uint32_t   size,
+ 198:arch/stm32/subsystems/settings_arch.c ****                     uint32_t   chksum) {
+ 199:arch/stm32/subsystems/settings_arch.c ****   uint32_t i;
+ 200:arch/stm32/subsystems/settings_arch.c **** 
+ 201:arch/stm32/subsystems/settings_arch.c ****   /* erase */
+ 202:arch/stm32/subsystems/settings_arch.c ****   flash_unlock();
+ 203:arch/stm32/subsystems/settings_arch.c ****   flash_erase_page(flash->addr);
+ 204:arch/stm32/subsystems/settings_arch.c ****   flash_lock();
+ 205:arch/stm32/subsystems/settings_arch.c **** 
+ 206:arch/stm32/subsystems/settings_arch.c ****   /* verify erase */
+ 207:arch/stm32/subsystems/settings_arch.c ****   for (i=0; i<flash->page_size; i+=4) {
+ 208:arch/stm32/subsystems/settings_arch.c ****     if ((*(uint32_t*) (flash->addr + i)) != 0xFFFFFFFF) return -1;
+ 209:arch/stm32/subsystems/settings_arch.c ****   }
+ 210:arch/stm32/subsystems/settings_arch.c **** 
+ 211:arch/stm32/subsystems/settings_arch.c ****   flash_unlock();
+ 212:arch/stm32/subsystems/settings_arch.c ****   /* write full 16 bit words */
+ 213:arch/stm32/subsystems/settings_arch.c ****   for (i=0; i<(size & ~1); i+=2) {
+ 214:arch/stm32/subsystems/settings_arch.c ****     flash_program_half_word(flash->addr+i,
+ 215:arch/stm32/subsystems/settings_arch.c ****         (uint16_t)(*(uint8_t*)(src+i) | (*(uint8_t*)(src+i+1)) << 8));
+ 216:arch/stm32/subsystems/settings_arch.c ****   }
+ 217:arch/stm32/subsystems/settings_arch.c ****   /* fill bytes with a zero */
+ 218:arch/stm32/subsystems/settings_arch.c ****   if (size & 1) {
+ 219:arch/stm32/subsystems/settings_arch.c ****     flash_program_half_word(flash->addr+i, (uint16_t)(*(uint8_t*)(src+i)));
+ 220:arch/stm32/subsystems/settings_arch.c ****   }
+ 221:arch/stm32/subsystems/settings_arch.c ****   /* write size */
+ 222:arch/stm32/subsystems/settings_arch.c ****   flash_program_half_word(flash->addr+flash->page_size-FSIZ,
+ 223:arch/stm32/subsystems/settings_arch.c ****                           (uint16_t)(size & 0xFFFF));
+ 224:arch/stm32/subsystems/settings_arch.c ****   flash_program_half_word(flash->addr+flash->page_size-FSIZ+2,
+ 225:arch/stm32/subsystems/settings_arch.c ****                           (uint16_t)((size >> 16) & 0xFFFF));
+ 226:arch/stm32/subsystems/settings_arch.c ****   /* write checksum */
+ 227:arch/stm32/subsystems/settings_arch.c ****   flash_program_half_word(flash->addr+flash->page_size-FCHK,
+ 228:arch/stm32/subsystems/settings_arch.c ****                           (uint16_t)(chksum & 0xFFFF));
+ 229:arch/stm32/subsystems/settings_arch.c ****   flash_program_half_word(flash->addr+flash->page_size-FCHK+2,
+ 230:arch/stm32/subsystems/settings_arch.c ****                           (uint16_t)((chksum >> 16) & 0xFFFF));
+ 231:arch/stm32/subsystems/settings_arch.c ****   flash_lock();
+ 232:arch/stm32/subsystems/settings_arch.c **** 
+ 233:arch/stm32/subsystems/settings_arch.c ****   /* verify data */
+ 234:arch/stm32/subsystems/settings_arch.c ****   for (i=0; i<size; i++) {
+ 235:arch/stm32/subsystems/settings_arch.c ****     if ((*(uint8_t*) (flash->addr+i)) != (*(uint8_t*) (src+i))) return -2;
+ 236:arch/stm32/subsystems/settings_arch.c ****   }
+ 237:arch/stm32/subsystems/settings_arch.c ****   if (*(uint32_t*) (flash->addr+flash->page_size-FSIZ) != size) return -3;
+ 238:arch/stm32/subsystems/settings_arch.c ****   if (*(uint32_t*) (flash->addr+flash->page_size-FCHK) != chksum) return -4;
+ 239:arch/stm32/subsystems/settings_arch.c **** 
+ 240:arch/stm32/subsystems/settings_arch.c ****   return 0;
+ 241:arch/stm32/subsystems/settings_arch.c **** }
+ 242:arch/stm32/subsystems/settings_arch.c **** 
+ 243:arch/stm32/subsystems/settings_arch.c **** int32_t persistent_write(uint32_t ptr, uint32_t size) {
+ 244:arch/stm32/subsystems/settings_arch.c ****   struct FlashInfo flash_info;
+ 245:arch/stm32/subsystems/settings_arch.c ****   if (flash_detect(&flash_info)) return -1;
+ 246:arch/stm32/subsystems/settings_arch.c ****   if ((size > flash_info.page_size-FSIZ) || (size == 0)) return -2;
+ 247:arch/stm32/subsystems/settings_arch.c **** 
+ 248:arch/stm32/subsystems/settings_arch.c ****   return pflash_program_bytes(&flash_info,
+ 249:arch/stm32/subsystems/settings_arch.c ****                               ptr,
+ 250:arch/stm32/subsystems/settings_arch.c ****                               size,
+ 251:arch/stm32/subsystems/settings_arch.c ****                               pflash_checksum(ptr, size));
+ 252:arch/stm32/subsystems/settings_arch.c **** }
+ 253:arch/stm32/subsystems/settings_arch.c **** 
+ 254:arch/stm32/subsystems/settings_arch.c **** int32_t persistent_read(uint32_t ptr, uint32_t size) {
+ 235              		.loc 1 254 0
+ 236              		.cfi_startproc
+ 237              		@ args = 0, pretend = 0, frame = 16
+ 238              		@ frame_needed = 0, uses_anonymous_args = 0
+ 239              	.LVL19:
+ 240 0000 7FB5     		push	{r0, r1, r2, r3, r4, r5, r6, lr}
+ 241              	.LCFI1:
+ 242              		.cfi_def_cfa_offset 32
+ 243              	.LVL20:
+ 244              		.loc 1 254 0
+ 245 0002 0646     		mov	r6, r0
+ 246              		.cfi_offset 14, -4
+ 247              		.cfi_offset 6, -8
+ 248              		.cfi_offset 5, -12
+ 249              		.cfi_offset 4, -16
+ 250              		.cfi_offset 3, -20
+ 251              		.cfi_offset 2, -24
+ 252              		.cfi_offset 1, -28
+ 253              		.cfi_offset 0, -32
+ 254              	.LVL21:
+ 255:arch/stm32/subsystems/settings_arch.c ****   struct FlashInfo flash;
+ 256:arch/stm32/subsystems/settings_arch.c ****   uint32_t i;
+ 257:arch/stm32/subsystems/settings_arch.c **** 
+ 258:arch/stm32/subsystems/settings_arch.c ****   /* check parameters */
+ 259:arch/stm32/subsystems/settings_arch.c ****   if (flash_detect(&flash)) return -1;
+ 255              		.loc 1 259 0
+ 256 0004 6846     		mov	r0, sp
+ 257              	.LVL22:
+ 254:arch/stm32/subsystems/settings_arch.c **** int32_t persistent_read(uint32_t ptr, uint32_t size) {
+ 258              		.loc 1 254 0
+ 259 0006 0C46     		mov	r4, r1
+ 260              	.LVL23:
+ 261              		.loc 1 259 0
+ 262 0008 FFF7FEFF 		bl	flash_detect
+ 263              	.LVL24:
+ 264 000c 0546     		mov	r5, r0
+ 265 000e 10B1     		cbz	r0, .L31
+ 266 0010 4FF0FF30 		mov	r0, #-1
+ 267 0014 25E0     		b	.L32
+ 268              	.L31:
+ 260:arch/stm32/subsystems/settings_arch.c ****   if ((size > flash.page_size-FSIZ) || (size == 0)) return -2;
+ 269              		.loc 1 260 0
+ 270 0016 039B     		ldr	r3, [sp, #12]
+ 271 0018 A3F10802 		sub	r2, r3, #8
+ 272 001c 9442     		cmp	r4, r2
+ 273 001e 1ED8     		bhi	.L33
+ 274 0020 ECB1     		cbz	r4, .L33
+ 261:arch/stm32/subsystems/settings_arch.c **** 
+ 262:arch/stm32/subsystems/settings_arch.c ****   /* check consistency */
+ 263:arch/stm32/subsystems/settings_arch.c ****   if (size != *(uint32_t*)(flash.addr+flash.page_size-FSIZ)) return -3;
+ 275              		.loc 1 263 0
+ 276 0022 0098     		ldr	r0, [sp, #0]
+ 277 0024 C318     		adds	r3, r0, r3
+ 278 0026 53F8083C 		ldr	r3, [r3, #-8]
+ 279 002a 9C42     		cmp	r4, r3
+ 280 002c 02D0     		beq	.L34
+ 281 002e 6FF00200 		mvn	r0, #2
+ 282 0032 16E0     		b	.L32
+ 283              	.L34:
+ 264:arch/stm32/subsystems/settings_arch.c ****   if (pflash_checksum(flash.addr, size) !=
+ 284              		.loc 1 264 0
+ 285 0034 2146     		mov	r1, r4
+ 286 0036 FFF7FEFF 		bl	pflash_checksum
+ 265:arch/stm32/subsystems/settings_arch.c ****       *(uint32_t*)(flash.addr+flash.page_size-FCHK))
+ 287              		.loc 1 265 0
+ 288 003a 039B     		ldr	r3, [sp, #12]
+ 289 003c 009A     		ldr	r2, [sp, #0]
+ 290 003e D318     		adds	r3, r2, r3
+ 291 0040 53F8043C 		ldr	r3, [r3, #-4]
+ 292 0044 9842     		cmp	r0, r3
+ 293 0046 06D0     		beq	.L36
+ 294 0048 6FF00300 		mvn	r0, #3
+ 295 004c 09E0     		b	.L32
+ 296              	.LVL25:
+ 297              	.L37:
+ 266:arch/stm32/subsystems/settings_arch.c ****     return -4;
+ 267:arch/stm32/subsystems/settings_arch.c **** 
+ 268:arch/stm32/subsystems/settings_arch.c ****   /* copy data */
+ 269:arch/stm32/subsystems/settings_arch.c ****   for (i=0; i<size; i++) {
+ 270:arch/stm32/subsystems/settings_arch.c ****     *(uint8_t*) (ptr+i) = *(uint8_t*) (flash.addr+i);
+ 298              		.loc 1 270 0
+ 299 004e 009B     		ldr	r3, [sp, #0]
+ 300 0050 EB5C     		ldrb	r3, [r5, r3]	@ zero_extendqisi2
+ 301 0052 AB55     		strb	r3, [r5, r6]
+ 269:arch/stm32/subsystems/settings_arch.c ****   for (i=0; i<size; i++) {
+ 302              		.loc 1 269 0
+ 303 0054 0135     		adds	r5, r5, #1
+ 304              	.L36:
+ 305 0056 A542     		cmp	r5, r4
+ 306 0058 F9D3     		bcc	.L37
+ 307 005a 0020     		movs	r0, #0
+ 308 005c 01E0     		b	.L32
+ 309              	.LVL26:
+ 310              	.L33:
+ 311 005e 6FF00100 		mvn	r0, #1
+ 312              	.LVL27:
+ 313              	.L32:
+ 271:arch/stm32/subsystems/settings_arch.c ****   }
+ 272:arch/stm32/subsystems/settings_arch.c **** 
+ 273:arch/stm32/subsystems/settings_arch.c ****   return 0;
+ 274:arch/stm32/subsystems/settings_arch.c **** }
+ 314              		.loc 1 274 0
+ 315 0062 04B0     		add	sp, sp, #16
+ 316 0064 70BD     		pop	{r4, r5, r6, pc}
+ 317              		.cfi_endproc
+ 318              	.LFE41:
+ 320              		.section	.text.persistent_write,"ax",%progbits
+ 321              		.align	1
+ 322              		.global	persistent_write
+ 323              		.thumb
+ 324              		.thumb_func
+ 326              	persistent_write:
+ 327              	.LFB40:
+ 243:arch/stm32/subsystems/settings_arch.c **** int32_t persistent_write(uint32_t ptr, uint32_t size) {
+ 328              		.loc 1 243 0
+ 329              		.cfi_startproc
+ 330              		@ args = 0, pretend = 0, frame = 16
+ 331              		@ frame_needed = 0, uses_anonymous_args = 0
+ 332              	.LVL28:
+ 333 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 334              	.LCFI2:
+ 335              		.cfi_def_cfa_offset 20
+ 336 0002 85B0     		sub	sp, sp, #20
+ 337              	.LCFI3:
+ 338              		.cfi_def_cfa_offset 40
+ 243:arch/stm32/subsystems/settings_arch.c **** int32_t persistent_write(uint32_t ptr, uint32_t size) {
+ 339              		.loc 1 243 0
+ 340 0004 0646     		mov	r6, r0
+ 341              		.cfi_offset 14, -4
+ 342              		.cfi_offset 7, -8
+ 343              		.cfi_offset 6, -12
+ 344              		.cfi_offset 5, -16
+ 345              		.cfi_offset 4, -20
+ 245:arch/stm32/subsystems/settings_arch.c ****   if (flash_detect(&flash_info)) return -1;
+ 346              		.loc 1 245 0
+ 347 0006 6846     		mov	r0, sp
+ 348              	.LVL29:
+ 243:arch/stm32/subsystems/settings_arch.c **** int32_t persistent_write(uint32_t ptr, uint32_t size) {
+ 349              		.loc 1 243 0
+ 350 0008 0C46     		mov	r4, r1
+ 245:arch/stm32/subsystems/settings_arch.c ****   if (flash_detect(&flash_info)) return -1;
+ 351              		.loc 1 245 0
+ 352 000a FFF7FEFF 		bl	flash_detect
+ 353              	.LVL30:
+ 354 000e 0546     		mov	r5, r0
+ 355 0010 C0B9     		cbnz	r0, .L54
+ 246:arch/stm32/subsystems/settings_arch.c ****   if ((size > flash_info.page_size-FSIZ) || (size == 0)) return -2;
+ 356              		.loc 1 246 0
+ 357 0012 039B     		ldr	r3, [sp, #12]
+ 358 0014 083B     		subs	r3, r3, #8
+ 359 0016 9C42     		cmp	r4, r3
+ 360 0018 6CD8     		bhi	.L42
+ 361 001a 002C     		cmp	r4, #0
+ 362 001c 6AD0     		beq	.L42
+ 248:arch/stm32/subsystems/settings_arch.c ****   return pflash_program_bytes(&flash_info,
+ 363              		.loc 1 248 0
+ 364 001e 2146     		mov	r1, r4
+ 365 0020 3046     		mov	r0, r6
+ 366 0022 FFF7FEFF 		bl	pflash_checksum
+ 367 0026 0746     		mov	r7, r0
+ 368              	.LBB4:
+ 369              	.LBB5:
+ 202:arch/stm32/subsystems/settings_arch.c ****   flash_unlock();
+ 370              		.loc 1 202 0
+ 371 0028 FFF7FEFF 		bl	flash_unlock
+ 203:arch/stm32/subsystems/settings_arch.c ****   flash_erase_page(flash->addr);
+ 372              		.loc 1 203 0
+ 373 002c 0098     		ldr	r0, [sp, #0]
+ 374 002e FFF7FEFF 		bl	flash_erase_page
+ 204:arch/stm32/subsystems/settings_arch.c ****   flash_lock();
+ 375              		.loc 1 204 0
+ 376 0032 FFF7FEFF 		bl	flash_lock
+ 207:arch/stm32/subsystems/settings_arch.c ****   for (i=0; i<flash->page_size; i+=4) {
+ 377              		.loc 1 207 0
+ 378 0036 039A     		ldr	r2, [sp, #12]
+ 208:arch/stm32/subsystems/settings_arch.c ****     if ((*(uint32_t*) (flash->addr + i)) != 0xFFFFFFFF) return -1;
+ 379              		.loc 1 208 0
+ 380 0038 009B     		ldr	r3, [sp, #0]
+ 381 003a 07E0     		b	.L43
+ 382              	.LVL31:
+ 383              	.L45:
+ 384 003c E958     		ldr	r1, [r5, r3]
+ 385 003e B1F1FF3F 		cmp	r1, #-1
+ 386 0042 02D0     		beq	.L44
+ 387              	.L54:
+ 388 0044 4FF0FF30 		mov	r0, #-1
+ 389 0048 56E0     		b	.L41
+ 390              	.L44:
+ 207:arch/stm32/subsystems/settings_arch.c ****   for (i=0; i<flash->page_size; i+=4) {
+ 391              		.loc 1 207 0
+ 392 004a 0435     		adds	r5, r5, #4
+ 393              	.L43:
+ 394 004c 9542     		cmp	r5, r2
+ 395 004e F5D3     		bcc	.L45
+ 211:arch/stm32/subsystems/settings_arch.c ****   flash_unlock();
+ 396              		.loc 1 211 0
+ 397 0050 FFF7FEFF 		bl	flash_unlock
+ 398 0054 0025     		movs	r5, #0
+ 399              	.LVL32:
+ 400 0056 09E0     		b	.L46
+ 401              	.L47:
+ 214:arch/stm32/subsystems/settings_arch.c ****     flash_program_half_word(flash->addr+i,
+ 402              		.loc 1 214 0
+ 403 0058 AB19     		adds	r3, r5, r6
+ 404 005a 5978     		ldrb	r1, [r3, #1]	@ zero_extendqisi2
+ 405 005c 0098     		ldr	r0, [sp, #0]
+ 406 005e AB5D     		ldrb	r3, [r5, r6]	@ zero_extendqisi2
+ 407 0060 2818     		adds	r0, r5, r0
+ 408 0062 43EA0121 		orr	r1, r3, r1, lsl #8
+ 409 0066 FFF7FEFF 		bl	flash_program_half_word
+ 213:arch/stm32/subsystems/settings_arch.c ****   for (i=0; i<(size & ~1); i+=2) {
+ 410              		.loc 1 213 0
+ 411 006a 0235     		adds	r5, r5, #2
+ 412              	.L46:
+ 413 006c 24F00103 		bic	r3, r4, #1
+ 414 0070 9D42     		cmp	r5, r3
+ 415 0072 F1D3     		bcc	.L47
+ 218:arch/stm32/subsystems/settings_arch.c ****   if (size & 1) {
+ 416              		.loc 1 218 0
+ 417 0074 14F0010F 		tst	r4, #1
+ 418 0078 04D0     		beq	.L48
+ 219:arch/stm32/subsystems/settings_arch.c ****     flash_program_half_word(flash->addr+i, (uint16_t)(*(uint8_t*)(src+i)));
+ 419              		.loc 1 219 0
+ 420 007a 0098     		ldr	r0, [sp, #0]
+ 421 007c A95D     		ldrb	r1, [r5, r6]	@ zero_extendqisi2
+ 422 007e 2818     		adds	r0, r5, r0
+ 423 0080 FFF7FEFF 		bl	flash_program_half_word
+ 424              	.L48:
+ 222:arch/stm32/subsystems/settings_arch.c ****   flash_program_half_word(flash->addr+flash->page_size-FSIZ,
+ 425              		.loc 1 222 0
+ 426 0084 039B     		ldr	r3, [sp, #12]
+ 427 0086 0098     		ldr	r0, [sp, #0]
+ 428 0088 A1B2     		uxth	r1, r4
+ 429 008a C018     		adds	r0, r0, r3
+ 430 008c 0838     		subs	r0, r0, #8
+ 431 008e FFF7FEFF 		bl	flash_program_half_word
+ 224:arch/stm32/subsystems/settings_arch.c ****   flash_program_half_word(flash->addr+flash->page_size-FSIZ+2,
+ 432              		.loc 1 224 0
+ 433 0092 039B     		ldr	r3, [sp, #12]
+ 434 0094 0098     		ldr	r0, [sp, #0]
+ 435 0096 210C     		lsrs	r1, r4, #16
+ 436 0098 C018     		adds	r0, r0, r3
+ 437 009a 0638     		subs	r0, r0, #6
+ 438 009c FFF7FEFF 		bl	flash_program_half_word
+ 227:arch/stm32/subsystems/settings_arch.c ****   flash_program_half_word(flash->addr+flash->page_size-FCHK,
+ 439              		.loc 1 227 0
+ 440 00a0 039B     		ldr	r3, [sp, #12]
+ 441 00a2 0098     		ldr	r0, [sp, #0]
+ 442 00a4 B9B2     		uxth	r1, r7
+ 443 00a6 C018     		adds	r0, r0, r3
+ 444 00a8 0438     		subs	r0, r0, #4
+ 445 00aa FFF7FEFF 		bl	flash_program_half_word
+ 229:arch/stm32/subsystems/settings_arch.c ****   flash_program_half_word(flash->addr+flash->page_size-FCHK+2,
+ 446              		.loc 1 229 0
+ 447 00ae 039B     		ldr	r3, [sp, #12]
+ 448 00b0 0098     		ldr	r0, [sp, #0]
+ 449 00b2 390C     		lsrs	r1, r7, #16
+ 450 00b4 C018     		adds	r0, r0, r3
+ 451 00b6 0238     		subs	r0, r0, #2
+ 452 00b8 FFF7FEFF 		bl	flash_program_half_word
+ 231:arch/stm32/subsystems/settings_arch.c ****   flash_lock();
+ 453              		.loc 1 231 0
+ 454 00bc FFF7FEFF 		bl	flash_lock
+ 235:arch/stm32/subsystems/settings_arch.c ****     if ((*(uint8_t*) (flash->addr+i)) != (*(uint8_t*) (src+i))) return -2;
+ 455              		.loc 1 235 0
+ 456 00c0 009A     		ldr	r2, [sp, #0]
+ 457 00c2 0023     		movs	r3, #0
+ 458              	.LVL33:
+ 459              	.L50:
+ 460 00c4 985C     		ldrb	r0, [r3, r2]	@ zero_extendqisi2
+ 461 00c6 995D     		ldrb	r1, [r3, r6]	@ zero_extendqisi2
+ 462 00c8 8842     		cmp	r0, r1
+ 463 00ca 13D1     		bne	.L42
+ 234:arch/stm32/subsystems/settings_arch.c ****   for (i=0; i<size; i++) {
+ 464              		.loc 1 234 0
+ 465 00cc 0133     		adds	r3, r3, #1
+ 466 00ce A342     		cmp	r3, r4
+ 467 00d0 F8D3     		bcc	.L50
+ 237:arch/stm32/subsystems/settings_arch.c ****   if (*(uint32_t*) (flash->addr+flash->page_size-FSIZ) != size) return -3;
+ 468              		.loc 1 237 0
+ 469 00d2 039B     		ldr	r3, [sp, #12]
+ 470              	.LVL34:
+ 471 00d4 D318     		adds	r3, r2, r3
+ 472 00d6 53F8082C 		ldr	r2, [r3, #-8]
+ 473 00da A242     		cmp	r2, r4
+ 474 00dc 02D0     		beq	.L51
+ 475 00de 6FF00200 		mvn	r0, #2
+ 476 00e2 09E0     		b	.L41
+ 477              	.L51:
+ 238:arch/stm32/subsystems/settings_arch.c ****   if (*(uint32_t*) (flash->addr+flash->page_size-FCHK) != chksum) return -4;
+ 478              		.loc 1 238 0
+ 479 00e4 53F8043C 		ldr	r3, [r3, #-4]
+ 480 00e8 BB42     		cmp	r3, r7
+ 481 00ea 14BF     		ite	ne
+ 482 00ec 6FF00300 		mvnne	r0, #3
+ 483 00f0 0020     		moveq	r0, #0
+ 484 00f2 01E0     		b	.L41
+ 485              	.LVL35:
+ 486              	.L42:
+ 487 00f4 6FF00100 		mvn	r0, #1
+ 488              	.LVL36:
+ 489              	.L41:
+ 490              	.LBE5:
+ 491              	.LBE4:
+ 252:arch/stm32/subsystems/settings_arch.c **** }
+ 492              		.loc 1 252 0
+ 493 00f8 05B0     		add	sp, sp, #20
+ 494 00fa F0BD     		pop	{r4, r5, r6, r7, pc}
+ 495              		.cfi_endproc
+ 496              	.LFE40:
+ 498              		.text
+ 499              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 settings_arch.c
+     /tmp/ccZSe94z.s:24     .text.pflash_checksum:00000000 $t
+     /tmp/ccZSe94z.s:28     .text.pflash_checksum:00000000 pflash_checksum
+     /tmp/ccZSe94z.s:143    .text.pflash_checksum:00000090 $d
+     /tmp/ccZSe94z.s:149    .text.flash_detect:00000000 $t
+     /tmp/ccZSe94z.s:153    .text.flash_detect:00000000 flash_detect
+     /tmp/ccZSe94z.s:223    .text.flash_detect:0000006c $d
+     /tmp/ccZSe94z.s:228    .text.persistent_read:00000000 $t
+     /tmp/ccZSe94z.s:233    .text.persistent_read:00000000 persistent_read
+     /tmp/ccZSe94z.s:321    .text.persistent_write:00000000 $t
+     /tmp/ccZSe94z.s:326    .text.persistent_write:00000000 persistent_write
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+flash_unlock
+flash_erase_page
+flash_lock
+flash_program_half_word

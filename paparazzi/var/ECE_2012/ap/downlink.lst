@@ -1,0 +1,54 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"downlink.c"
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.global	telemetry_mode_Fbw_DefaultChannel
+  24              		.global	telemetry_mode_Ap_DefaultChannel
+  25              		.global	downlink_nb_ovrn
+  26              		.global	downlink_nb_bytes
+  27              		.global	downlink_nb_msgs
+  28              		.section	.bss.downlink_nb_msgs,"aw",%nobits
+  29              		.align	1
+  32              	downlink_nb_msgs:
+  33 0000 0000     		.space	2
+  34              		.section	.bss.downlink_nb_ovrn,"aw",%nobits
+  37              	downlink_nb_ovrn:
+  38 0000 00       		.space	1
+  39              		.section	.bss.downlink_nb_bytes,"aw",%nobits
+  40              		.align	1
+  43              	downlink_nb_bytes:
+  44 0000 0000     		.space	2
+  45              		.section	.bss.telemetry_mode_Ap_DefaultChannel,"aw",%nobits
+  48              	telemetry_mode_Ap_DefaultChannel:
+  49 0000 00       		.space	1
+  50              		.section	.data.telemetry_mode_Fbw_DefaultChannel,"aw",%progbits
+  53              	telemetry_mode_Fbw_DefaultChannel:
+  54 0000 01       		.byte	1
+  55              		.text
+  56              	.Letext0:
+  57              		.file 1 "/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include
+  58              		.file 2 "downlink.c"
+DEFINED SYMBOLS
+                            *ABS*:00000000 downlink.c
+     /tmp/ccExvHXM.s:53     .data.telemetry_mode_Fbw_DefaultChannel:00000000 telemetry_mode_Fbw_DefaultChannel
+     /tmp/ccExvHXM.s:48     .bss.telemetry_mode_Ap_DefaultChannel:00000000 telemetry_mode_Ap_DefaultChannel
+     /tmp/ccExvHXM.s:37     .bss.downlink_nb_ovrn:00000000 downlink_nb_ovrn
+     /tmp/ccExvHXM.s:43     .bss.downlink_nb_bytes:00000000 downlink_nb_bytes
+     /tmp/ccExvHXM.s:32     .bss.downlink_nb_msgs:00000000 downlink_nb_msgs
+     /tmp/ccExvHXM.s:29     .bss.downlink_nb_msgs:00000000 $d
+     /tmp/ccExvHXM.s:38     .bss.downlink_nb_ovrn:00000000 $d
+     /tmp/ccExvHXM.s:40     .bss.downlink_nb_bytes:00000000 $d
+     /tmp/ccExvHXM.s:49     .bss.telemetry_mode_Ap_DefaultChannel:00000000 $d
+
+NO UNDEFINED SYMBOLS

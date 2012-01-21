@@ -1,0 +1,493 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"ahrs_aligner.c"
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.section	.text.ahrs_aligner_init,"ax",%progbits
+  24              		.align	1
+  25              		.global	ahrs_aligner_init
+  26              		.thumb
+  27              		.thumb_func
+  29              	ahrs_aligner_init:
+  30              	.LFB27:
+  31              		.file 1 "subsystems/ahrs/ahrs_aligner.c"
+   1:subsystems/ahrs/ahrs_aligner.c **** /*
+   2:subsystems/ahrs/ahrs_aligner.c ****  * $Id$
+   3:subsystems/ahrs/ahrs_aligner.c ****  *
+   4:subsystems/ahrs/ahrs_aligner.c ****  * Copyright (C) 2008-2009 Antoine Drouin <poinix@gmail.com>
+   5:subsystems/ahrs/ahrs_aligner.c ****  *
+   6:subsystems/ahrs/ahrs_aligner.c ****  * This file is part of paparazzi.
+   7:subsystems/ahrs/ahrs_aligner.c ****  *
+   8:subsystems/ahrs/ahrs_aligner.c ****  * paparazzi is free software; you can redistribute it and/or modify
+   9:subsystems/ahrs/ahrs_aligner.c ****  * it under the terms of the GNU General Public License as published by
+  10:subsystems/ahrs/ahrs_aligner.c ****  * the Free Software Foundation; either version 2, or (at your option)
+  11:subsystems/ahrs/ahrs_aligner.c ****  * any later version.
+  12:subsystems/ahrs/ahrs_aligner.c ****  *
+  13:subsystems/ahrs/ahrs_aligner.c ****  * paparazzi is distributed in the hope that it will be useful,
+  14:subsystems/ahrs/ahrs_aligner.c ****  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  15:subsystems/ahrs/ahrs_aligner.c ****  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  16:subsystems/ahrs/ahrs_aligner.c ****  * GNU General Public License for more details.
+  17:subsystems/ahrs/ahrs_aligner.c ****  *
+  18:subsystems/ahrs/ahrs_aligner.c ****  * You should have received a copy of the GNU General Public License
+  19:subsystems/ahrs/ahrs_aligner.c ****  * along with paparazzi; see the file COPYING.  If not, write to
+  20:subsystems/ahrs/ahrs_aligner.c ****  * the Free Software Foundation, 59 Temple Place - Suite 330,
+  21:subsystems/ahrs/ahrs_aligner.c ****  * Boston, MA 02111-1307, USA.
+  22:subsystems/ahrs/ahrs_aligner.c ****  */
+  23:subsystems/ahrs/ahrs_aligner.c **** 
+  24:subsystems/ahrs/ahrs_aligner.c **** #include "ahrs_aligner.h"
+  25:subsystems/ahrs/ahrs_aligner.c **** 
+  26:subsystems/ahrs/ahrs_aligner.c **** #include <stdlib.h> /* for abs() */
+  27:subsystems/ahrs/ahrs_aligner.c **** #include "subsystems/imu.h"
+  28:subsystems/ahrs/ahrs_aligner.c **** #include "led.h"
+  29:subsystems/ahrs/ahrs_aligner.c **** 
+  30:subsystems/ahrs/ahrs_aligner.c **** struct AhrsAligner ahrs_aligner;
+  31:subsystems/ahrs/ahrs_aligner.c **** 
+  32:subsystems/ahrs/ahrs_aligner.c **** #define SAMPLES_NB PERIODIC_FREQUENCY
+  33:subsystems/ahrs/ahrs_aligner.c **** 
+  34:subsystems/ahrs/ahrs_aligner.c **** static struct Int32Rates gyro_sum;
+  35:subsystems/ahrs/ahrs_aligner.c **** static struct Int32Vect3 accel_sum;
+  36:subsystems/ahrs/ahrs_aligner.c **** static struct Int32Vect3 mag_sum;
+  37:subsystems/ahrs/ahrs_aligner.c **** static int32_t ref_sensor_samples[SAMPLES_NB];
+  38:subsystems/ahrs/ahrs_aligner.c **** static uint32_t samples_idx;
+  39:subsystems/ahrs/ahrs_aligner.c **** 
+  40:subsystems/ahrs/ahrs_aligner.c **** void ahrs_aligner_init(void) {
+  32              		.loc 1 40 0
+  33              		.cfi_startproc
+  34              		@ args = 0, pretend = 0, frame = 0
+  35              		@ frame_needed = 0, uses_anonymous_args = 0
+  36              		@ link register save eliminated.
+  41:subsystems/ahrs/ahrs_aligner.c **** 
+  42:subsystems/ahrs/ahrs_aligner.c ****   ahrs_aligner.status = AHRS_ALIGNER_RUNNING;
+  37              		.loc 1 42 0
+  38 0000 0A4A     		ldr	r2, .L3
+  43:subsystems/ahrs/ahrs_aligner.c ****   INT_RATES_ZERO(gyro_sum);
+  39              		.loc 1 43 0
+  40 0002 0B49     		ldr	r1, .L3+4
+  42:subsystems/ahrs/ahrs_aligner.c ****   ahrs_aligner.status = AHRS_ALIGNER_RUNNING;
+  41              		.loc 1 42 0
+  42 0004 0123     		movs	r3, #1
+  43 0006 82F82C30 		strb	r3, [r2, #44]
+  44              		.loc 1 43 0
+  45 000a 013B     		subs	r3, r3, #1
+  46 000c 0B60     		str	r3, [r1, #0]
+  47 000e 4B60     		str	r3, [r1, #4]
+  48 0010 8B60     		str	r3, [r1, #8]
+  44:subsystems/ahrs/ahrs_aligner.c ****   INT_VECT3_ZERO(accel_sum);
+  49              		.loc 1 44 0
+  50 0012 0849     		ldr	r1, .L3+8
+  45:subsystems/ahrs/ahrs_aligner.c ****   INT_VECT3_ZERO(mag_sum);
+  46:subsystems/ahrs/ahrs_aligner.c ****   samples_idx = 0;
+  47:subsystems/ahrs/ahrs_aligner.c ****   ahrs_aligner.noise = 0;
+  51              		.loc 1 47 0
+  52 0014 5362     		str	r3, [r2, #36]
+  44:subsystems/ahrs/ahrs_aligner.c ****   INT_VECT3_ZERO(accel_sum);
+  53              		.loc 1 44 0
+  54 0016 0B60     		str	r3, [r1, #0]
+  55 0018 4B60     		str	r3, [r1, #4]
+  56 001a 8B60     		str	r3, [r1, #8]
+  45:subsystems/ahrs/ahrs_aligner.c ****   INT_VECT3_ZERO(mag_sum);
+  57              		.loc 1 45 0
+  58 001c 0649     		ldr	r1, .L3+12
+  48:subsystems/ahrs/ahrs_aligner.c ****   ahrs_aligner.low_noise_cnt = 0;
+  59              		.loc 1 48 0
+  60 001e 9362     		str	r3, [r2, #40]
+  45:subsystems/ahrs/ahrs_aligner.c ****   INT_VECT3_ZERO(mag_sum);
+  61              		.loc 1 45 0
+  62 0020 0B60     		str	r3, [r1, #0]
+  63 0022 4B60     		str	r3, [r1, #4]
+  64 0024 8B60     		str	r3, [r1, #8]
+  46:subsystems/ahrs/ahrs_aligner.c ****   samples_idx = 0;
+  65              		.loc 1 46 0
+  66 0026 0549     		ldr	r1, .L3+16
+  67 0028 0B60     		str	r3, [r1, #0]
+  49:subsystems/ahrs/ahrs_aligner.c **** }
+  68              		.loc 1 49 0
+  69 002a 7047     		bx	lr
+  70              	.L4:
+  71              		.align	2
+  72              	.L3:
+  73 002c 00000000 		.word	.LANCHOR0
+  74 0030 00000000 		.word	.LANCHOR1
+  75 0034 00000000 		.word	.LANCHOR2
+  76 0038 00000000 		.word	.LANCHOR3
+  77 003c 00000000 		.word	.LANCHOR4
+  78              		.cfi_endproc
+  79              	.LFE27:
+  81              		.section	.text.ahrs_aligner_run,"ax",%progbits
+  82              		.align	1
+  83              		.global	ahrs_aligner_run
+  84              		.thumb
+  85              		.thumb_func
+  87              	ahrs_aligner_run:
+  88              	.LFB28:
+  50:subsystems/ahrs/ahrs_aligner.c **** 
+  51:subsystems/ahrs/ahrs_aligner.c **** #ifndef LOW_NOISE_THRESHOLD
+  52:subsystems/ahrs/ahrs_aligner.c **** #define LOW_NOISE_THRESHOLD 90000
+  53:subsystems/ahrs/ahrs_aligner.c **** #endif
+  54:subsystems/ahrs/ahrs_aligner.c **** #ifndef LOW_NOISE_TIME
+  55:subsystems/ahrs/ahrs_aligner.c **** #define LOW_NOISE_TIME          5
+  56:subsystems/ahrs/ahrs_aligner.c **** #endif
+  57:subsystems/ahrs/ahrs_aligner.c **** 
+  58:subsystems/ahrs/ahrs_aligner.c **** void ahrs_aligner_run(void) {
+  89              		.loc 1 58 0
+  90              		.cfi_startproc
+  91              		@ args = 0, pretend = 0, frame = 0
+  92              		@ frame_needed = 0, uses_anonymous_args = 0
+  59:subsystems/ahrs/ahrs_aligner.c **** 
+  60:subsystems/ahrs/ahrs_aligner.c ****   RATES_ADD(gyro_sum,  imu.gyro);
+  93              		.loc 1 60 0
+  94 0000 594A     		ldr	r2, .L15
+  95 0002 5A4B     		ldr	r3, .L15+4
+  96 0004 1068     		ldr	r0, [r2, #0]
+  97 0006 1968     		ldr	r1, [r3, #0]
+  58:subsystems/ahrs/ahrs_aligner.c **** void ahrs_aligner_run(void) {
+  98              		.loc 1 58 0
+  99 0008 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, sl, fp, lr}
+ 100              	.LCFI0:
+ 101              		.cfi_def_cfa_offset 36
+ 102              		.loc 1 60 0
+ 103 000c 00EB010C 		add	ip, r0, r1
+ 104 0010 5768     		ldr	r7, [r2, #4]
+ 105              		.cfi_offset 14, -4
+ 106              		.cfi_offset 11, -8
+ 107              		.cfi_offset 10, -12
+ 108              		.cfi_offset 9, -16
+ 109              		.cfi_offset 8, -20
+ 110              		.cfi_offset 7, -24
+ 111              		.cfi_offset 6, -28
+ 112              		.cfi_offset 5, -32
+ 113              		.cfi_offset 4, -36
+ 114 0012 5968     		ldr	r1, [r3, #4]
+ 115 0014 9668     		ldr	r6, [r2, #8]
+ 116 0016 7F18     		adds	r7, r7, r1
+ 117 0018 9968     		ldr	r1, [r3, #8]
+  61:subsystems/ahrs/ahrs_aligner.c ****   VECT3_ADD(accel_sum, imu.accel);
+ 118              		.loc 1 61 0
+ 119 001a D568     		ldr	r5, [r2, #12]
+  60:subsystems/ahrs/ahrs_aligner.c ****   RATES_ADD(gyro_sum,  imu.gyro);
+ 120              		.loc 1 60 0
+ 121 001c 7618     		adds	r6, r6, r1
+ 122              		.loc 1 61 0
+ 123 001e 5449     		ldr	r1, .L15+8
+  60:subsystems/ahrs/ahrs_aligner.c ****   RATES_ADD(gyro_sum,  imu.gyro);
+ 124              		.loc 1 60 0
+ 125 0020 C3F800C0 		str	ip, [r3, #0]
+ 126 0024 5F60     		str	r7, [r3, #4]
+ 127 0026 9E60     		str	r6, [r3, #8]
+ 128              		.loc 1 61 0
+ 129 0028 0B68     		ldr	r3, [r1, #0]
+ 130 002a 1469     		ldr	r4, [r2, #16]
+ 131 002c ED18     		adds	r5, r5, r3
+ 132 002e 4B68     		ldr	r3, [r1, #4]
+ 133 0030 D2F814A0 		ldr	sl, [r2, #20]
+ 134 0034 E418     		adds	r4, r4, r3
+ 135 0036 8B68     		ldr	r3, [r1, #8]
+  62:subsystems/ahrs/ahrs_aligner.c ****   VECT3_ADD(mag_sum,   imu.mag);
+ 136              		.loc 1 62 0
+ 137 0038 DFF83881 		ldr	r8, .L15+12
+  61:subsystems/ahrs/ahrs_aligner.c ****   VECT3_ADD(accel_sum, imu.accel);
+ 138              		.loc 1 61 0
+ 139 003c 5344     		add	r3, sl, r3
+ 140              		.loc 1 62 0
+ 141 003e 9069     		ldr	r0, [r2, #24]
+  61:subsystems/ahrs/ahrs_aligner.c ****   VECT3_ADD(accel_sum, imu.accel);
+ 142              		.loc 1 61 0
+ 143 0040 0D60     		str	r5, [r1, #0]
+ 144 0042 4C60     		str	r4, [r1, #4]
+ 145 0044 8B60     		str	r3, [r1, #8]
+ 146              		.loc 1 62 0
+ 147 0046 D8F80010 		ldr	r1, [r8, #0]
+ 148 004a D2F81C90 		ldr	r9, [r2, #28]
+ 149 004e 4018     		adds	r0, r0, r1
+ 150 0050 D8F80410 		ldr	r1, [r8, #4]
+ 151 0054 C8F80000 		str	r0, [r8, #0]
+ 152 0058 4944     		add	r1, r9, r1
+ 153 005a D2F82090 		ldr	r9, [r2, #32]
+ 154 005e D8F80820 		ldr	r2, [r8, #8]
+ 155 0062 C8F80410 		str	r1, [r8, #4]
+ 156 0066 4A44     		add	r2, r9, r2
+ 157 0068 C8F80820 		str	r2, [r8, #8]
+  63:subsystems/ahrs/ahrs_aligner.c **** 
+  64:subsystems/ahrs/ahrs_aligner.c ****   ref_sensor_samples[samples_idx] = imu.accel.z;
+ 158              		.loc 1 64 0
+ 159 006c DFF80881 		ldr	r8, .L15+16
+ 160 0070 DFF81091 		ldr	r9, .L15+28
+ 161 0074 D8F800B0 		ldr	fp, [r8, #0]
+ 162 0078 49F82BA0 		str	sl, [r9, fp, lsl #2]
+  65:subsystems/ahrs/ahrs_aligner.c ****   samples_idx++;
+ 163              		.loc 1 65 0
+ 164 007c 0BF1010B 		add	fp, fp, #1
+  66:subsystems/ahrs/ahrs_aligner.c **** 
+  67:subsystems/ahrs/ahrs_aligner.c **** #ifdef AHRS_ALIGNER_LED
+  68:subsystems/ahrs/ahrs_aligner.c ****   RunOnceEvery(50, {LED_TOGGLE(AHRS_ALIGNER_LED);});
+  69:subsystems/ahrs/ahrs_aligner.c **** #endif
+  70:subsystems/ahrs/ahrs_aligner.c **** 
+  71:subsystems/ahrs/ahrs_aligner.c ****   if (samples_idx >= SAMPLES_NB) {
+ 165              		.loc 1 71 0
+ 166 0080 BBF13B0F 		cmp	fp, #59
+  65:subsystems/ahrs/ahrs_aligner.c ****   samples_idx++;
+ 167              		.loc 1 65 0
+ 168 0084 C8F800B0 		str	fp, [r8, #0]
+ 169              		.loc 1 71 0
+ 170 0088 6BD9     		bls	.L12
+ 171              	.LBB2:
+  72:subsystems/ahrs/ahrs_aligner.c ****     int32_t avg_ref_sensor = accel_sum.z;
+  73:subsystems/ahrs/ahrs_aligner.c ****     if ( avg_ref_sensor >= 0)
+ 172              		.loc 1 73 0
+ 173 008a 002B     		cmp	r3, #0
+  74:subsystems/ahrs/ahrs_aligner.c ****       avg_ref_sensor += SAMPLES_NB / 2;
+ 174              		.loc 1 74 0
+ 175 008c ACBF     		ite	ge
+ 176 008e 03F11E08 		addge	r8, r3, #30
+ 177              	.LVL0:
+  75:subsystems/ahrs/ahrs_aligner.c ****     else
+  76:subsystems/ahrs/ahrs_aligner.c ****       avg_ref_sensor -= SAMPLES_NB / 2;
+ 178              		.loc 1 76 0
+ 179 0092 A3F11E08 		sublt	r8, r3, #30
+  77:subsystems/ahrs/ahrs_aligner.c ****     avg_ref_sensor /= SAMPLES_NB;
+ 180              		.loc 1 77 0
+ 181 0096 4FF03C0B 		mov	fp, #60
+ 182 009a 98FBFBFB 		sdiv	fp, r8, fp
+ 183              	.LVL1:
+ 184 009e 4FF00008 		mov	r8, #0
+ 185 00a2 C246     		mov	sl, r8
+ 186              	.L9:
+ 187              	.LBB3:
+  78:subsystems/ahrs/ahrs_aligner.c **** 
+  79:subsystems/ahrs/ahrs_aligner.c ****     ahrs_aligner.noise = 0;
+  80:subsystems/ahrs/ahrs_aligner.c ****     int i;
+  81:subsystems/ahrs/ahrs_aligner.c ****     for (i=0; i<SAMPLES_NB; i++) {
+  82:subsystems/ahrs/ahrs_aligner.c ****       int32_t diff = ref_sensor_samples[i] - avg_ref_sensor;
+  83:subsystems/ahrs/ahrs_aligner.c ****       ahrs_aligner.noise += abs(diff);
+ 188              		.loc 1 83 0
+ 189 00a4 DFF8DC90 		ldr	r9, .L15+28
+ 190 00a8 59F80890 		ldr	r9, [r9, r8]
+ 191 00ac 08F10408 		add	r8, r8, #4
+ 192 00b0 CBEB0909 		rsb	r9, fp, r9
+ 193 00b4 B9F1000F 		cmp	r9, #0
+ 194 00b8 B8BF     		it	lt
+ 195 00ba C9F10009 		rsblt	r9, r9, #0
+ 196              	.LBE3:
+  81:subsystems/ahrs/ahrs_aligner.c ****     for (i=0; i<SAMPLES_NB; i++) {
+ 197              		.loc 1 81 0
+ 198 00be B8F1F00F 		cmp	r8, #240
+ 199              	.LBB4:
+ 200              		.loc 1 83 0
+ 201 00c2 CA44     		add	sl, sl, r9
+ 202              	.LBE4:
+  81:subsystems/ahrs/ahrs_aligner.c ****     for (i=0; i<SAMPLES_NB; i++) {
+ 203              		.loc 1 81 0
+ 204 00c4 EED1     		bne	.L9
+ 205 00c6 DFF8B880 		ldr	r8, .L15+24
+  84:subsystems/ahrs/ahrs_aligner.c ****     }
+  85:subsystems/ahrs/ahrs_aligner.c **** 
+  86:subsystems/ahrs/ahrs_aligner.c ****     RATES_SDIV(ahrs_aligner.lp_gyro,  gyro_sum,  SAMPLES_NB);
+ 206              		.loc 1 86 0
+ 207 00ca 4FF03C09 		mov	r9, #60
+  87:subsystems/ahrs/ahrs_aligner.c ****     VECT3_SDIV(ahrs_aligner.lp_accel, accel_sum, SAMPLES_NB);
+  88:subsystems/ahrs/ahrs_aligner.c ****     VECT3_SDIV(ahrs_aligner.lp_mag,   mag_sum,   SAMPLES_NB);
+ 208              		.loc 1 88 0
+ 209 00ce 92FBF9F2 		sdiv	r2, r2, r9
+  87:subsystems/ahrs/ahrs_aligner.c ****     VECT3_SDIV(ahrs_aligner.lp_accel, accel_sum, SAMPLES_NB);
+ 210              		.loc 1 87 0
+ 211 00d2 93FBF9F3 		sdiv	r3, r3, r9
+ 212              		.loc 1 88 0
+ 213 00d6 C8F82020 		str	r2, [r8, #32]
+  89:subsystems/ahrs/ahrs_aligner.c **** 
+  90:subsystems/ahrs/ahrs_aligner.c ****     INT_RATES_ZERO(gyro_sum);
+ 214              		.loc 1 90 0
+ 215 00da 244A     		ldr	r2, .L15+4
+  87:subsystems/ahrs/ahrs_aligner.c ****     VECT3_SDIV(ahrs_aligner.lp_accel, accel_sum, SAMPLES_NB);
+ 216              		.loc 1 87 0
+ 217 00dc C8F81430 		str	r3, [r8, #20]
+ 218              		.loc 1 90 0
+ 219 00e0 0023     		movs	r3, #0
+ 220 00e2 1360     		str	r3, [r2, #0]
+ 221 00e4 5360     		str	r3, [r2, #4]
+ 222 00e6 9360     		str	r3, [r2, #8]
+  91:subsystems/ahrs/ahrs_aligner.c ****     INT_VECT3_ZERO(accel_sum);
+ 223              		.loc 1 91 0
+ 224 00e8 214A     		ldr	r2, .L15+8
+  86:subsystems/ahrs/ahrs_aligner.c ****     RATES_SDIV(ahrs_aligner.lp_gyro,  gyro_sum,  SAMPLES_NB);
+ 225              		.loc 1 86 0
+ 226 00ea 9CFBF9FC 		sdiv	ip, ip, r9
+ 227              		.loc 1 91 0
+ 228 00ee 1360     		str	r3, [r2, #0]
+ 229 00f0 5360     		str	r3, [r2, #4]
+ 230 00f2 9360     		str	r3, [r2, #8]
+  92:subsystems/ahrs/ahrs_aligner.c ****     INT_VECT3_ZERO(mag_sum);
+ 231              		.loc 1 92 0
+ 232 00f4 1F4A     		ldr	r2, .L15+12
+  86:subsystems/ahrs/ahrs_aligner.c ****     RATES_SDIV(ahrs_aligner.lp_gyro,  gyro_sum,  SAMPLES_NB);
+ 233              		.loc 1 86 0
+ 234 00f6 97FBF9F7 		sdiv	r7, r7, r9
+ 235              		.loc 1 92 0
+ 236 00fa 1360     		str	r3, [r2, #0]
+ 237 00fc 5360     		str	r3, [r2, #4]
+ 238 00fe 9360     		str	r3, [r2, #8]
+  93:subsystems/ahrs/ahrs_aligner.c ****     samples_idx = 0;
+ 239              		.loc 1 93 0
+ 240 0100 1D4A     		ldr	r2, .L15+16
+  86:subsystems/ahrs/ahrs_aligner.c ****     RATES_SDIV(ahrs_aligner.lp_gyro,  gyro_sum,  SAMPLES_NB);
+ 241              		.loc 1 86 0
+ 242 0102 96FBF9F6 		sdiv	r6, r6, r9
+ 243              		.loc 1 93 0
+ 244 0106 1360     		str	r3, [r2, #0]
+  94:subsystems/ahrs/ahrs_aligner.c **** 
+  95:subsystems/ahrs/ahrs_aligner.c ****     if (ahrs_aligner.noise < LOW_NOISE_THRESHOLD)
+ 245              		.loc 1 95 0
+ 246 0108 1C4B     		ldr	r3, .L15+20
+  87:subsystems/ahrs/ahrs_aligner.c ****     VECT3_SDIV(ahrs_aligner.lp_accel, accel_sum, SAMPLES_NB);
+ 247              		.loc 1 87 0
+ 248 010a 95FBF9F5 		sdiv	r5, r5, r9
+ 249 010e 94FBF9F4 		sdiv	r4, r4, r9
+  88:subsystems/ahrs/ahrs_aligner.c ****     VECT3_SDIV(ahrs_aligner.lp_mag,   mag_sum,   SAMPLES_NB);
+ 250              		.loc 1 88 0
+ 251 0112 90FBF9F0 		sdiv	r0, r0, r9
+ 252 0116 91FBF9F1 		sdiv	r1, r1, r9
+ 253              		.loc 1 95 0
+ 254 011a 9A45     		cmp	sl, r3
+  81:subsystems/ahrs/ahrs_aligner.c ****     for (i=0; i<SAMPLES_NB; i++) {
+ 255              		.loc 1 81 0
+ 256 011c C8F824A0 		str	sl, [r8, #36]
+  86:subsystems/ahrs/ahrs_aligner.c ****     RATES_SDIV(ahrs_aligner.lp_gyro,  gyro_sum,  SAMPLES_NB);
+ 257              		.loc 1 86 0
+ 258 0120 C8F800C0 		str	ip, [r8, #0]
+ 259 0124 C8F80470 		str	r7, [r8, #4]
+ 260 0128 C8F80860 		str	r6, [r8, #8]
+  87:subsystems/ahrs/ahrs_aligner.c ****     VECT3_SDIV(ahrs_aligner.lp_accel, accel_sum, SAMPLES_NB);
+ 261              		.loc 1 87 0
+ 262 012c C8F80C50 		str	r5, [r8, #12]
+ 263 0130 C8F81040 		str	r4, [r8, #16]
+  88:subsystems/ahrs/ahrs_aligner.c ****     VECT3_SDIV(ahrs_aligner.lp_mag,   mag_sum,   SAMPLES_NB);
+ 264              		.loc 1 88 0
+ 265 0134 C8F81800 		str	r0, [r8, #24]
+ 266 0138 C8F81C10 		str	r1, [r8, #28]
+ 267              		.loc 1 95 0
+ 268 013c 03DC     		bgt	.L10
+  96:subsystems/ahrs/ahrs_aligner.c ****       ahrs_aligner.low_noise_cnt++;
+ 269              		.loc 1 96 0
+ 270 013e D8F82830 		ldr	r3, [r8, #40]
+ 271 0142 0133     		adds	r3, r3, #1
+ 272 0144 04E0     		b	.L13
+ 273              	.L10:
+  97:subsystems/ahrs/ahrs_aligner.c ****     else
+  98:subsystems/ahrs/ahrs_aligner.c ****       if ( ahrs_aligner.low_noise_cnt > 0)
+ 274              		.loc 1 98 0
+ 275 0146 D8F82830 		ldr	r3, [r8, #40]
+ 276 014a 002B     		cmp	r3, #0
+ 277 014c 02DD     		ble	.L11
+  99:subsystems/ahrs/ahrs_aligner.c ****         ahrs_aligner.low_noise_cnt--;
+ 278              		.loc 1 99 0
+ 279 014e 013B     		subs	r3, r3, #1
+ 280              	.L13:
+ 281 0150 C8F82830 		str	r3, [r8, #40]
+ 282              	.L11:
+ 100:subsystems/ahrs/ahrs_aligner.c **** 
+ 101:subsystems/ahrs/ahrs_aligner.c ****     if (ahrs_aligner.low_noise_cnt > LOW_NOISE_TIME) {
+ 283              		.loc 1 101 0
+ 284 0154 0A4B     		ldr	r3, .L15+24
+ 285 0156 9A6A     		ldr	r2, [r3, #40]
+ 286 0158 052A     		cmp	r2, #5
+ 287 015a 02DD     		ble	.L12
+ 102:subsystems/ahrs/ahrs_aligner.c ****       ahrs_aligner.status = AHRS_ALIGNER_LOCKED;
+ 288              		.loc 1 102 0
+ 289 015c 0222     		movs	r2, #2
+ 290 015e 83F82C20 		strb	r2, [r3, #44]
+ 291              	.L12:
+ 292 0162 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, sl, fp, pc}
+ 293              	.L16:
+ 294 0166 00BF     		.align	2
+ 295              	.L15:
+ 296 0168 00000000 		.word	imu
+ 297 016c 00000000 		.word	.LANCHOR1
+ 298 0170 00000000 		.word	.LANCHOR2
+ 299 0174 00000000 		.word	.LANCHOR3
+ 300 0178 00000000 		.word	.LANCHOR4
+ 301 017c 8F5F0100 		.word	89999
+ 302 0180 00000000 		.word	.LANCHOR0
+ 303 0184 00000000 		.word	.LANCHOR5
+ 304              	.LBE2:
+ 305              		.cfi_endproc
+ 306              	.LFE28:
+ 308              		.global	ahrs_aligner
+ 309              		.section	.bss.gyro_sum,"aw",%nobits
+ 310              		.align	2
+ 311              		.set	.LANCHOR1,. + 0
+ 314              	gyro_sum:
+ 315 0000 00000000 		.space	12
+ 315      00000000 
+ 315      00000000 
+ 316              		.section	.bss.mag_sum,"aw",%nobits
+ 317              		.align	2
+ 318              		.set	.LANCHOR3,. + 0
+ 321              	mag_sum:
+ 322 0000 00000000 		.space	12
+ 322      00000000 
+ 322      00000000 
+ 323              		.section	.bss.samples_idx,"aw",%nobits
+ 324              		.align	2
+ 325              		.set	.LANCHOR4,. + 0
+ 328              	samples_idx:
+ 329 0000 00000000 		.space	4
+ 330              		.section	.bss.ahrs_aligner,"aw",%nobits
+ 331              		.align	2
+ 332              		.set	.LANCHOR0,. + 0
+ 335              	ahrs_aligner:
+ 336 0000 00000000 		.space	48
+ 336      00000000 
+ 336      00000000 
+ 336      00000000 
+ 336      00000000 
+ 337              		.section	.bss.ref_sensor_samples,"aw",%nobits
+ 338              		.align	2
+ 339              		.set	.LANCHOR5,. + 0
+ 342              	ref_sensor_samples:
+ 343 0000 00000000 		.space	240
+ 343      00000000 
+ 343      00000000 
+ 343      00000000 
+ 343      00000000 
+ 344              		.section	.bss.accel_sum,"aw",%nobits
+ 345              		.align	2
+ 346              		.set	.LANCHOR2,. + 0
+ 349              	accel_sum:
+ 350 0000 00000000 		.space	12
+ 350      00000000 
+ 350      00000000 
+ 351              		.text
+ 352              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 ahrs_aligner.c
+     /tmp/cc0cO7pv.s:24     .text.ahrs_aligner_init:00000000 $t
+     /tmp/cc0cO7pv.s:29     .text.ahrs_aligner_init:00000000 ahrs_aligner_init
+     /tmp/cc0cO7pv.s:73     .text.ahrs_aligner_init:0000002c $d
+     /tmp/cc0cO7pv.s:82     .text.ahrs_aligner_run:00000000 $t
+     /tmp/cc0cO7pv.s:87     .text.ahrs_aligner_run:00000000 ahrs_aligner_run
+     /tmp/cc0cO7pv.s:296    .text.ahrs_aligner_run:00000168 $d
+     /tmp/cc0cO7pv.s:335    .bss.ahrs_aligner:00000000 ahrs_aligner
+     /tmp/cc0cO7pv.s:310    .bss.gyro_sum:00000000 $d
+     /tmp/cc0cO7pv.s:314    .bss.gyro_sum:00000000 gyro_sum
+     /tmp/cc0cO7pv.s:317    .bss.mag_sum:00000000 $d
+     /tmp/cc0cO7pv.s:321    .bss.mag_sum:00000000 mag_sum
+     /tmp/cc0cO7pv.s:324    .bss.samples_idx:00000000 $d
+     /tmp/cc0cO7pv.s:328    .bss.samples_idx:00000000 samples_idx
+     /tmp/cc0cO7pv.s:331    .bss.ahrs_aligner:00000000 $d
+     /tmp/cc0cO7pv.s:338    .bss.ref_sensor_samples:00000000 $d
+     /tmp/cc0cO7pv.s:342    .bss.ref_sensor_samples:00000000 ref_sensor_samples
+     /tmp/cc0cO7pv.s:345    .bss.accel_sum:00000000 $d
+     /tmp/cc0cO7pv.s:349    .bss.accel_sum:00000000 accel_sum
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+imu

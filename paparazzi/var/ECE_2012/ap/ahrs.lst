@@ -1,0 +1,55 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"ahrs.c"
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.global	ahrs
+  24              		.global	ahrs_float
+  25              		.global	ahrs_mag_offset
+  26              		.section	.bss.ahrs_mag_offset,"aw",%nobits
+  27              		.align	2
+  30              	ahrs_mag_offset:
+  31 0000 00000000 		.space	4
+  32              		.section	.bss.ahrs,"aw",%nobits
+  33              		.align	2
+  36              	ahrs:
+  37 0000 00000000 		.space	156
+  37      00000000 
+  37      00000000 
+  37      00000000 
+  37      00000000 
+  38              		.section	.bss.ahrs_float,"aw",%nobits
+  39              		.align	2
+  42              	ahrs_float:
+  43 0000 00000000 		.space	188
+  43      00000000 
+  43      00000000 
+  43      00000000 
+  43      00000000 
+  44              		.text
+  45              	.Letext0:
+  46              		.file 1 "/opt/paparazzi/arm-multilib/lib/gcc/arm-none-eabi/4.4.5/../../../../arm-none-eabi/include
+  47              		.file 2 "./math/pprz_algebra_int.h"
+  48              		.file 3 "./math/pprz_algebra_float.h"
+  49              		.file 4 "./subsystems/ahrs.h"
+  50              		.file 5 "subsystems/ahrs.c"
+DEFINED SYMBOLS
+                            *ABS*:00000000 ahrs.c
+     /tmp/ccZ6iJwp.s:36     .bss.ahrs:00000000 ahrs
+     /tmp/ccZ6iJwp.s:42     .bss.ahrs_float:00000000 ahrs_float
+     /tmp/ccZ6iJwp.s:30     .bss.ahrs_mag_offset:00000000 ahrs_mag_offset
+     /tmp/ccZ6iJwp.s:27     .bss.ahrs_mag_offset:00000000 $d
+     /tmp/ccZ6iJwp.s:33     .bss.ahrs:00000000 $d
+     /tmp/ccZ6iJwp.s:39     .bss.ahrs_float:00000000 $d
+
+NO UNDEFINED SYMBOLS
