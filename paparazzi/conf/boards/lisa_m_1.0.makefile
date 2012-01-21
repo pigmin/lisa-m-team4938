@@ -62,18 +62,18 @@ MAX_1168_DRDY_PORT_SOURCE = PortSourceGPIOD
 
 
 
-# ifndef ADC_IR1
-# ADC_IR1      = 1
-# ADC_IR1_CHAN = 0
-# endif
-# ifndef ADC_IR2
-# ADC_IR2      = 2
-# ADC_IR2_CHAN = 1
-# endif
-# ifndef ADC_IR3
-# ADC_IR_TOP      = 4
-# ADC_IR_TOP_CHAN = 3
-# endif
-# ifndef ADC_IR_NB_SAMPLES
-# ADC_IR_NB_SAMPLES = 16
-# endif
+ifndef ADC_IR1
+ADC_IR1      = 1
+ADC_IR1_CHAN = 0
+endif
+ifndef ADC_IR2
+ADC_IR2      = 2
+ADC_IR2_CHAN = 1
+endif
+ifndef ADC_IR3
+ADC_IR_TOP      = 4
+ADC_IR_TOP_CHAN = 3
+endif
+ifndef ADC_IR_NB_SAMPLES
+ADC_IR_NB_SAMPLES = 16
+endif
